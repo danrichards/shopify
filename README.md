@@ -2,7 +2,7 @@
 
 An object-oriented approach towards using the Shopify API. 
 
-> Please note: the old version (v0.9) using Guzzle 3.9 is [maintained here](https://github.com/danrichards/shopify-api/tree/develop-guzzle-3.9)
+> Please note: the old version (v0.9) using Guzzle 3.9 is [maintained here](https://github.com/danrichards/shopify-api)
 
 ## Supported Objects / Endpoints:
 
