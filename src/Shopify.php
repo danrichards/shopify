@@ -171,7 +171,7 @@ class Shopify extends Client
         $response = $this->request('POST', $endpoint, ['json' => $model]);
         $data = json_decode($response->getBody()->getContents(), true);
 
-        if (isset($response[$model::$resource_name])) {
+        if (isset($data[$model::$resource_name])) {
             $data = $data[$model::$resource_name];
         }
 
@@ -209,7 +209,7 @@ class Shopify extends Client
      * @param  string $append
      * @return array
      */
-    public function update($payload = [], $append = '')
+    public function put($payload = [], $append = '')
     {
         $endpoint = static::makeEndpoint($this->endpoint, $append);
 
@@ -218,7 +218,7 @@ class Shopify extends Client
         $data = json_decode($response->getBody()->getContents(), true);
 
         if ($payload instanceof AbstractModel) {
-            if (isset($response[$payload::$resource_name])) {
+            if (isset($data[$payload::$resource_name])) {
                 $data = $data[$payload::$resource_name];
             }
 
