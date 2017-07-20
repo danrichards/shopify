@@ -39,9 +39,9 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * AbstractModel constructor.
      *
-     * @param $data
+     * @param array|object $data
      */
-    public function __construct($data)
+    public function __construct($data = [])
     {
         $data = json_decode(json_encode($data), true);
 
@@ -446,7 +446,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
             ? ['id' => $this->original['id']] + $this->getDirty()
             : $this->getDirty();
 
-        return json_encode([static::$resource_name => $payload]);
+        return [static::$resource_name => $payload];
     }
 
     /**
