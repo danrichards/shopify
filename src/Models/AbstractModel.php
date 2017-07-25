@@ -3,13 +3,14 @@
 namespace Dan\Shopify\Models;
 
 use ArrayAccess;
+use BadMethodCallException;
 use Carbon\Carbon;
+use Dan\Shopify\Util;
 use DateTime;
 use DateTimeInterface;
 use Exception;
 use JsonSerializable;
 use Serializable;
-use Dan\Shopify\Util;
 
 /**
  * Class AbstractModel
@@ -24,7 +25,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /** @var array $original */
     protected $original = [];
 
-    /** @var array $data */
+    /** @var array $attributes */
     protected $attributes = [];
 
     /** @var string $date_format */
@@ -479,29 +480,6 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     }
 
     /**
-     * Dynamically retrieve attributes on the model.
-     *
-     * @param  string  $key
-     * @return mixed
-     */
-    public function __get($key)
-    {
-        return $this->getAttribute($key);
-    }
-
-    /**
-     * Dynamically set attributes on the model.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return void
-     */
-    public function __set($key, $value)
-    {
-        $this->setAttribute($key, $value);
-    }
-
-    /**
      * Determine if the given attribute exists.
      *
      * @param  mixed  $offset
@@ -547,6 +525,29 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     }
 
     /**
+     * Dynamically retrieve attributes on the model.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function __get($key)
+    {
+        return $this->getAttribute($key);
+    }
+
+    /**
+     * Dynamically set attributes on the model.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return void
+     */
+    public function __set($key, $value)
+    {
+        $this->setAttribute($key, $value);
+    }
+
+    /**
      * Determine if an attribute or relation exists on the model.
      *
      * @param  string  $key
@@ -579,21 +580,87 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     }
 
     /**
-     * Convert the model instance to JSON.
-     *
-     * @param  int $options
-     * @return string
-     * @throws Exception
+     * @param $attribute
+     * @param $prop
+     * @param $value
+     * @param bool $unset
+     * @return $this
      */
-    public function toJson($options = 0)
+    public function prop($attribute, $prop, $value, $unset = false)
     {
-        $json = json_encode($this->jsonSerialize(), $options);
+        $obj = $this->$attribute ?: (object) [];
 
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new Exception("Json Encoding Exception: ".json_last_error_msg());
+        if ($unset) {
+            unset($obj->$prop);
+        } else {
+            $obj->$prop = $value;
         }
 
-        return $json;
+        $this->$attribute = $obj;
+
+        return $this;
+    }
+
+    /**
+     * Helper for pushing to an attribute that is an array
+     *
+     * @param $attribute
+     * @param $value
+     * @return integer
+     */
+    public function push($attribute, ...$args)
+    {
+        $arr = (array) $this->getAttribute($attribute);
+        foreach ($args as $arg) {
+            $count = array_push($arr, $arg);
+        }
+        $this->setAttribute($attribute, $arr);
+        return $count;
+    }
+
+    /**
+     * Helper for popping from an attribute that is an array
+     *
+     * @param $attribute
+     * @return mixed|null
+     */
+    public function pop($attribute)
+    {
+        $arr = (array) $this->getAttribute($attribute);
+        $value = array_pop($arr, $value);
+        $this->setAttribute($attribute, $arr);
+        return $value;
+    }
+
+    /**
+     * Helper for unshifting to an attribute that is array
+     *
+     * @param $attribute
+     * @param ...$args
+     * @return int
+     */
+    public function unshift($attribute, ...$args)
+    {
+        $arr = (array) $this->getAttribute($attribute);
+        foreach ($args as $arg) {
+            $count = array_unshift($arr, $arg);
+        }
+        $this->setAttribute($attribute, $arr);
+        return $count;
+    }
+
+    /**
+     * Helper for shifting from an attribute that is an array
+     *
+     * @param $attribute
+     * @return mixed|null
+     */
+    public function shift($attribute)
+    {
+        $arr = (array) $this->getAttribute($attribute);
+        $value = array_shift($arr, $value);
+        $this->setAttribute($attribute, $arr);
+        return $value;
     }
 
 }
