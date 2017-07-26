@@ -40,6 +40,7 @@ class Order extends AbstractModel
         'payment_gateway_names' => 'array',
         'line_items' => 'array',
         'shipping_lines' => 'array',
+        'shipping_address' => 'object',
         'billing_address' => 'object',
         'tax_lines' => 'array',
         'fulfillments' => 'array',
