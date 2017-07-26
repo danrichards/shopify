@@ -663,4 +663,12 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
         return $value;
     }
 
+    /**
+     * @return array
+     */
+    public function getCasts()
+    {
+        return $this->casts;
+    }
+
 }
