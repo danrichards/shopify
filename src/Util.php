@@ -161,4 +161,23 @@ class Util
         return $hmac == $calculated_hmac;
     }
 
+    /**
+     * @param int|string|array|\stdClass|\Dan\Shopify\Models\AbstractModel $mixed
+     * @return int|null
+     */
+    public static function getKeyFromMixed($mixed)
+    {
+        if (is_numeric($mixed)) {
+            return $mixed;
+        } elseif (is_array($mixed) && isset($mixed['id'])) {
+            return $order['id'];
+        } elseif ($mixed instanceof \stdClass && isset($mixed->id)) {
+            return $mixed->id;
+        } elseif ($mixed instanceof AbstractModel) {
+            return $mixed->getKey();
+        } else {
+            return null;
+        }
+    }
+
 }

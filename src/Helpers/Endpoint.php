@@ -9,7 +9,8 @@ use Dan\Shopify\Shopify;
  */
 abstract class Endpoint
 {
-    private $api;
+    /** @var Shopify $api */
+    protected $api;
 
     /**
      * Endpoint constructor.
