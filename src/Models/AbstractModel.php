@@ -3,12 +3,10 @@
 namespace Dan\Shopify\Models;
 
 use ArrayAccess;
-use BadMethodCallException;
 use Carbon\Carbon;
 use Dan\Shopify\Util;
 use DateTime;
 use DateTimeInterface;
-use Exception;
 use JsonSerializable;
 use Serializable;
 
@@ -71,7 +69,6 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     {
         foreach($attributes as $key => $value) {
             $this->setAttribute($key, $value);
-            \Log::debug("fill ".$key, [$value]);
         }
 
         return $this;
@@ -622,16 +619,21 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      * Helper for pushing to an attribute that is an array
      *
      * @param $attribute
-     * @param $value
+     * @param $args
      * @return integer
      */
     public function push($attribute, ...$args)
     {
         $arr = (array) $this->getAttribute($attribute);
+
+        $count = count($arr);
+
         foreach ($args as $arg) {
             $count = array_push($arr, $arg);
         }
+
         $this->setAttribute($attribute, $arr);
+
         return $count;
     }
 
@@ -644,7 +646,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     public function pop($attribute)
     {
         $arr = (array) $this->getAttribute($attribute);
-        $value = array_pop($arr, $value);
+        $value = array_pop($arr);
         $this->setAttribute($attribute, $arr);
         return $value;
     }
@@ -653,16 +655,21 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      * Helper for unshifting to an attribute that is array
      *
      * @param $attribute
-     * @param ...$args
+     * @param $args
      * @return int
      */
     public function unshift($attribute, ...$args)
     {
         $arr = (array) $this->getAttribute($attribute);
+
+        $count = count($arr);
+
         foreach ($args as $arg) {
             $count = array_unshift($arr, $arg);
         }
+
         $this->setAttribute($attribute, $arr);
+
         return $count;
     }
 
@@ -675,7 +682,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     public function shift($attribute)
     {
         $arr = (array) $this->getAttribute($attribute);
-        $value = array_shift($arr, $value);
+        $value = array_shift($arr);
         $this->setAttribute($attribute, $arr);
         return $value;
     }
