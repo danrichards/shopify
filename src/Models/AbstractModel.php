@@ -71,6 +71,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     {
         foreach($attributes as $key => $value) {
             $this->setAttribute($key, $value);
+            \Log::debug("fill ".$key, [$value]);
         }
 
         return $this;
@@ -476,7 +477,23 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      */
     public function unserialize($serialized)
     {
-        $this->attributes = $this->unserialize($serialized);
+        $this->attributes = unserialize($serialized);
+    }
+
+    /**
+     * The origin
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        $arr = [];
+
+        foreach ($this->attributes as $key => $value) {
+            $arr[$key] = $this->getAttribute($key);
+        }
+
+        return $arr;
     }
 
     /**

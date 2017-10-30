@@ -1,6 +1,6 @@
 # Shopify API
 
-An object-oriented approach towards using the Shopify API. 
+An object-oriented approach towards using the Shopify API. This repos is a work-in-progress and not production ready.
 
 > Please note: the old version (v0.9) using Guzzle 3.9 is [maintained here](https://github.com/danrichards/shopify-api)
 

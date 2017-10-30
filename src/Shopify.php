@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use Dan\Shopify\Models\AbstractModel;
 use Dan\Shopify\Models\Product;
 use Dan\Shopify\Models\Order;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Class Shopify
@@ -88,15 +89,20 @@ class Shopify extends Client
             if (isset($data[$class::$resource_name])) {
                 $data = $data[$class::$resource_name];
             }
+
+            return new $class($data);
         }
 
-        return new Order($data);
+        throw new ModelNotFoundException(sprintf(
+            'Model not available for `%s`', $this->endpoint));
     }
 
     /**
+     * Return an array of models or Collection (if Laravel present)
+     *
      * @param string|array $ids
      * @param string $append
-     * @return array An array of Order models
+     * @return array|\Illuminate\Support\Collection
      */
     public function findMany($ids, $append = '')
     {
@@ -104,7 +110,24 @@ class Shopify extends Client
             $ids = implode(',', array_filter($ids));
         }
 
-        return $this->all(compact('ids'), $append);
+        if (isset(static::$resource_models[$this->endpoint])) {
+            $class = static::$resource_models[$this->endpoint];
+
+            $data = $this->all(compact('ids'), $append);
+
+            if (isset($data[$class::$resource_name_many])) {
+                $data = $data[$class::$resource_name_many];
+            }
+
+            $data = array_map(function($i) use ($class) {
+                return new $class($i);
+            }, $data);
+
+            return defined('LARAVEL_START') ? collect($data) : $data;
+        }
+
+        throw new ModelNotFoundException(sprintf(
+            'Model not available for `%s`', $this->endpoint));
     }
 
     /**
