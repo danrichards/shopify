@@ -202,7 +202,7 @@ class Shopify extends Client
      *
      * @param array $payload
      * @param string $append
-     * @return array
+     * @return array|\Illuminate\Support\Collection
      */
     public function all($payload = [], $append = '')
     {
