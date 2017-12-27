@@ -6,7 +6,8 @@ use GuzzleHttp\Client;
 use Dan\Shopify\Models\AbstractModel;
 use Dan\Shopify\Models\Product;
 use Dan\Shopify\Models\Order;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Dan\Shopify\Models\Theme;
+use Dan\Shopify\Exceptions\ModelNotFoundException;
 
 /**
  * Class Shopify
@@ -74,7 +75,9 @@ class Shopify extends Client
     ];
 
     /**
-     * @var string The current endpoint for the API. The default endpoint is /orders/
+     * The current endpoint for the API. The default endpoint is /orders/
+     *
+     * @var string $endpoint
      */
     public $endpoint = 'orders';
 
@@ -82,17 +85,21 @@ class Shopify extends Client
     private static $base = 'admin';
 
     /**
-     * @var array Our list of valid Shopify endpoints.
+     * Our list of valid Shopify endpoints.
+     *
+     * @var array $endpoints
      */
     private static $endpoints = [
         'orders',
         'products',
+        'themes'
     ];
 
     /** @var array $resource_helpers */
     private static $resource_models = [
         'orders' => Order::class,
         'products' => Product::class,
+        'themes' => Theme::class,
     ];
 
     /**
@@ -207,11 +214,15 @@ class Shopify extends Client
             if (isset($data[$class::$resource_name_many])) {
                 $data = $data[$class::$resource_name_many];
             }
+
+            $data = array_map(function($arr) use ($class) {
+                return new $class($arr);
+            }, $data);
+
+            return defined('LARAVEL_START') ? collect($data) : $data;
         }
 
-        return array_map(function($order) {
-            return new Order($order);
-        }, $data);
+        return $data;
     }
 
     /**
