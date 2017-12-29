@@ -23,6 +23,21 @@ abstract class Endpoint
     }
 
     /**
+     * Set our endpoint by accessing it via a property.
+     *
+     * @param  string $property
+     * @return $this
+     */
+    public function __get($property)
+    {
+        if (isset($this->$property)) {
+            return $this->$property;
+        }
+
+        return $this->api->__get($property);
+    }
+
+    /**
      * Handle dynamic method calls into the model.
      *
      * @param  string  $method

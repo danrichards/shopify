@@ -20,6 +20,12 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /** @var string $resource_name */
     public static $resource_name;
 
+    /** @var string $identifier */
+    public static $identifier = 'id';
+
+    /** @var array $omit_on_replication */
+    public static $omit_on_replication = ['id', 'updated_at', 'created_at'];
+
     /** @var array $original */
     protected $original = [];
 
@@ -35,6 +41,9 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /** @var array $casts */
     protected $casts = [];
 
+    /** @var bool $exists */
+    public $exists = false;
+
     /**
      * AbstractModel constructor.
      *
@@ -46,19 +55,31 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
 
         $this->fill($data);
 
-        if (isset($data['id'])) {
+        // Unlike Laravel, we sync the original after filling
+        if (isset($data[static::$identifier])) {
             $this->syncOriginal();
+            $this->exists = true;
         }
     }
 
     /**
-     * @return integer|null
+     * @return integer|string|null
      */
     public function getKey()
     {
-        return isset($this->original['id'])
-            ? intval($this->original['id'])
+        return isset($this->original[static::$identifier])
+            ? $this->original[static::$identifier]
             : null;
+    }
+
+    /**
+     * Get the primary key for the model.
+     *
+     * @return string
+     */
+    public function getKeyName()
+    {
+        return static::$identifier;
     }
 
     /**
@@ -441,8 +462,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      */
     public function jsonSerialize()
     {
-        $payload = isset($this->original['id'])
-            ? ['id' => $this->original['id']] + $this->getDirty()
+        $payload = isset($this->original[static::$identifier])
+            ? [static::$identifier => $this->original[static::$identifier]] + $this->getDirty()
             : $this->getDirty();
 
         return [static::$resource_name => $payload];
@@ -684,6 +705,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
         $arr = (array) $this->getAttribute($attribute);
         $value = array_shift($arr);
         $this->setAttribute($attribute, $arr);
+
         return $value;
     }
 
@@ -693,6 +715,18 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     public function getCasts()
     {
         return $this->casts;
+    }
+
+    /**
+     * @return static
+     */
+    public function replicate()
+    {
+        $attr = $this->getAttributes();
+
+        $data = array_diff_key($attr, array_fill_keys(static::$omit_on_replication, null));
+
+        return new static($data);
     }
 
 }
