@@ -6,6 +6,20 @@ use Dan\Shopify\Shopify;
 
 /**
  * Class Endpoint
+ *
+ * @method array|\Illuminate\Support\Collection all(array $query, string $append = '')
+ * @method integer count(array $query = [], $append = '')
+ * @method array delete(array $query = [], string $append = '')
+ * @method bool destroy(AbstractModel $model)
+ * @method string endpoint(...$args)
+ * @method AbstractModel find(string $id)
+ * @method array|\Illuminate\Support\Collection findMany(array $ids, string $append = '')
+ * @method array get(array $query = [], string $append = '')
+ * @method array|AbstractModel post(array $payload = [], string $append = '')
+ * @method array|AbstractModel put(array $payload = [], string $append = '')
+ * @method AbstractModel save(AbstractModel $model, $append = '')
+ * @property string endpoint
+ * @property array ids
  */
 abstract class Endpoint
 {

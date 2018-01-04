@@ -13,6 +13,13 @@ use GuzzleHttp\Exception\ClientException;
 
 /**
  * Class Shopify
+ *
+ * @property \Dan\Shopify\Helpers\Assets assets
+ * @property \Dan\Shopify\Helpers\Fulfillments fulfillments
+ * @property \Dan\Shopify\Helpers\Orders orders
+ * @property \Dan\Shopify\Helpers\Products products
+ * @property \Dan\Shopify\Helpers\Themes themes
+ * @method \Dan\Shopify\Helpers\Themes themes(string $theme_id)
  */
 class Shopify extends Client
 {
@@ -178,7 +185,7 @@ class Shopify extends Client
      *
      * @param array|AbstractModel $payload
      * @param string $append
-     * @return array
+     * @return array|AbstractModel
      */
     public function put($payload = [], $append = '')
     {
@@ -352,15 +359,15 @@ class Shopify extends Client
     }
 
     /**
-     * @param array $payload
+     * @param array $query
      * @param string $append
      * @return integer
      */
-    public function count($payload = [], $append = '')
+    public function count($query = [], $append = '')
     {
         $endpoint = $this->endpoint($append, 'count');
 
-        $response = $this->request('GET', $endpoint, ['query' => $payload]);
+        $response = $this->request('GET', $endpoint, ['query' => $query]);
 
         $data = json_decode($response->getBody()->getContents(), true);
 
