@@ -3,9 +3,8 @@
 namespace Dan\Shopify\Helpers;
 
 use BadMethodCallException;
+use Dan\Shopify\Models\AbstractModel;
 use Dan\Shopify\Models\Asset;
-use Dan\Shopify\Models\Theme;
-use Dan\Shopify\Shopify;
 
 /**
  * Class Assets
@@ -16,8 +15,7 @@ class Assets extends Endpoint
     /**
      * Get data using the `assets` endpoint
      *
-     * @param  array   $payload
-     * @param  string  $append
+     * @param string $key
      * @return array
      */
     public function get($key = null)
@@ -30,21 +28,21 @@ class Assets extends Endpoint
     /**
      * Post to a resource using the assigned endpoint ($this->endpoint).
      *
-     * @param  array|AbstractModel  $payload
-     * @param  string  $append
+     * @param array|AbstractModel $payload
+     * @param string $append
      * @return array|AbstractModel
      * @throws BadMethodCallException
      */
     public function post($payload = [], $append = '')
     {
         // Only PUT is allowed on `Asset`
-        $this->put($payload, $append);
+        return $this->put($payload, $append);
     }
 
     /**
      * Delete a resource using the assigned endpoint ($this->endpoint).
      *
-     * @param  string  $id
+     * @param string $key
      * @return array
      */
     public function delete($key)
@@ -53,7 +51,7 @@ class Assets extends Endpoint
     }
 
     /**
-     * @param $id
+     * @param $key
      * @return Asset|null
      */
     public function find($key)
@@ -77,9 +75,8 @@ class Assets extends Endpoint
     /**
      * Return an array of models or Collection (if Laravel present)
      *
-     * @param string|array $ids
-     * @param string $append
-     * @return array|\Illuminate\Support\Collection
+     * @param string|array $keys
+     * @return void
      */
     public function findMany($keys)
     {
@@ -89,8 +86,7 @@ class Assets extends Endpoint
     /**
      * PUT to `assets` endpoint using a `Asset` model
      *
-     * @param  AbstractModel  $model
-     * @param  string  $append
+     * @param AbstractModel $model
      * @return AbstractModel
      */
     public function save(Asset $model)
@@ -115,11 +111,11 @@ class Assets extends Endpoint
 
     /**
      * @param Asset $model
-     * @return bool
+     * @return array
      */
     public function destroy(Asset $model)
     {
-        $this->delete($model->getKey());
+        return $this->delete($model->getKey());
     }
 
 }

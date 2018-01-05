@@ -216,6 +216,8 @@ class Shopify extends Client
             }
 
             $payload->syncOriginal($data);
+
+            return $payload;
         }
 
         return $data;
@@ -283,7 +285,7 @@ class Shopify extends Client
             $ids = implode(',', array_filter($ids));
         }
 
-        $data = $this->all(compact('ids'), $append);
+        return $this->all(compact('ids'), $append);
     }
 
     /**
