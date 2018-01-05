@@ -177,7 +177,7 @@ class Shopify extends Client
      */
     public function post($payload = [], $append = '')
     {
-        $this->post_or_put('POST', $payload, $append);
+        return $this->post_or_put('POST', $payload, $append);
     }
 
     /**
@@ -189,7 +189,7 @@ class Shopify extends Client
      */
     public function put($payload = [], $append = '')
     {
-        $this->post_or_put('PUT', $payload, $append);
+        return $this->post_or_put('PUT', $payload, $append);
     }
 
     /**
