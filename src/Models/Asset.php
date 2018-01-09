@@ -46,21 +46,19 @@ class Asset extends AbstractModel
     ];
 
     /**
-     * AbstractModel constructor.
-     *
      * @param array|object $data
      */
-    public function __construct($data = [])
+    public function __construct($data = [], $exists = true)
     {
         $data = json_decode(json_encode($data), true);
 
         $this->fill($data);
 
-        // Unlike Laravel, we sync the original after filling
-        if (isset($data[static::$identifier])) {
+        $this->exists = $exists;
+
+        // An identifier doesn't necessarily mean it exists.
+        if (isset($data[static::$identifier]) && $exists) {
             $this->syncOriginal();
-            // No ID! We can't be sure it exists because we only PUT with `key`
-            $this->exists = false;
         }
     }
 
