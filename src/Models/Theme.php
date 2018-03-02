@@ -7,7 +7,6 @@ namespace Dan\Shopify\Models;
  */
 class Theme extends AbstractModel
 {
-
     /** @var string $resource_name */
     public static $resource_name = 'theme';
 

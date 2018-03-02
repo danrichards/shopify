@@ -3,7 +3,10 @@
 namespace Dan\Shopify;
 
 use BadMethodCallException;
+use Dan\Shopify\Exceptions\InvalidOrMissingEndpointException;
 use Dan\Shopify\Models\AbstractModel;
+use Dan\Shopify\Models\Asset;
+use Dan\Shopify\Models\Fulfillment;
 use Dan\Shopify\Models\Product;
 use Dan\Shopify\Models\Order;
 use Dan\Shopify\Models\Theme;
@@ -19,6 +22,9 @@ use GuzzleHttp\Exception\ClientException;
  * @property \Dan\Shopify\Helpers\Orders orders
  * @property \Dan\Shopify\Helpers\Products products
  * @property \Dan\Shopify\Helpers\Themes themes
+ * @method \Dan\Shopify\Helpers\Fulfillments fulfillments(string $fulfillment_id)
+ * @method \Dan\Shopify\Helpers\Orders orders(string $order_id)
+ * @method \Dan\Shopify\Helpers\Products products(string $product_id)
  * @method \Dan\Shopify\Helpers\Themes themes(string $theme_id)
  */
 class Shopify extends Client
@@ -86,9 +92,9 @@ class Shopify extends Client
     /**
      * The current endpoint for the API. The default endpoint is /orders/
      *
-     * @var string $endpoint
+     * @var string $api
      */
-    public $endpoint = 'orders';
+    public $api = 'orders';
 
     /** @var array $ids */
     public $ids = [];
@@ -102,18 +108,20 @@ class Shopify extends Client
      * @var array $endpoints
      */
     private static $endpoints = [
-        'orders' => 'orders',
-        'products' => 'products',
-        'themes' => 'themes',
-        'assets' => 'themes/%s/assets',
+        'assets' => 'themes/%s/assets.json',
+        'fulfillments' => 'orders/%s/fulfillments/%s.json',
+        'orders' => 'orders/%s.json',
+        'products' => 'products/%s.json',
+        'themes' => 'themes/%s.json',
     ];
 
     /** @var array $resource_helpers */
     private static $resource_models = [
+        'assets' => Asset::class,
+        'fulfillments' => Fulfillment::class,
         'orders' => Order::class,
         'products' => Product::class,
         'themes' => Theme::class,
-        'assets' => Asset::class,
     ];
 
     /**
@@ -154,87 +162,101 @@ class Shopify extends Client
      * Get a resource using the assigned endpoint ($this->endpoint).
      *
      * @param array $query
-     * @param string $append
+     * @param string|null $id
      * @return array
      */
     public function get($query = [], $append = '')
     {
+        $api = $this->api;
+
         $response = $this->request(
             $method = 'GET',
-            $uri = $this->endpoint($append),
+            $uri = $this->uri($append),
             $options = ['query' => $query]
-        );
-
-        return json_decode($response->getBody()->getContents(), true);
-    }
-
-    /**
-     * Post to a resource using the assigned endpoint ($this->endpoint).
-     *
-     * @param array|AbstractModel $payload
-     * @param string  $append
-     * @return array|AbstractModel
-     */
-    public function post($payload = [], $append = '')
-    {
-        return $this->post_or_put('POST', $payload, $append);
-    }
-
-    /**
-     * Update a resource using the assigned endpoint ($this->endpoint).
-     *
-     * @param array|AbstractModel $payload
-     * @param string $append
-     * @return array|AbstractModel
-     */
-    public function put($payload = [], $append = '')
-    {
-        return $this->post_or_put('PUT', $payload, $append);
-    }
-
-    /**
-     * @param $post_or_post
-     * @param array $payload
-     * @param string $append
-     * @return mixed
-     */
-    private function post_or_put($post_or_post, $payload = [], $append = '')
-    {
-        $endpoint = $this->endpoint($append);
-
-        $response = $this->request(
-            $method = $post_or_post,
-            $uri = $endpoint,
-            $options = ['json' => $payload]
         );
 
         $data = json_decode($response->getBody()->getContents(), true);
 
-        if ($payload instanceof AbstractModel) {
-            if (isset($data[$payload::$resource_name])) {
-                $data = $data[$payload::$resource_name];
-            }
+        if (isset($data[static::apiCollectionProperty($api)])) {
+            return $data[static::apiCollectionProperty($api)];
+        }
 
-            $payload->syncOriginal($data);
-
-            return $payload;
+        if (isset($data[static::apiEntityProperty($api)])) {
+            return $data[static::apiEntityProperty($api)];
         }
 
         return $data;
     }
 
     /**
-     * Delete a resource using the assigned endpoint ($this->endpoint).
+     * Post to a resource using the assigned endpoint ($this->api).
+     *
+     * @param array|AbstractModel $payload
+     * @param string|null $id
+     * @return array|AbstractModel
+     */
+    public function post($payload = [])
+    {
+        return $this->post_or_put('POST', $payload);
+    }
+
+    /**
+     * Update a resource using the assigned endpoint ($this->api).
+     *
+     * @param array|AbstractModel $payload
+     * @param string|null $id
+     * @return array|AbstractModel
+     */
+    public function put($payload = [])
+    {
+        return $this->post_or_put('PUT', $payload);
+    }
+
+    /**
+     * @param $post_or_post
+     * @param array $payload
+     * @param string|null $id
+     * @return mixed
+     */
+    private function post_or_put($post_or_post, $payload = [])
+    {
+        $payload = $this->normalizePayload($payload);
+        $api = $this->api;
+        $uri = $this->uri();
+
+        $response = $this->request(
+            $method = $post_or_post,
+            $uri,
+            $options = ['json' => $payload]
+        );
+
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        if (isset($data[static::apiEntityProperty($api)])) {
+            $data = $data[static::apiEntityProperty($api)];
+
+            if ($payload instanceof AbstractModel) {
+                $payload->syncOriginal($data);
+
+                return $payload;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Delete a resource using the assigned endpoint ($this->api).
      *
      * @param array|string $query
-     * @param string $append
+     * @param string|null $id
      * @return array
      */
-    public function delete($query = [], $append = '')
+    public function delete($query = [])
     {
         $response = $this->request(
             $method = 'DELETE',
-            $url = $this->endpoint($append),
+            $uri = $this->uri(),
             $options = ['query' => $query]
         );
 
@@ -249,10 +271,10 @@ class Shopify extends Client
     public function find($id)
     {
         try {
-            $data = $this->get([], $append = $id);
+            $data = $this->get([], $args = $id);
 
-            if (isset(static::$resource_models[$this->endpoint])) {
-                $class = static::$resource_models[$this->endpoint];
+            if (isset(static::$resource_models[$this->api])) {
+                $class = static::$resource_models[$this->api];
 
                 if (isset($data[$class::$resource_name])) {
                     $data = $data[$class::$resource_name];
@@ -263,7 +285,7 @@ class Shopify extends Client
         } catch (ClientException $ce) {
             if ($ce->getResponse()->getStatusCode() == 404) {
                 $msg = sprintf('Model(%s) not found for `%s`',
-                    $id, $this->endpoint);
+                    $id, $this->api);
 
                 throw new ModelNotFoundException($msg);
             }
@@ -276,16 +298,16 @@ class Shopify extends Client
      * Return an array of models or Collection (if Laravel present)
      *
      * @param string|array $ids
-     * @param string $append
+     * @param string|null $id
      * @return array|\Illuminate\Support\Collection
      */
-    public function findMany($ids, $append = '')
+    public function findMany($ids)
     {
         if (is_array($ids)) {
             $ids = implode(',', array_filter($ids));
         }
 
-        return $this->all(compact('ids'), $append);
+        return $this->all(compact('ids'));
     }
 
     /**
@@ -299,8 +321,8 @@ class Shopify extends Client
     {
         $data = $this->get($query, $append);
 
-        if (static::$resource_models[$this->endpoint]) {
-            $class = static::$resource_models[$this->endpoint];
+        if (static::$resource_models[$this->api]) {
+            $class = static::$resource_models[$this->api];
 
             if (isset($data[$class::$resource_name_many])) {
                 $data = $data[$class::$resource_name_many];
@@ -317,20 +339,22 @@ class Shopify extends Client
     }
 
     /**
-     * Post to a resource using the assigned endpoint ($this->endpoint).
+     * Post to a resource using the assigned endpoint ($this->api).
      *
      * @param AbstractModel $model
-     * @param string $append
+     * @param string|null $id
      * @return AbstractModel
      */
-    public function save(AbstractModel $model, $append = '')
+    public function save(AbstractModel $model)
     {
-        // Filtered by endpoint() if falsy
+        // Filtered by uri() if falsy
         $id = $model->getAttribute($model::$identifier);
+
+        $this->api = $model::$resource_name_many;
 
         $response = $this->request(
             $method = $id ? 'PUT' : 'POST',
-            $uri = $this->endpoint($append, $id),
+            $uri = $this->uri(),
             $options = ['json' => $model]
         );
 
@@ -362,16 +386,12 @@ class Shopify extends Client
 
     /**
      * @param array $query
-     * @param string $append
+     * @param string|null $id
      * @return integer
      */
-    public function count($query = [], $append = '')
+    public function count($query = [])
     {
-        $endpoint = $this->endpoint($append, 'count');
-
-        $response = $this->request('GET', $endpoint, ['query' => $query]);
-
-        $data = json_decode($response->getBody()->getContents(), true);
+        $data = $this->get($query, 'count');
 
         return count($data) == 1
             ? array_values($data)[0]
@@ -379,29 +399,125 @@ class Shopify extends Client
     }
 
     /**
-     * @param array ...$args
+     * @param array $id = null
      * @return string
      */
-    public function endpoint(...$args)
+    public function uri($append = '')
     {
-        $endpoint = vsprintf($this->endpoint, $this->ids);
+        $uri = static::makeUri($this->api, $this->ids, $append);
 
         $this->ids = [];
 
-        array_unshift($args, $endpoint);
-
-        return call_user_func_array([get_class($this), 'makeEndpoint'], $args);
+        return $uri;
     }
 
     /**
-     * @param array ...$args
+     * @param array $id = null
      * @return string
      */
-    private static function makeEndpoint(...$args)
+    private static function makeUri($api, $ids = [], $append = '')
     {
-        $args = array_merge([static::$base], $args);
+        // Is it an entity endpoint?
+        if (substr_count(static::$endpoints[$api], '%') == count($ids)) {
+            $endpoint = vsprintf(static::$endpoints[$api], $ids);
 
-        return "/".implode('/', array_filter($args)).".json";
+        // Is it a collection endpoint?
+        } elseif (substr_count(static::$endpoints[$api], '%') == (count($ids) + 1)) {
+            $endpoint = vsprintf(str_replace('/%s.json', '.json', static::$endpoints[$api]), $ids);
+
+        // Is it just plain wrong?
+        } else {
+            $msg = sprintf('You did not specify enough ids for endpoint `%s`, ids(%s).',
+                static::$endpoints[$api],
+                implode($ids));
+
+            throw new InvalidOrMissingEndpointException($msg);
+        }
+
+        $endpoint = '/'.static::$base.'/'.$endpoint;
+
+        if ($append) {
+            $endpoint = str_replace('.json', '/'.$append.'.json', $endpoint);
+        }
+
+        return $endpoint;
+    }
+
+    /**
+     * @param $payload
+     * @param array $id = null
+     * @return mixed
+     */
+    private function normalizePayload($payload)
+    {
+        if ($payload instanceof AbstractModel) {
+            return $payload;
+        }
+
+        if (! isset($payload['id'])) {
+            if ($count = count($args = array_filter($this->ids))) {
+                $last = $args[$count-1];
+                if (is_numeric($last)) {
+                    $payload['id'] = $last;
+                }
+            }
+        }
+
+        if (empty($this->api)) {
+            throw new InvalidOrMissingEndpointException('Please specify an endpoint.');
+        }
+
+        $entity = $this->getApiEntityProperty();
+
+        return [$entity => $payload];
+    }
+
+    /**
+     * @return string
+     * @throws InvalidOrMissingEndpointException
+     */
+    private function getApiCollectionProperty()
+    {
+        return static::apiCollectionProperty($this->api);
+    }
+
+    /**
+     * @param string $api
+     * @return string
+     * @throws InvalidOrMissingEndpointException
+     */
+    private static function apiCollectionProperty($api)
+    {
+        if ($api) {
+            /** @var AbstractModel $model */
+            $model = static::$resource_models[$api];
+            return $model::$resource_name_many;
+        }
+
+        throw new InvalidOrMissingEndpointException('No endpoint specified.');
+    }
+
+    /**
+     * @return string
+     */
+    private function getApiEntityProperty()
+    {
+        return static::apiEntityProperty($this->api);
+    }
+
+    /**
+     * @param string $api
+     * @return string
+     */
+    private function apiEntityProperty($api)
+    {
+        if ($api) {
+            /** @var AbstractModel $model */
+            $model = static::$resource_models[$api];
+            return $model::$resource_name;
+        }
+
+        throw new InvalidOrMissingEndpointException('No endpoint specified.');
     }
 
     /**
@@ -413,10 +529,10 @@ class Shopify extends Client
     public function __get($property)
     {
         if (array_key_exists($property, static::$endpoints)) {
-            $this->endpoint = static::$endpoints[$property];
+            $this->api = $property;
         }
 
-        $className = "Dan\Shopify\\Helpers\\" . ucfirst($property);
+        $className = "Dan\Shopify\\Helpers\\" . Util::studly($property);
 
         if (class_exists($className)) {
             return new $className($this);
@@ -426,7 +542,7 @@ class Shopify extends Client
     }
 
     /**
-     * Set ids for one endpoint() call.
+     * Set ids for one uri() call.
      *
      * @param string $method
      * @param array $parameters
@@ -436,7 +552,7 @@ class Shopify extends Client
     public function __call($method, $parameters)
     {
         if (array_key_exists($method, static::$endpoints)) {
-            $this->ids = array_merge($parameters);
+            $this->ids = array_merge($this->ids, $parameters);
             return $this->__get($method);
         }
 

@@ -7,33 +7,23 @@ use Dan\Shopify\Shopify;
 /**
  * Class Endpoint
  *
- * @method array|\Illuminate\Support\Collection all(array $query, string $append = '')
- * @method integer count(array $query = [], $append = '')
- * @method array delete(array $query = [], string $append = '')
- * @method bool destroy(AbstractModel $model)
- * @method string endpoint(...$args)
- * @method AbstractModel find(string $id)
- * @method array|\Illuminate\Support\Collection findMany(array $ids, string $append = '')
- * @method array get(array $query = [], string $append = '')
- * @method array|AbstractModel post(array $payload = [], string $append = '')
- * @method array|AbstractModel put(array $payload = [], string $append = '')
- * @method AbstractModel save(AbstractModel $model, $append = '')
+ * @mixin Shopify
  * @property string endpoint
  * @property array ids
  */
 abstract class Endpoint
 {
-    /** @var Shopify $api */
-    protected $api;
+    /** @var Shopify $client */
+    protected $client;
 
     /**
      * Endpoint constructor.
      *
-     * @param Shopify $api
+     * @param Shopify $client
      */
-    public function __construct(Shopify $api)
+    public function __construct(Shopify $client)
     {
-        $this->api = $api;
+        $this->client = $client;
     }
 
     /**
@@ -48,7 +38,7 @@ abstract class Endpoint
             return $this->$property;
         }
 
-        return $this->api->__get($property);
+        return $this->client->__get($property);
     }
 
     /**
@@ -64,6 +54,6 @@ abstract class Endpoint
             return $this->$method(...$parameters);
         }
 
-        return $this->api->$method(...$parameters);
+        return $this->client->$method(...$parameters);
     }
 }

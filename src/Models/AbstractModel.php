@@ -20,6 +20,9 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /** @var string $resource_name */
     public static $resource_name;
 
+    /** @var string $resource_name_many */
+    public static $resource_name_many;
+
     /** @var string $identifier */
     public static $identifier = 'id';
 

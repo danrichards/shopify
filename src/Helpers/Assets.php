@@ -22,7 +22,7 @@ class Assets extends Endpoint
     {
         $query = is_null($key) ? $key : ['asset' => compact('key')];
 
-        return $this->api->get($query);
+        return $this->client->get($query);
     }
 
     /**
@@ -33,10 +33,10 @@ class Assets extends Endpoint
      * @return array|AbstractModel
      * @throws BadMethodCallException
      */
-    public function post($payload = [], $append = '')
+    public function post($payload = [])
     {
         // Only PUT is allowed on `Asset`
-        return $this->put($payload, $append);
+        return $this->put($payload);
     }
 
     /**
@@ -47,7 +47,7 @@ class Assets extends Endpoint
      */
     public function delete($key)
     {
-        return $this->api->delete(['asset' => compact('key')]);
+        return $this->client->delete(['asset' => compact('key')]);
     }
 
     /**
@@ -86,14 +86,14 @@ class Assets extends Endpoint
     /**
      * PUT to `assets` endpoint using a `Asset` model
      *
-     * @param AbstractModel $model
-     * @return AbstractModel
+     * @param Asset $model
+     * @return Asset
      */
     public function save(Asset $model)
     {
         $response = $this->request(
             $method = 'PUT',
-            $uri = $this->endpoint(),
+            $uri = $this->uri(),
             $options = ['json' => $model]
         );
 
