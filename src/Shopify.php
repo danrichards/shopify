@@ -19,13 +19,19 @@ use GuzzleHttp\Exception\ClientException;
  *
  * @property \Dan\Shopify\Helpers\Assets assets
  * @property \Dan\Shopify\Helpers\Fulfillments fulfillments
+ * @property \Dan\Shopify\Helpers\Images images
  * @property \Dan\Shopify\Helpers\Orders orders
  * @property \Dan\Shopify\Helpers\Products products
  * @property \Dan\Shopify\Helpers\Themes themes
+ * @property \Dan\Shopify\Helpers\Risks risks
+ * @property \Dan\Shopify\Helpers\Variants variants
  * @method \Dan\Shopify\Helpers\Fulfillments fulfillments(string $fulfillment_id)
+ * @method \Dan\Shopify\Helpers\Images images(string $image_id)
  * @method \Dan\Shopify\Helpers\Orders orders(string $order_id)
  * @method \Dan\Shopify\Helpers\Products products(string $product_id)
+ * @method \Dan\Shopify\Helpers\Risks risks(string $risk_id)
  * @method \Dan\Shopify\Helpers\Themes themes(string $theme_id)
+ * @method \Dan\Shopify\Helpers\Variants variants(string $variant_id)
  */
 class Shopify extends Client
 {
