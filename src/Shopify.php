@@ -129,7 +129,6 @@ class Shopify extends Client
      *
      * @param string $token
      * @param string $shop
-     * @throws \Exception
      */
     public function __construct($shop, $token)
     {
@@ -149,9 +148,9 @@ class Shopify extends Client
     }
 
     /**
-     * @param $token
-     * @param $shop
-     * @return static
+     * @param string $token
+     * @param string $shop
+     * @return Shopify
      */
     public static function make($token, $shop)
     {
@@ -162,8 +161,9 @@ class Shopify extends Client
      * Get a resource using the assigned endpoint ($this->endpoint).
      *
      * @param array $query
-     * @param string|null $id
+     * @param string $append
      * @return array
+     * @throws InvalidOrMissingEndpointException
      */
     public function get($query = [], $append = '')
     {
@@ -192,8 +192,8 @@ class Shopify extends Client
      * Post to a resource using the assigned endpoint ($this->api).
      *
      * @param array|AbstractModel $payload
-     * @param string|null $id
      * @return array|AbstractModel
+     * @throws InvalidOrMissingEndpointException
      */
     public function post($payload = [])
     {
@@ -204,8 +204,8 @@ class Shopify extends Client
      * Update a resource using the assigned endpoint ($this->api).
      *
      * @param array|AbstractModel $payload
-     * @param string|null $id
      * @return array|AbstractModel
+     * @throws InvalidOrMissingEndpointException
      */
     public function put($payload = [])
     {
@@ -215,8 +215,8 @@ class Shopify extends Client
     /**
      * @param $post_or_post
      * @param array $payload
-     * @param string|null $id
      * @return mixed
+     * @throws InvalidOrMissingEndpointException
      */
     private function post_or_put($post_or_post, $payload = [])
     {
@@ -249,7 +249,6 @@ class Shopify extends Client
      * Delete a resource using the assigned endpoint ($this->api).
      *
      * @param array|string $query
-     * @param string|null $id
      * @return array
      */
     public function delete($query = [])
@@ -266,7 +265,7 @@ class Shopify extends Client
     /**
      * @param $id
      * @return AbstractModel|null
-     * @throws ModelNotFoundException
+     * @throws ModelNotFoundException|InvalidOrMissingEndpointException
      */
     public function find($id)
     {
@@ -298,7 +297,6 @@ class Shopify extends Client
      * Return an array of models or Collection (if Laravel present)
      *
      * @param string|array $ids
-     * @param string|null $id
      * @return array|\Illuminate\Support\Collection
      */
     public function findMany($ids)
@@ -316,6 +314,7 @@ class Shopify extends Client
      * @param array $query
      * @param string $append
      * @return array|\Illuminate\Support\Collection
+     * @throws InvalidOrMissingEndpointException
      */
     public function all($query = [], $append = '')
     {
@@ -342,7 +341,6 @@ class Shopify extends Client
      * Post to a resource using the assigned endpoint ($this->api).
      *
      * @param AbstractModel $model
-     * @param string|null $id
      * @return AbstractModel
      */
     public function save(AbstractModel $model)
@@ -388,6 +386,7 @@ class Shopify extends Client
      * @param array $query
      * @param string|null $id
      * @return integer
+     * @throws InvalidOrMissingEndpointException
      */
     public function count($query = [])
     {
@@ -401,6 +400,7 @@ class Shopify extends Client
     /**
      * @param array $id = null
      * @return string
+     * @throws InvalidOrMissingEndpointException
      */
     public function uri($append = '')
     {
@@ -412,8 +412,11 @@ class Shopify extends Client
     }
 
     /**
-     * @param array $id = null
+     * @param string $api
+     * @param array $ids
+     * @param string $append
      * @return string
+     * @throws InvalidOrMissingEndpointException
      */
     private static function makeUri($api, $ids = [], $append = '')
     {
@@ -445,7 +448,6 @@ class Shopify extends Client
 
     /**
      * @param $payload
-     * @param array $id = null
      * @return mixed
      */
     private function normalizePayload($payload)
@@ -463,10 +465,6 @@ class Shopify extends Client
             }
         }
 
-        if (empty($this->api)) {
-            throw new InvalidOrMissingEndpointException('Please specify an endpoint.');
-        }
-
         $entity = $this->getApiEntityProperty();
 
         return [$entity => $payload];
@@ -474,7 +472,6 @@ class Shopify extends Client
 
     /**
      * @return string
-     * @throws InvalidOrMissingEndpointException
      */
     private function getApiCollectionProperty()
     {
@@ -484,17 +481,12 @@ class Shopify extends Client
     /**
      * @param string $api
      * @return string
-     * @throws InvalidOrMissingEndpointException
      */
     private static function apiCollectionProperty($api)
     {
-        if ($api) {
-            /** @var AbstractModel $model */
-            $model = static::$resource_models[$api];
-            return $model::$resource_name_many;
-        }
-
-        throw new InvalidOrMissingEndpointException('No endpoint specified.');
+        /** @var AbstractModel $model */
+        $model = static::$resource_models[$api];
+        return $model::$resource_name_many;
     }
 
     /**
@@ -511,13 +503,9 @@ class Shopify extends Client
      */
     private function apiEntityProperty($api)
     {
-        if ($api) {
-            /** @var AbstractModel $model */
-            $model = static::$resource_models[$api];
-            return $model::$resource_name;
-        }
-
-        throw new InvalidOrMissingEndpointException('No endpoint specified.');
+        /** @var AbstractModel $model */
+        $model = static::$resource_models[$api];
+        return $model::$resource_name;
     }
 
     /**

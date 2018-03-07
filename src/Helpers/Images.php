@@ -3,9 +3,9 @@
 namespace Dan\Shopify\Helpers;
 
 /**
- * Class Orders
+ * Class Images
  */
-class Orders extends Endpoint
+class Images extends Endpoint
 {
 
 }
