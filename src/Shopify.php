@@ -253,10 +253,14 @@ class Shopify extends Client
         $api = $this->api;
         $uri = $this->uri();
 
+        $json = $payload instanceof AbstractModel
+            ? $payload->getPayload()
+            : $payload;
+
         $response = $this->request(
             $method = $post_or_post,
             $uri,
-            $options = ['json' => $payload]
+            $options = compact('json')
         );
 
         $data = json_decode($response->getBody()->getContents(), true);
@@ -382,7 +386,7 @@ class Shopify extends Client
         $response = $this->request(
             $method = $id ? 'PUT' : 'POST',
             $uri = $this->uri(),
-            $options = ['json' => $model]
+            $options = ['json' => $model->getPayload()]
         );
 
         $data = json_decode($response->getBody()->getContents(), true);

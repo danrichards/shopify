@@ -94,7 +94,7 @@ class Assets extends Endpoint
         $response = $this->request(
             $method = 'PUT',
             $uri = $this->uri(),
-            $options = ['json' => $model]
+            $options = ['json' => $model->getPayload()]
         );
 
         $data = json_decode($response->getBody()->getContents(), true);

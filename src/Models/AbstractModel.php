@@ -463,7 +463,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      *
      * @return string
      */
-    public function jsonSerialize()
+    public function getPayload()
     {
         $payload = isset($this->original[static::$identifier])
             ? [static::$identifier => $this->original[static::$identifier]] + $this->getDirty()
@@ -473,16 +473,11 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     }
 
     /**
-     * In case you want to serialize everything.
-     *
-     * @param bool $with_changes
      * @return string
      */
-    public function jsonSerializeAll($with_changes = false)
+    public function jsonSerialize()
     {
-        return $with_changes
-            ? json_encode($this->attributes + $this->original)
-            : json_encode($this->original);
+        return json_encode($this->attributes + $this->original);
     }
 
     /**
