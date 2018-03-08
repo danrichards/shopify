@@ -7,9 +7,12 @@ use Dan\Shopify\Exceptions\InvalidOrMissingEndpointException;
 use Dan\Shopify\Models\AbstractModel;
 use Dan\Shopify\Models\Asset;
 use Dan\Shopify\Models\Fulfillment;
+use Dan\Shopify\Models\Image;
 use Dan\Shopify\Models\Product;
 use Dan\Shopify\Models\Order;
+use Dan\Shopify\Models\Risk;
 use Dan\Shopify\Models\Theme;
+use Dan\Shopify\Models\Variant;
 use Dan\Shopify\Exceptions\ModelNotFoundException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -116,18 +119,24 @@ class Shopify extends Client
     private static $endpoints = [
         'assets' => 'themes/%s/assets.json',
         'fulfillments' => 'orders/%s/fulfillments/%s.json',
+        'images' => 'products/%s/images/%s.json',
         'orders' => 'orders/%s.json',
         'products' => 'products/%s.json',
+        'risks' => 'orders/%s/risks/%s.json',
         'themes' => 'themes/%s.json',
+        'variants' => 'products/%s/variants/%s.json',
     ];
 
     /** @var array $resource_helpers */
     private static $resource_models = [
         'assets' => Asset::class,
         'fulfillments' => Fulfillment::class,
+        'images' => Image::class,
         'orders' => Order::class,
         'products' => Product::class,
+        'risks' => Risk::class,
         'themes' => Theme::class,
+        'variants' => Variant::class,
     ];
 
     /**
