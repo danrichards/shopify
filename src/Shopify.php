@@ -195,6 +195,20 @@ class Shopify extends Client
     }
 
     /**
+     * Get the shop resource
+     *
+     * @return array
+     */
+    public function shop()
+    {
+        $response = $this->request('GET', 'admin/shop.json');
+
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        return $data['shop'];
+    }
+
+    /**
      * Post to a resource using the assigned endpoint ($this->api).
      *
      * @param array|AbstractModel $payload
