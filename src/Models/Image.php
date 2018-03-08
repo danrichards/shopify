@@ -26,7 +26,7 @@ class Image extends AbstractModel
         'position' => 'int',
         'width' => 'int',
         'height' => 'int',
-        'src' => 'int',
+        'src' => 'string',
         'variant_ids' => 'array',
     ];
 
