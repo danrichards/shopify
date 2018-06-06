@@ -25,4 +25,17 @@ return [
     */
 
     'token' => env('SHOPIFY_TOKEN', ''),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Options
+    |--------------------------------------------------------------------------
+    |
+    | Log API Request Data:
+    | If enabled will log the data of every API Request to shopify
+    */
+
+    'options' => [
+        'log_api_request_data' => true,
+    ],
 ];

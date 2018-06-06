@@ -29,6 +29,10 @@ class ShopifyServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/shopify.php', 'shopify'
+        );
+        
         $shop = config('shopify.shop');
         $token = config('shopify.token');
 
