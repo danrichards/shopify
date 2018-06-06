@@ -31,8 +31,8 @@ return [
     | Options
     |--------------------------------------------------------------------------
     |
-    | Log API Request Data:
-    | If enabled will log the data of every API Request to shopify
+    | log_api_request_data:
+    | When enabled will log the data of every API Request to shopify
     */
 
     'options' => [
