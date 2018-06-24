@@ -16,6 +16,7 @@ use Dan\Shopify\Models\Variant;
 use Dan\Shopify\Exceptions\ModelNotFoundException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Log;
 
 /**
  * Class Shopify
@@ -593,9 +594,8 @@ class Shopify extends Client
      */
     public function request($method, $uri = '', array $options = [])
     {
-        \Log::info('SHOPIFY API Request', compact('method', 'uri') + $options);
         if (config('shopify.log_api_request_data')){
-            \Log::info('SHOPIFY API Request', compact('method', 'uri') + $options);
+            Log::info('SHOPIFY API Request', compact('method', 'uri') + $options);
         }
         return parent::request($method, $uri, $options);
     }
