@@ -36,6 +36,6 @@ return [
     */
 
     'options' => [
-        'log_api_request_data' => true,
+        'log_api_request_data' => false,
     ],
 ];

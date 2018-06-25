@@ -594,7 +594,7 @@ class Shopify extends Client
      */
     public function request($method, $uri = '', array $options = [])
     {
-        if (config('shopify.log_api_request_data')){
+        if (env('SHOPIFY_OPTION_LOG_API_REQUEST') || config('shopify.options.log_api_request_data')){
             Log::info('SHOPIFY API Request', compact('method', 'uri') + $options);
         }
         return parent::request($method, $uri, $options);
