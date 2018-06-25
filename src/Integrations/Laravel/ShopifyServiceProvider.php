@@ -18,7 +18,7 @@ class ShopifyServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../config/shopify.php' => config_path('shopify.php'),
+            __DIR__ . '/../../../config/shopify.php' => config_path('shopify.php'), 'config'
         ]);
     }
 
@@ -30,9 +30,9 @@ class ShopifyServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/shopify.php', 'shopify'
+            __DIR__ . '/../../../config/shopify.php', 'shopify'
         );
-        
+
         $shop = config('shopify.shop');
         $token = config('shopify.token');
 

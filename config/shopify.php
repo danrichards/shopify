@@ -36,6 +36,6 @@ return [
     */
 
     'options' => [
-        'log_api_request_data' => false,
+        'log_api_request_data' => env('SHOPIFY_OPTION_LOG_API_REQUEST', 0),
     ],
 ];
