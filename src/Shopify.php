@@ -23,6 +23,7 @@ use GuzzleHttp\Exception\ClientException;
  *
  * @property \Dan\Shopify\Helpers\Assets assets
  * @property \Dan\Shopify\Helpers\Fulfillments fulfillments
+ * @property \Dan\Shopify\Helpers\FulfillmentServices fulfillment_services
  * @property \Dan\Shopify\Helpers\Images images
  * @property \Dan\Shopify\Helpers\Orders orders
  * @property \Dan\Shopify\Helpers\Products products
@@ -30,6 +31,7 @@ use GuzzleHttp\Exception\ClientException;
  * @property \Dan\Shopify\Helpers\Risks risks
  * @property \Dan\Shopify\Helpers\Variants variants
  * @method \Dan\Shopify\Helpers\Fulfillments fulfillments(string $fulfillment_id)
+ * @method \Dan\Shopify\Helpers\FulfillmentServices fulfillment_services(string $fulfillment_service_id)
  * @method \Dan\Shopify\Helpers\Images images(string $image_id)
  * @method \Dan\Shopify\Helpers\Orders orders(string $order_id)
  * @method \Dan\Shopify\Helpers\Products products(string $product_id)
