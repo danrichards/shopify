@@ -7,6 +7,7 @@ use Dan\Shopify\Exceptions\InvalidOrMissingEndpointException;
 use Dan\Shopify\Models\AbstractModel;
 use Dan\Shopify\Models\Asset;
 use Dan\Shopify\Models\Fulfillment;
+use Dan\Shopify\Models\FulfillmentService;
 use Dan\Shopify\Models\Image;
 use Dan\Shopify\Models\Product;
 use Dan\Shopify\Models\Order;
@@ -119,6 +120,7 @@ class Shopify extends Client
     private static $endpoints = [
         'assets' => 'themes/%s/assets.json',
         'fulfillments' => 'orders/%s/fulfillments/%s.json',
+        'fulfillment_services' => 'fulfillment_services/%s.json',
         'images' => 'products/%s/images/%s.json',
         'orders' => 'orders/%s.json',
         'products' => 'products/%s.json',
@@ -131,6 +133,7 @@ class Shopify extends Client
     private static $resource_models = [
         'assets' => Asset::class,
         'fulfillments' => Fulfillment::class,
+        'fulfillment_services' => FulfillmentService::class,
         'images' => Image::class,
         'orders' => Order::class,
         'products' => Product::class,
