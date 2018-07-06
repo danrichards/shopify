@@ -15,21 +15,23 @@ use Dan\Shopify\Models\Risk;
 use Dan\Shopify\Models\Theme;
 use Dan\Shopify\Models\Variant;
 use Dan\Shopify\Exceptions\ModelNotFoundException;
+use Dan\Shopify\Models\Webhook;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
 /**
  * Class Shopify
  *
- * @property \Dan\Shopify\Helpers\Assets assets
- * @property \Dan\Shopify\Helpers\Fulfillments fulfillments
- * @property \Dan\Shopify\Helpers\FulfillmentServices fulfillment_services
- * @property \Dan\Shopify\Helpers\Images images
- * @property \Dan\Shopify\Helpers\Orders orders
- * @property \Dan\Shopify\Helpers\Products products
- * @property \Dan\Shopify\Helpers\Themes themes
- * @property \Dan\Shopify\Helpers\Risks risks
- * @property \Dan\Shopify\Helpers\Variants variants
+ * @property \Dan\Shopify\Helpers\Assets $assets
+ * @property \Dan\Shopify\Helpers\Fulfillments $fulfillments
+ * @property \Dan\Shopify\Helpers\FulfillmentServices $fulfillment_services
+ * @property \Dan\Shopify\Helpers\Images $images
+ * @property \Dan\Shopify\Helpers\Orders $orders
+ * @property \Dan\Shopify\Helpers\Products $products
+ * @property \Dan\Shopify\Helpers\Themes $themes
+ * @property \Dan\Shopify\Helpers\Risks $risks
+ * @property \Dan\Shopify\Helpers\Variants $variants
+ * @property \Dan\Shopify\Helpers\Webhooks $webhooks
  * @method \Dan\Shopify\Helpers\Fulfillments fulfillments(string $fulfillment_id)
  * @method \Dan\Shopify\Helpers\FulfillmentServices fulfillment_services(string $fulfillment_service_id)
  * @method \Dan\Shopify\Helpers\Images images(string $image_id)
@@ -38,6 +40,7 @@ use GuzzleHttp\Exception\ClientException;
  * @method \Dan\Shopify\Helpers\Risks risks(string $risk_id)
  * @method \Dan\Shopify\Helpers\Themes themes(string $theme_id)
  * @method \Dan\Shopify\Helpers\Variants variants(string $variant_id)
+ * @method \Dan\Shopify\Helpers\Webhooks webhooks(string $webhook_id)
  */
 class Shopify extends Client
 {
@@ -49,6 +52,7 @@ class Shopify extends Client
     const SCOPE_READ_DRAFT_ORDERS = 'read_draft_orders';
     const SCOPE_READ_FULFILLMENTS = 'read_fulfillments';
     const SCOPE_READ_ORDERS = 'read_orders';
+    const SCOPE_READ_ORDERS_ALL = 'read_all_orders';
     const SCOPE_READ_PRICE_RULES = 'read_price_rules';
     const SCOPE_READ_PRODUCTS = 'read_products';
     const SCOPE_READ_REPORTS = 'read_reports';
@@ -79,6 +83,7 @@ class Shopify extends Client
         self::SCOPE_READ_DRAFT_ORDERS,
         self::SCOPE_READ_FULFILLMENTS,
         self::SCOPE_READ_ORDERS,
+        self::SCOPE_READ_ORDERS_ALL,
         self::SCOPE_READ_PRICE_RULES,
         self::SCOPE_READ_PRODUCTS,
         self::SCOPE_READ_REPORTS,
@@ -129,6 +134,7 @@ class Shopify extends Client
         'risks' => 'orders/%s/risks/%s.json',
         'themes' => 'themes/%s.json',
         'variants' => 'products/%s/variants/%s.json',
+        'webhooks' => 'webhooks/%s.json',
     ];
 
     /** @var array $resource_helpers */
@@ -142,6 +148,7 @@ class Shopify extends Client
         'risks' => Risk::class,
         'themes' => Theme::class,
         'variants' => Variant::class,
+        'webhooks' => Webhook::class,
     ];
 
     /**
