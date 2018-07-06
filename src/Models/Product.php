@@ -4,6 +4,24 @@ namespace Dan\Shopify\Models;
 
 /**
  * Class Product
+ *
+ * @property int $id
+ * @property string $title
+ * @property string $body_html
+ * @property string $vendor
+ * @property string $product_type
+ * @property string $handle
+ * @property \Carbon\Carbon $published_at
+ * @property string $template_suffix
+ * @property string $tags
+ * @property string $published_scope
+ * @property string $admin_graphql_api_id
+ * @property array $variants
+ * @property array $options
+ * @property array $images
+ * @property string $image
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  */
 class Product extends AbstractModel
 {

@@ -4,6 +4,15 @@ namespace Dan\Shopify\Models;
 
 /**
  * Class Webhook
+ *
+ * @property int $id
+ * @property string $address
+ * @property string $topic
+ * @property string $format
+ * @property array $fields
+ * @property array $metafield_namespaces
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  */
 class Webhook extends AbstractModel
 {

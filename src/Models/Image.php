@@ -4,6 +4,16 @@ namespace Dan\Shopify\Models;
 
 /**
  * Class Image
+ *
+ * @property int $id
+ * @property int $product_id
+ * @property int $position
+ * @property int $width
+ * @property int $height
+ * @property string $src
+ * @property array $variant_ids
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  */
 class Image extends AbstractModel
 {
@@ -22,7 +32,7 @@ class Image extends AbstractModel
 
     /** @var array $casts */
     protected $casts = [
-        'product_id' => 'string',
+        'product_id' => 'int',
         'position' => 'int',
         'width' => 'int',
         'height' => 'int',

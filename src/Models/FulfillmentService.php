@@ -4,6 +4,18 @@ namespace Dan\Shopify\Models;
 
 /**
  * Class FulfillmentService
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $handle
+ * @property string $email
+ * @property bool $include_pending_stock
+ * @property bool $requires_shipping_method
+ * @property string $service_name
+ * @property bool $inventory_management
+ * @property bool $tracking_support
+ * @property int $provider_id
+ * @property int $location_id
  */
 class FulfillmentService extends AbstractModel
 {
