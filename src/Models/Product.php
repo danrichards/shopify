@@ -29,12 +29,12 @@ class Product extends AbstractModel
         'image' => 'object'
     ];
 
-    const PUBLISEHD_SCOPE_GLOBAL = 'global';
+    const PUBLISHED_SCOPE_GLOBAL = 'global';
     const PUBLISHED_SCOPE_WEB = 'web';
 
     /** @var array $published_scopes */
     public static $published_scopes = [
-        self::PUBLISEHD_SCOPE_GLOBAL,
+        self::PUBLISHED_SCOPE_GLOBAL,
         self::PUBLISHED_SCOPE_WEB
     ];
 
