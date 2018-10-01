@@ -4,17 +4,17 @@ namespace Dan\Shopify;
 
 use BadMethodCallException;
 use Dan\Shopify\Exceptions\InvalidOrMissingEndpointException;
+use Dan\Shopify\Exceptions\ModelNotFoundException;
 use Dan\Shopify\Models\AbstractModel;
 use Dan\Shopify\Models\Asset;
 use Dan\Shopify\Models\Fulfillment;
 use Dan\Shopify\Models\FulfillmentService;
 use Dan\Shopify\Models\Image;
-use Dan\Shopify\Models\Product;
 use Dan\Shopify\Models\Order;
+use Dan\Shopify\Models\Product;
 use Dan\Shopify\Models\Risk;
 use Dan\Shopify\Models\Theme;
 use Dan\Shopify\Models\Variant;
-use Dan\Shopify\Exceptions\ModelNotFoundException;
 use Dan\Shopify\Models\Webhook;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -592,5 +592,13 @@ class Shopify extends Client
         $msg = sprintf('Method %s does not exist.', $method);
 
         throw new BadMethodCallException($msg);
+    }
+
+    /**
+     * @return Helpers\Testing\ShopifyMock
+     */
+    public static function fake()
+    {
+        return new Helpers\Testing\ShopifyMock();
     }
 }
