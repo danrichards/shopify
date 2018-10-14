@@ -117,14 +117,14 @@ class Shopify extends Client
     public $ids = [];
 
     /** @var string $base */
-    protected static $base = 'admin';
+    private static $base = 'admin';
 
     /**
      * Our list of valid Shopify endpoints.
      *
      * @var array $endpoints
      */
-    protected static $endpoints = [
+    private static $endpoints = [
         'assets' => 'themes/%s/assets.json',
         'fulfillments' => 'orders/%s/fulfillments/%s.json',
         'fulfillment_services' => 'fulfillment_services/%s.json',
@@ -138,7 +138,7 @@ class Shopify extends Client
     ];
 
     /** @var array $resource_helpers */
-    protected static $resource_models = [
+    private static $resource_models = [
         'assets' => Asset::class,
         'fulfillments' => Fulfillment::class,
         'fulfillment_services' => FulfillmentService::class,
