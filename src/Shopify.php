@@ -599,7 +599,7 @@ class Shopify extends Client
      * @return Helpers\Testing\ShopifyMock
      * @throws \ReflectionException
      */
-    public static function fake($responseStack)
+    public static function fake($responseStack = [])
     {
         return new Helpers\Testing\ShopifyMock($responseStack);
     }
