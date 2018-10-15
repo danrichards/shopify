@@ -7,7 +7,9 @@ use PHPUnit\Framework\TestCase;
 
 class ShopifyMockTest extends TestCase
 {
-    /** @test */
+    /** @test
+     * @throws \ReflectionException
+     */
     public function it_gets_a_shopify_mock_class()
     {
         $mock = \Dan\Shopify\Shopify::fake();
