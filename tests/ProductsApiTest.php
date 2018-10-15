@@ -53,7 +53,7 @@ class ProductsApiTest extends TestCase
             "tags": "Barnes & Noble, John\'s Fav, &quot;Big Air&quot;"
           }', true));
 
-//        $this->assertEquals(Product::class, get_class($reponse));
+        $this->assertTrue(is_array($reponse));
         $this->assertEquals('POST', $api->lastRequestMethod());
         $this->assertEquals('/admin/products.json', $api->lastRequestUri());
     }
