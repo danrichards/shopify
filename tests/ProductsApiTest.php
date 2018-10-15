@@ -3,8 +3,8 @@
 namespace Dan\Shopify\Test;
 
 use Dan\Shopify\Helpers\Testing\ModelFactory\ProductFactory;
+use Dan\Shopify\Helpers\Testing\TransactionMock;
 use Dan\Shopify\Models\Product;
-use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 class ProductsApiTest extends TestCase
@@ -21,7 +21,7 @@ class ProductsApiTest extends TestCase
     public function it_gets_a_product()
     {
         $api = \Dan\Shopify\Shopify::fake([
-            new Response(200, [], ProductFactory::create())
+            TransactionMock::create(ProductFactory::create())
         ]);
 
         $reponse = $api->products->find($product_id = 123);
@@ -43,7 +43,7 @@ class ProductsApiTest extends TestCase
     public function it_creates_a_new_product()
     {
         $api = \Dan\Shopify\Shopify::fake([
-            new Response(201, [], ProductFactory::create())
+            TransactionMock::create(ProductFactory::create(), 201)
         ]);
 
         $reponse = $api->products->post(json_decode('{
