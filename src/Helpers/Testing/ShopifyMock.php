@@ -77,4 +77,20 @@ class ShopifyMock extends Shopify
     {
         return $this->getLastRequest()->getUri()->getPath();
     }
+
+    /**
+     * @return \GuzzleHttp\Psr7\Response
+     */
+    public function getLastResponse()
+    {
+        return $this->getLastTransaction()['response'];
+    }
+
+    /**
+     * @return integer
+     */
+    public function lastResponseStatusCode()
+    {
+        return $this->getLastResponse()->getStatusCode();
+    }
 }
