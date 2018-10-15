@@ -23,13 +23,13 @@ class ProductsApiTest extends TestCase
             TransactionMock::create(ProductFactory::create(2))
         ]);
 
-        $reponse = $api->products->get();
+        $response = $api->products->get();
 
         $this->assertEquals(200, $api->lastResponseStatusCode());
-        $this->assertTrue(is_array($reponse));
+        $this->assertTrue(is_array($response));
         $this->assertEquals('GET', $api->lastRequestMethod());
         $this->assertEquals('/admin/products.json', $api->lastRequestUri());
-        $this->assertCount(2, $reponse);
+        $this->assertCount(2, $response);
     }
 
     /**
@@ -46,12 +46,12 @@ class ProductsApiTest extends TestCase
             TransactionMock::create('{ "count": 2 }')
         ]);
 
-        $reponse = $api->products->count();
+        $response = $api->products->count();
 
         $this->assertEquals(200, $api->lastResponseStatusCode());
         $this->assertEquals('GET', $api->lastRequestMethod());
         $this->assertEquals('/admin/products/count.json', $api->lastRequestUri());
-        $this->assertEquals(2, $reponse);
+        $this->assertEquals(2, $response);
     }
 
     /**
@@ -69,10 +69,10 @@ class ProductsApiTest extends TestCase
             TransactionMock::create(ProductFactory::create())
         ]);
 
-        $reponse = $api->products->find($product_id = 123);
+        $response = $api->products->find($product_id = 123);
 
         $this->assertEquals(200, $api->lastResponseStatusCode());
-        $this->assertEquals(Product::class, get_class($reponse));
+        $this->assertEquals(Product::class, get_class($response));
         $this->assertEquals('GET', $api->lastRequestMethod());
         $this->assertEquals('/admin/products/123.json', $api->lastRequestUri());
     }
@@ -91,7 +91,7 @@ class ProductsApiTest extends TestCase
             TransactionMock::create(ProductFactory::create(), 201)
         ]);
 
-        $reponse = $api->products->post(json_decode('{
+        $response = $api->products->post(json_decode('{
             "title": "Burton Custom Freestyle 151",
             "body_html": "<strong>Good snowboard!</strong>",
             "vendor": "Burton",
@@ -100,8 +100,35 @@ class ProductsApiTest extends TestCase
           }', true));
 
         $this->assertEquals(201, $api->lastResponseStatusCode());
-        $this->assertTrue(is_array($reponse));
+        $this->assertTrue(is_array($response));
         $this->assertEquals('POST', $api->lastRequestMethod());
         $this->assertEquals('/admin/products.json', $api->lastRequestUri());
+    }
+
+    /**
+     * PUT /admin/products/123.json
+     * Updates a product and its variants and images.
+     *
+     * @test
+     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
+     * @throws \ReflectionException
+     */
+    public function it_updates_product()
+    {
+        $update = [
+            'title' => 'New product title'
+        ];
+
+        $api = \Dan\Shopify\Shopify::fake([
+            TransactionMock::create(ProductFactory::create(1, $update))
+        ]);
+
+        $response = $api->products(123)->put($update);
+
+        $this->assertEquals(200, $api->lastResponseStatusCode());
+        $this->assertEquals('PUT', $api->lastRequestMethod());
+        $this->assertEquals('/admin/products/123.json', $api->lastRequestUri());
+        $this->assertTrue(is_array($response));
+        $this->assertEquals($update['title'], $response['title']);
     }
 }
