@@ -14,6 +14,8 @@ class ProductFactory
     }
 
     /**
+     * Example response from https://help.shopify.com/en/api/reference/products/product#show
+     * 
      * @return string
      */
     private static function getJsonSample()
