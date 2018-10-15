@@ -113,7 +113,7 @@ class ProductsApiTest extends TestCase
      * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
      * @throws \ReflectionException
      */
-    public function it_updates_product()
+    public function it_updates_a_product()
     {
         $update = [
             'title' => 'New product title'
@@ -130,5 +130,26 @@ class ProductsApiTest extends TestCase
         $this->assertEquals('/admin/products/123.json', $api->lastRequestUri());
         $this->assertTrue(is_array($response));
         $this->assertEquals($update['title'], $response['title']);
+    }
+
+    /**
+     * DELETE /admin/products/123.json
+     * Delete a product along with all its variants and images
+     *
+     * @test
+     * @throws \ReflectionException
+     */
+    public function it_deletes_a_product()
+    {
+        $api = \Dan\Shopify\Shopify::fake([
+            TransactionMock::create()
+        ]);
+
+        $response = $api->products(123)->delete();
+
+        $this->assertEquals(200, $api->lastResponseStatusCode());
+        $this->assertEquals('DELETE', $api->lastRequestMethod());
+        $this->assertEquals('/admin/products/123.json', $api->lastRequestUri());
+        $this->assertTrue(empty($response));
     }
 }

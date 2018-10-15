@@ -12,7 +12,7 @@ class TransactionMock
      * @param array $headers
      * @return Response
      */
-    public static function create($body, $statusCode = 200, $headers = [])
+    public static function create($body = '', $statusCode = 200, $headers = [])
     {
         return new Response($statusCode, $headers, $body);
     }
