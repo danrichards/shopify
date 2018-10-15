@@ -10,6 +10,51 @@ use PHPUnit\Framework\TestCase;
 class ProductsApiTest extends TestCase
 {
     /**
+     * GET /admin/products.json
+     * Retrieves a list of products.
+     *
+     * @test
+     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
+     * @throws \ReflectionException
+     */
+    public function it_gets_a_list_of_products()
+    {
+        $api = \Dan\Shopify\Shopify::fake([
+            TransactionMock::create(ProductFactory::create(2))
+        ]);
+
+        $reponse = $api->products->get();
+
+        $this->assertEquals(200, $api->lastResponseStatusCode());
+        $this->assertTrue(is_array($reponse));
+        $this->assertEquals('GET', $api->lastRequestMethod());
+        $this->assertEquals('/admin/products.json', $api->lastRequestUri());
+        $this->assertCount(2, $reponse);
+    }
+
+    /**
+     * GET /admin/products/count.json
+     * Retrieve a count of all products.
+     *
+     * @test
+     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
+     * @throws \ReflectionException
+     */
+    public function it_gets_a_count_of_products()
+    {
+        $api = \Dan\Shopify\Shopify::fake([
+            TransactionMock::create('{ "count": 2 }')
+        ]);
+
+        $reponse = $api->products->count();
+
+        $this->assertEquals(200, $api->lastResponseStatusCode());
+        $this->assertEquals('GET', $api->lastRequestMethod());
+        $this->assertEquals('/admin/products/count.json', $api->lastRequestUri());
+        $this->assertEquals(2, $reponse);
+    }
+
+    /**
      * GET /admin/products/123.json
      * Retrieves a single product.
      *

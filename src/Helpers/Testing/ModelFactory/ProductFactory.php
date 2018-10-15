@@ -6,11 +6,14 @@ namespace Dan\Shopify\Helpers\Testing\ModelFactory;
 class ProductFactory
 {
     /**
+     * @param int $quantity
      * @return string
      */
-    public static function create()
+    public static function create($quantity = 1)
     {
-        return static::getJsonSample();
+        return $quantity == 1
+            ? static::getJsonSample()
+            : json_encode(array_fill(0, $quantity, static::getJsonSample()));
     }
 
     /**
