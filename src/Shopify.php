@@ -343,6 +343,7 @@ class Shopify extends Client
      *
      * @param string|array $ids
      * @return array|\Illuminate\Support\Collection
+     * @throws InvalidOrMissingEndpointException
      */
     public function findMany($ids)
     {
