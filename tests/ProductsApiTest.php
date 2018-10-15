@@ -26,6 +26,7 @@ class ProductsApiTest extends TestCase
 
         $reponse = $api->products->find($product_id = 123);
 
+        $this->assertEquals(200, $api->lastResponseStatusCode());
         $this->assertEquals(Product::class, get_class($reponse));
         $this->assertEquals('GET', $api->lastRequestMethod());
         $this->assertEquals('/admin/products/123.json', $api->lastRequestUri());
@@ -53,6 +54,7 @@ class ProductsApiTest extends TestCase
             "tags": "Barnes & Noble, John\'s Fav, &quot;Big Air&quot;"
           }', true));
 
+        $this->assertEquals(201, $api->lastResponseStatusCode());
         $this->assertTrue(is_array($reponse));
         $this->assertEquals('POST', $api->lastRequestMethod());
         $this->assertEquals('/admin/products.json', $api->lastRequestUri());
