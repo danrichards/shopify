@@ -233,37 +233,41 @@ class Shopify extends Client
      * Post to a resource using the assigned endpoint ($this->api).
      *
      * @param array|AbstractModel $payload
+     * @param string $append
      * @return array|AbstractModel
      * @throws InvalidOrMissingEndpointException
      */
-    public function post($payload = [])
+    public function post($payload = [], $append = '')
     {
-        return $this->post_or_put('POST', $payload);
+        return $this->post_or_put('POST', $payload, $append);
     }
 
     /**
      * Update a resource using the assigned endpoint ($this->api).
      *
      * @param array|AbstractModel $payload
+     * @param string $append
      * @return array|AbstractModel
      * @throws InvalidOrMissingEndpointException
      */
-    public function put($payload = [])
+    public function put($payload = [], $append = '')
     {
-        return $this->post_or_put('PUT', $payload);
+        return $this->post_or_put('PUT', $payload, $append);
     }
 
     /**
      * @param $post_or_post
      * @param array $payload
+     * @param string $append
      * @return mixed
      * @throws InvalidOrMissingEndpointException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    private function post_or_put($post_or_post, $payload = [])
+    private function post_or_put($post_or_post, $payload = [], $append = '')
     {
         $payload = $this->normalizePayload($payload);
         $api = $this->api;
-        $uri = $this->uri();
+        $uri = $this->uri($append);
 
         $json = $payload instanceof AbstractModel
             ? $payload->getPayload()

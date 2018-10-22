@@ -77,10 +77,6 @@ class OrdersApiTest extends TestCase
         $this->assertEquals('/admin/orders/123.json', $api->lastRequestUri());
     }
 
-    /** /admin/orders/450789469/close.json */
-    /** /admin/orders/450789469/open.json */
-    /** /admin/orders/450789469/cancel.json */
-
     /**
      * POST /admin/orders.json
      * Creates a new order.
@@ -109,4 +105,77 @@ class OrdersApiTest extends TestCase
         $this->assertEquals('POST', $api->lastRequestMethod());
         $this->assertEquals('/admin/orders.json', $api->lastRequestUri());
     }
+
+    /**
+     * PUT /admin/orders/123.json
+     * Updates a order.
+     *
+     * @test
+     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
+     * @throws \ReflectionException
+     */
+    public function it_updates_a_order()
+    {
+        $update = [
+            'note' => 'New note'
+        ];
+
+        $api = \Dan\Shopify\Shopify::fake([
+            TransactionMock::create(OrderFactory::create(1, $update))
+        ]);
+
+        $response = $api->orders(123)->put($update);
+
+        $this->assertEquals(200, $api->lastResponseStatusCode());
+        $this->assertEquals('PUT', $api->lastRequestMethod());
+        $this->assertEquals('/admin/orders/123.json', $api->lastRequestUri());
+        $this->assertTrue(is_array($response));
+        $this->assertEquals($update['note'], $response['note']);
+    }
+
+    /**
+     * DELETE /admin/orders/123.json
+     * Delete a order
+     *
+     * @test
+     * @throws \ReflectionException
+     */
+    public function it_deletes_a_order()
+    {
+        $api = \Dan\Shopify\Shopify::fake([
+            TransactionMock::create()
+        ]);
+
+        $response = $api->orders(123)->delete();
+
+        $this->assertEquals(200, $api->lastResponseStatusCode());
+        $this->assertEquals('DELETE', $api->lastRequestMethod());
+        $this->assertEquals('/admin/orders/123.json', $api->lastRequestUri());
+        $this->assertTrue(empty($response));
+    }
+
+    /**
+     * POST /admin/orders/123/close.json
+     * Closes an order
+     *
+     * @test
+     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
+     * @throws \ReflectionException
+     */
+    public function it_closes_an_order()
+    {
+        $api = \Dan\Shopify\Shopify::fake([
+            TransactionMock::create(OrderFactory::create(1, ['id' => 123]), 201)
+        ]);
+
+        $response = $api->orders(123)->post([], 'close');
+
+        $this->assertEquals(201, $api->lastResponseStatusCode());
+        $this->assertTrue(is_array($response));
+        $this->assertEquals('POST', $api->lastRequestMethod());
+        $this->assertEquals('/admin/orders/123/close.json', $api->lastRequestUri());
+    }
+
+    /** /admin/orders/450789469/open.json */
+    /** /admin/orders/450789469/cancel.json */
 }
