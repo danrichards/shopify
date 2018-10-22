@@ -31,4 +31,25 @@ class OrdersApiTest extends TestCase
         $this->assertCount(2, $response);
     }
 
+    /**
+     * GET /admin/orders/count.json
+     * Retrieve a count of all orders.
+     *
+     * @test
+     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
+     * @throws \ReflectionException
+     */
+    public function it_gets_a_count_of_orders()
+    {
+        $api = \Dan\Shopify\Shopify::fake([
+            TransactionMock::create('{ "count": 2 }')
+        ]);
+
+        $response = $api->orders->count();
+
+        $this->assertEquals(200, $api->lastResponseStatusCode());
+        $this->assertEquals('GET', $api->lastRequestMethod());
+        $this->assertEquals('/admin/orders/count.json', $api->lastRequestUri());
+        $this->assertEquals(2, $response);
+    }
 }
