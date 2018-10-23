@@ -4,17 +4,17 @@ namespace Dan\Shopify;
 
 use BadMethodCallException;
 use Dan\Shopify\Exceptions\InvalidOrMissingEndpointException;
+use Dan\Shopify\Exceptions\ModelNotFoundException;
 use Dan\Shopify\Models\AbstractModel;
 use Dan\Shopify\Models\Asset;
 use Dan\Shopify\Models\Fulfillment;
 use Dan\Shopify\Models\FulfillmentService;
 use Dan\Shopify\Models\Image;
-use Dan\Shopify\Models\Product;
 use Dan\Shopify\Models\Order;
+use Dan\Shopify\Models\Product;
 use Dan\Shopify\Models\Risk;
 use Dan\Shopify\Models\Theme;
 use Dan\Shopify\Models\Variant;
-use Dan\Shopify\Exceptions\ModelNotFoundException;
 use Dan\Shopify\Models\Webhook;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
@@ -117,14 +117,14 @@ class Shopify extends Client
     public $ids = [];
 
     /** @var string $base */
-    private static $base = 'admin';
+    protected static $base = 'admin';
 
     /**
      * Our list of valid Shopify endpoints.
      *
      * @var array $endpoints
      */
-    private static $endpoints = [
+    protected static $endpoints = [
         'assets' => 'themes/%s/assets.json',
         'fulfillments' => 'orders/%s/fulfillments/%s.json',
         'fulfillment_services' => 'fulfillment_services/%s.json',
@@ -138,7 +138,7 @@ class Shopify extends Client
     ];
 
     /** @var array $resource_helpers */
-    private static $resource_models = [
+    protected static $resource_models = [
         'assets' => Asset::class,
         'fulfillments' => Fulfillment::class,
         'fulfillment_services' => FulfillmentService::class,
@@ -233,37 +233,41 @@ class Shopify extends Client
      * Post to a resource using the assigned endpoint ($this->api).
      *
      * @param array|AbstractModel $payload
+     * @param string $append
      * @return array|AbstractModel
      * @throws InvalidOrMissingEndpointException
      */
-    public function post($payload = [])
+    public function post($payload = [], $append = '')
     {
-        return $this->post_or_put('POST', $payload);
+        return $this->post_or_put('POST', $payload, $append);
     }
 
     /**
      * Update a resource using the assigned endpoint ($this->api).
      *
      * @param array|AbstractModel $payload
+     * @param string $append
      * @return array|AbstractModel
      * @throws InvalidOrMissingEndpointException
      */
-    public function put($payload = [])
+    public function put($payload = [], $append = '')
     {
-        return $this->post_or_put('PUT', $payload);
+        return $this->post_or_put('PUT', $payload, $append);
     }
 
     /**
      * @param $post_or_post
      * @param array $payload
+     * @param string $append
      * @return mixed
      * @throws InvalidOrMissingEndpointException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    private function post_or_put($post_or_post, $payload = [])
+    private function post_or_put($post_or_post, $payload = [], $append = '')
     {
         $payload = $this->normalizePayload($payload);
         $api = $this->api;
-        $uri = $this->uri();
+        $uri = $this->uri($append);
 
         $json = $payload instanceof AbstractModel
             ? $payload->getPayload()
@@ -343,6 +347,7 @@ class Shopify extends Client
      *
      * @param string|array $ids
      * @return array|\Illuminate\Support\Collection
+     * @throws InvalidOrMissingEndpointException
      */
     public function findMany($ids)
     {
@@ -592,5 +597,15 @@ class Shopify extends Client
         $msg = sprintf('Method %s does not exist.', $method);
 
         throw new BadMethodCallException($msg);
+    }
+
+    /**
+     * @param $responseStack
+     * @return Helpers\Testing\ShopifyMock
+     * @throws \ReflectionException
+     */
+    public static function fake($responseStack = [])
+    {
+        return new Helpers\Testing\ShopifyMock($responseStack);
     }
 }
