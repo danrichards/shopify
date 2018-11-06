@@ -56,4 +56,17 @@ class Product extends AbstractModel
         self::PUBLISHED_SCOPE_WEB
     ];
 
+    const WEIGHT_UNIT_GRAMS = 'g';
+    const WEIGHT_UNIT_KG = 'kg';
+    const WEIGHT_UNIT_LB = 'lb';
+    const WEIGHT_UNIT_OUNCE = 'oz';
+
+    /** @var array $weight_units */
+    public static $weight_units = [
+        self::WEIGHT_UNIT_GRAMS,
+        self::WEIGHT_UNIT_KG,
+        self::WEIGHT_UNIT_LB,
+        self::WEIGHT_UNIT_OUNCE,
+    ];
+
 }
