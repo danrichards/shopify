@@ -18,6 +18,7 @@ use Dan\Shopify\Models\Variant;
 use Dan\Shopify\Models\Webhook;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Log;
 
 /**
  * Class Shopify
@@ -608,4 +609,22 @@ class Shopify extends Client
     {
         return new Helpers\Testing\ShopifyMock($responseStack);
     }
+
+    /**
+     * Wrapper to the $client->request method
+     *
+     * @param string $method
+     * @param string $uri
+     * @param array $options
+     * @return mixed|\Psr\Http\Message\ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function request($method, $uri = '', array $options = [])
+    {
+        if (env('SHOPIFY_OPTION_LOG_API_REQUEST') || config('shopify.options.log_api_request_data')){
+            Log::info('SHOPIFY API Request', compact('method', 'uri') + $options);
+        }
+        return parent::request($method, $uri, $options);
+    }
+
 }
