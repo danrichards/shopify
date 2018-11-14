@@ -4,6 +4,16 @@ namespace Dan\Shopify\Models;
 
 /**
  * Class Theme
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $role
+ * @property int $theme_store_id
+ * @property bool $previewable
+ * @property bool $processing
+ * @property string $admin_graphql_api_id
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  */
 class Theme extends AbstractModel
 {

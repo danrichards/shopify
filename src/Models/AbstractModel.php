@@ -413,6 +413,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      */
     protected function castAttribute($key, $value)
     {
+        // All types to permit null
         if (is_null($value)) {
             return $value;
         }
