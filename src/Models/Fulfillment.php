@@ -4,6 +4,23 @@ namespace Dan\Shopify\Models;
 
 /**
  * Class Fulfillment
+ *
+ * @property int $id
+ * @property int $order_id
+ * @property string $status
+ * @property string $service
+ * @property string|null $tracking_company
+ * @property string|null $shipment_status
+ * @property int $location_id
+ * @property string $tracking_number
+ * @property array $tracking_numbers
+ * @property string $tracking_url
+ * @property array $tracking_urls
+ * @property \stdClass $receipt
+ * @property string $name
+ * @property string $admin_graphql_api_id
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  */
 class Fulfillment extends AbstractModel
 {
@@ -25,27 +42,20 @@ class Fulfillment extends AbstractModel
 
     /** @var array $casts */
     protected $casts = [
-        'test' => 'bool',
-        'total_price' => 'float',
-        'subtotal_price' => 'float',
-        'total_weight' => 'float',
-        'total_tax' => 'float',
-        'taxes_included' => 'bool',
-        'total_discounts' => 'float',
-        'total_line_items_price' => 'float',
-        'buyer_accepts_marketing' => 'float',
-        'total_price_usd' => 'float',
-        'discount_codes' => 'array',
-        'note_attributes' => 'array',
-        'payment_gateway_names' => 'array',
-        'line_items' => 'array',
-        'shipping_lines' => 'array',
-        'shipping_address' => 'object',
-        'billing_address' => 'object',
-        'tax_lines' => 'array',
-        'fulfillments' => 'array',
-        'refunds' => 'array',
-        'customer' => 'object',
+        'id' => 'integer',
+        'order_id' => 'integer',
+        'status' => 'string',
+        'service' => 'string',
+        'tracking_company' => 'string',
+        'shipment_status' => 'string',
+        'int' => 'location_id',
+        'tracking_number' => 'string',
+        'tracking_numbers' => 'array',
+        'tracking_url' => 'string',
+        'tracking_urls' => 'array',
+        'receipt' => 'object',
+        'name' => 'string',
+        'admin_graphql_api_id' => 'string',
     ];
 
 }

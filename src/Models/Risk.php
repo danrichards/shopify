@@ -4,6 +4,17 @@ namespace Dan\Shopify\Models;
 
 /**
  * Class Risk
+ *
+ * @property int $id
+ * @property int $order_id
+ * @property int $checkout_id
+ * @property string $message
+ * @property string $merchant_message
+ * @property string $recommendation
+ * @property bool $display
+ * @property string $source
+ * @property bool $cause_cancel
+ * @property float $score
  */
 class Risk extends AbstractModel
 {

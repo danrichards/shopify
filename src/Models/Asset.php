@@ -4,6 +4,14 @@ namespace Dan\Shopify\Models;
 
 /**
  * Class Asset
+ *
+ * @property string $public_url
+ * @property string $content_type
+ * @property int $size
+ * @property int $theme_id
+ * @property array $warnings
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  */
 class Asset extends AbstractModel
 {

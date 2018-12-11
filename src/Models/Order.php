@@ -4,6 +4,72 @@ namespace Dan\Shopify\Models;
 
 /**
  * Class Order
+ *
+ * @property int $id
+ * @property string $email
+ * @property \Carbon\Carbon $closed_at
+ * @property int $number
+ * @property string $note
+ * @property string $token
+ * @property string $gateway
+ * @property bool $test
+ * @property float $total_price
+ * @property float $subtotal_price
+ * @property int $total_weight
+ * @property float $total_tax
+ * @property bool $taxes_included
+ * @property string $currency
+ * @property string $financial_status
+ * @property bool $confirmed
+ * @property float $total_discounts
+ * @property float $total_line_items_price
+ * @property string $cart_token
+ * @property bool $buyer_accepts_marketing
+ * @property string $name
+ * @property string $referring_site
+ * @property string $landing_site
+ * @property \Carbon\Carbon $cancelled_at
+ * @property string $cancelled_reason
+ * @property float $total_price_usd
+ * @property string $checkout_token
+ * @property string $reference
+ * @property string $user_id
+ * @property int $location_id
+ * @property string $location_
+ * @property string $source_identifier
+ * @property string $source_url
+ * @property \Carbon\Carbon $processed_at
+ * @property string $device_id
+ * @property string $phone
+ * @property string $customer_locale
+ * @property string $app_id
+ * @property string $browser_ip
+ * @property string $landing_site_ref
+ * @property string $order_number
+ * @property array $discount_applications
+ * @property array $discount_codes
+ * @property array $note_attributes
+ * @property array $payment_gateway_names
+ * @property string $processing_method
+ * @property int $checkout_id
+ * @property string $source_name
+ * @property string $fulfillment_status
+ * @property array $tax_lines
+ * @property string $tags
+ * @property string $contact_email
+ * @property string $order_status_url
+ * @property string $admin_graphql_api_id
+ * @property array $line_items
+ * @property array $shipping_lines
+ * @property \stdClass $billing_address
+ * @property \stdClass $shipping_address
+ * @property array $fulfillments
+ * @property \stdClass $client_details
+ * @property array $refunds
+ * @property \stdClass $payment_details
+ * @property \stdClass $customer
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  */
 class Order extends AbstractModel
 {
@@ -26,6 +92,7 @@ class Order extends AbstractModel
     /** @var array $casts */
     protected $casts = [
         'test' => 'bool',
+        'confirmed' => 'bool',
         'total_price' => 'float',
         'subtotal_price' => 'float',
         'total_weight' => 'float',
@@ -46,6 +113,8 @@ class Order extends AbstractModel
         'fulfillments' => 'array',
         'refunds' => 'array',
         'customer' => 'object',
+        'client_details' => 'object',
+        'payment_details' => 'object'
     ];
 
     // Financial statuses from Shopify
