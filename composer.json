@@ -21,5 +21,15 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^5.3"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Dan\\Shopify\\Integrations\\Laravel\\ShopifyServiceProvider"
+            ],
+            "aliases": {
+                "Shopify": "Dan\\Shopify\\Integrations\\Laravel\\ShopifyFacade"
+            }
+        }
     }
 }
