@@ -7,6 +7,7 @@ use Dan\Shopify\Exceptions\InvalidOrMissingEndpointException;
 use Dan\Shopify\Exceptions\ModelNotFoundException;
 use Dan\Shopify\Models\AbstractModel;
 use Dan\Shopify\Models\Asset;
+use Dan\Shopify\Models\Customer;
 use Dan\Shopify\Models\Fulfillment;
 use Dan\Shopify\Models\FulfillmentService;
 use Dan\Shopify\Models\Image;
@@ -24,6 +25,7 @@ use Log;
  * Class Shopify
  *
  * @property \Dan\Shopify\Helpers\Assets $assets
+ * @property \Dan\Shopify\Helpers\Customers $customers
  * @property \Dan\Shopify\Helpers\Fulfillments $fulfillments
  * @property \Dan\Shopify\Helpers\FulfillmentServices $fulfillment_services
  * @property \Dan\Shopify\Helpers\Images $images
@@ -33,6 +35,7 @@ use Log;
  * @property \Dan\Shopify\Helpers\Risks $risks
  * @property \Dan\Shopify\Helpers\Variants $variants
  * @property \Dan\Shopify\Helpers\Webhooks $webhooks
+ * @method \Dan\Shopify\Helpers\Customers customers(string $customer_id)
  * @method \Dan\Shopify\Helpers\Fulfillments fulfillments(string $fulfillment_id)
  * @method \Dan\Shopify\Helpers\FulfillmentServices fulfillment_services(string $fulfillment_service_id)
  * @method \Dan\Shopify\Helpers\Images images(string $image_id)
@@ -45,7 +48,6 @@ use Log;
  */
 class Shopify extends Client
 {
-
     const SCOPE_READ_ANALYTICS = 'read_analytics';
     const SCOPE_READ_CHECKOUTS = 'read_checkouts';
     const SCOPE_READ_CONTENT = 'read_content';
@@ -117,6 +119,13 @@ class Shopify extends Client
     /** @var array $ids */
     public $ids = [];
 
+    /**
+     * Methods / Params queued for API call
+     *
+     * @var array $queue
+     */
+    public $queue = [];
+
     /** @var string $base */
     protected static $base = 'admin';
 
@@ -127,6 +136,7 @@ class Shopify extends Client
      */
     protected static $endpoints = [
         'assets' => 'themes/%s/assets.json',
+        'customers' => 'customers/%s.json',
         'fulfillments' => 'orders/%s/fulfillments/%s.json',
         'fulfillment_services' => 'fulfillment_services/%s.json',
         'images' => 'products/%s/images/%s.json',
@@ -141,6 +151,7 @@ class Shopify extends Client
     /** @var array $resource_helpers */
     protected static $resource_models = [
         'assets' => Asset::class,
+        'customers' => Customer::class,
         'fulfillments' => Fulfillment::class,
         'fulfillment_services' => FulfillmentService::class,
         'images' => Image::class,
@@ -393,6 +404,7 @@ class Shopify extends Client
      *
      * @param AbstractModel $model
      * @return AbstractModel
+     * @throws InvalidOrMissingEndpointException|\GuzzleHttp\Exception\GuzzleException
      */
     public function save(AbstractModel $model)
     {
@@ -443,21 +455,24 @@ class Shopify extends Client
     {
         $data = $this->get($query, 'count');
 
-        return count($data) == 1
+        $data = count($data) == 1
             ? array_values($data)[0]
             : $data;
+
+        return $data;
     }
 
     /**
-     * @param array $id = null
+     * @param string $append
      * @return string
      * @throws InvalidOrMissingEndpointException
      */
     public function uri($append = '')
     {
-        $uri = static::makeUri($this->api, $this->ids, $append);
+        $uri = static::makeUri($this->api, $this->ids, $this->queue, $append);
 
         $this->ids = [];
+        $this->queue = [];
 
         return $uri;
     }
@@ -465,11 +480,12 @@ class Shopify extends Client
     /**
      * @param string $api
      * @param array $ids
+     * @param array $queue
      * @param string $append
      * @return string
      * @throws InvalidOrMissingEndpointException
      */
-    private static function makeUri($api, $ids = [], $append = '')
+    private static function makeUri($api, $ids = [], $queue = [], $append = '')
     {
         // Is it an entity endpoint?
         if (substr_count(static::$endpoints[$api], '%') == count($ids)) {
@@ -486,6 +502,11 @@ class Shopify extends Client
                 implode($ids));
 
             throw new InvalidOrMissingEndpointException($msg);
+        }
+
+        // Prepend parent APIs until none left.
+        while ($parent = array_shift($queue)) {
+            $endpoint = implode('/', array_filter($parent)).'/'.$endpoint;
         }
 
         $endpoint = '/'.static::$base.'/'.$endpoint;
@@ -560,18 +581,18 @@ class Shopify extends Client
     }
 
     /**
-     * Set our endpoint by accessing it via a property.
+     * Set our endpoint by accessing it like a property.
      *
-     * @param string $property
+     * @param string $endpoint
      * @return $this
      */
-    public function __get($property)
+    public function __get($endpoint)
     {
-        if (array_key_exists($property, static::$endpoints)) {
-            $this->api = $property;
+        if (array_key_exists($endpoint, static::$endpoints)) {
+            $this->api = $endpoint;
         }
 
-        $className = "Dan\Shopify\\Helpers\\" . Util::studly($property);
+        $className = "Dan\Shopify\\Helpers\\" . Util::studly($endpoint);
 
         if (class_exists($className)) {
             return new $className($this);
@@ -594,7 +615,6 @@ class Shopify extends Client
             $this->ids = array_merge($this->ids, $parameters);
             return $this->__get($method);
         }
-
         $msg = sprintf('Method %s does not exist.', $method);
 
         throw new BadMethodCallException($msg);
@@ -626,5 +646,4 @@ class Shopify extends Client
         }
         return parent::request($method, $uri, $options);
     }
-
 }

@@ -3,7 +3,7 @@
 namespace Dan\Shopify;
 
 /**
- * Interface ShopifyApiInterface
+ * Interface HasShopifyClientInterface
  */
 interface HasShopifyClientInterface
 {
