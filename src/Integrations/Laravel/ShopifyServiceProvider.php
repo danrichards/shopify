@@ -2,6 +2,7 @@
 
 namespace Dan\Shopify\Integrations\Laravel;
 
+use Dan\Shopify\Util;
 use Illuminate\Support\ServiceProvider;
 use Dan\Shopify\Shopify;
 
@@ -29,9 +30,11 @@ class ShopifyServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(
-            __DIR__ . '/../../../config/shopify.php', 'shopify'
-        );
+        if (Util::isLaravel()) {
+            $this->mergeConfigFrom(
+                __DIR__ . '/../../../config/shopify.php', 'shopify'
+            );
+        }
 
         $shop = config('shopify.shop');
         $token = config('shopify.token');
