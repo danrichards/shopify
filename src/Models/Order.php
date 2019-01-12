@@ -73,7 +73,6 @@ namespace Dan\Shopify\Models;
  */
 class Order extends AbstractModel
 {
-
     /** @var string $resource_name */
     public static $resource_name = 'order';
 
@@ -160,5 +159,4 @@ class Order extends AbstractModel
         self::RISK_RECOMMENDATION_MEDIUM,
         self::RISK_RECOMMENDATION_HIGH
     ];
-
 }

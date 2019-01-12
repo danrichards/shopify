@@ -36,7 +36,6 @@ namespace Dan\Shopify\Models;
  */
 class Variant extends AbstractModel
 {
-
     /** @var string $resource_name */
     public static $resource_name = 'variant';
 
@@ -71,5 +70,4 @@ class Variant extends AbstractModel
         'requires_shipping' => 'bool',
         'metafields' => 'array'
     ];
-
 }

@@ -11,12 +11,10 @@ use Illuminate\Support\Facades\Facade;
  */
 class ShopifyFacade extends Facade
 {
-
     /**
      * Return \Dan\Shopify\Manager singleton.
      *
      * @return string
      */
     protected static function getFacadeAccessor() { return 'shopify'; }
-
 }

@@ -11,7 +11,6 @@ use Dan\Shopify\Models\Asset;
  */
 class Assets extends Endpoint
 {
-
     /**
      * Get data using the `assets` endpoint
      *
@@ -117,5 +116,4 @@ class Assets extends Endpoint
     {
         return $this->delete($model->getKey());
     }
-
 }

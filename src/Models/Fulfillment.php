@@ -24,7 +24,6 @@ namespace Dan\Shopify\Models;
  */
 class Fulfillment extends AbstractModel
 {
-
     /** @var string $resource_name */
     public static $resource_name = 'fulfillment';
 
@@ -57,5 +56,4 @@ class Fulfillment extends AbstractModel
         'name' => 'string',
         'admin_graphql_api_id' => 'string',
     ];
-
 }

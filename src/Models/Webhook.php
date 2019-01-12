@@ -16,7 +16,6 @@ namespace Dan\Shopify\Models;
  */
 class Webhook extends AbstractModel
 {
-
     /** @var string $resource_name */
     public static $resource_name = 'webhook';
 
@@ -140,5 +139,4 @@ class Webhook extends AbstractModel
         self::THEMES_PUBLISH,
         self::THEMES_UPDATE
     ];
-
 }

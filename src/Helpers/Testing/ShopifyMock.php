@@ -2,13 +2,15 @@
 
 namespace Dan\Shopify\Helpers\Testing;
 
-
 use Dan\Shopify\Shopify;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use ReflectionMethod;
 
+/**
+ * Class ShopifyMock
+ */
 class ShopifyMock extends Shopify
 {
     /** @var array $requestHistory */

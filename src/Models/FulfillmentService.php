@@ -19,7 +19,6 @@ namespace Dan\Shopify\Models;
  */
 class FulfillmentService extends AbstractModel
 {
-
     /** @var string $resource_name */
     public static $resource_name = 'fulfillment_service';
 
@@ -43,5 +42,4 @@ class FulfillmentService extends AbstractModel
         'provider_id' => 'integer',
         'location_id' => 'integer',
     ];
-
 }

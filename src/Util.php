@@ -191,5 +191,4 @@ class Util
         $myshopify_domain = str_replace('.myshopify.com', '', $myshopify_domain);
         return sprintf("%s.myshopify.com", $myshopify_domain);
     }
-
 }

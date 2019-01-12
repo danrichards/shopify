@@ -727,5 +727,4 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
 
         return new static($data);
     }
-
 }

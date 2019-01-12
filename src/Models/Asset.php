@@ -15,7 +15,6 @@ namespace Dan\Shopify\Models;
  */
 class Asset extends AbstractModel
 {
-
     /** @var array $omit_on_replication */
     public static $omit_on_replication = [
         'id',
@@ -88,5 +87,4 @@ class Asset extends AbstractModel
 
         return new static($data);
     }
-
 }

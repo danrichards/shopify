@@ -4,6 +4,9 @@ namespace Dan\Shopify\Helpers\Testing;
 
 use GuzzleHttp\Psr7\Response;
 
+/**
+ * Class TransactionMock
+ */
 class TransactionMock
 {
     /**

@@ -17,7 +17,6 @@ namespace Dan\Shopify\Models;
  */
 class Image extends AbstractModel
 {
-
     /** @var string $resource_name */
     public static $resource_name = 'image';
 
@@ -39,5 +38,4 @@ class Image extends AbstractModel
         'src' => 'string',
         'variant_ids' => 'array',
     ];
-
 }

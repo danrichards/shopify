@@ -25,7 +25,6 @@ namespace Dan\Shopify\Models;
  */
 class Product extends AbstractModel
 {
-
     /** @var string $resource_name */
     public static $resource_name = 'product';
 
@@ -68,5 +67,4 @@ class Product extends AbstractModel
         self::WEIGHT_UNIT_LB,
         self::WEIGHT_UNIT_OUNCE,
     ];
-
 }

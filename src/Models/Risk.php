@@ -18,7 +18,6 @@ namespace Dan\Shopify\Models;
  */
 class Risk extends AbstractModel
 {
-
     /** @var string $resource_name */
     public static $resource_name = 'risk';
 
@@ -42,5 +41,4 @@ class Risk extends AbstractModel
         'message' => 'string',
         'merchant_message' => 'string'
     ];
-
 }

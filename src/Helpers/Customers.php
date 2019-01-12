@@ -9,11 +9,6 @@ use Dan\Shopify\Exceptions\InvalidOrMissingEndpointException;
  */
 class Customers extends Endpoint
 {
-//    public function orders($id)
-//    {
-//
-//    }
-
     /**
      * @param string $endpoint
      * @return $this|Endpoint
