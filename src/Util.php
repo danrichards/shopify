@@ -2,12 +2,13 @@
 
 namespace Dan\Shopify;
 
+use Dan\Shopify\Models\AbstractModel;
+
 /**
  * Class Util
  */
 class Util
 {
-
     /**
      * The cache of snake-cased words.
      *
@@ -153,7 +154,7 @@ class Util
         $message = implode('&', $message);
 
         $calculated_hmac = hash_hmac(
-            $alorithm = 'sha256',
+            $algorithm = 'sha256',
             $message,
             $secret
         );
@@ -170,7 +171,7 @@ class Util
         if (is_numeric($mixed)) {
             return $mixed;
         } elseif (is_array($mixed) && isset($mixed['id'])) {
-            return $order['id'];
+            return $mixed['id'];
         } elseif ($mixed instanceof \stdClass && isset($mixed->id)) {
             return $mixed->id;
         } elseif ($mixed instanceof AbstractModel) {
@@ -178,6 +179,17 @@ class Util
         } else {
             return null;
         }
+    }
+
+    /**
+     * @param string $myshopify_domain
+     * @return string
+     */
+    public static function normalizeDomain($myshopify_domain)
+    {
+        $myshopify_domain = strtolower($myshopify_domain);
+        $myshopify_domain = str_replace('.myshopify.com', '', $myshopify_domain);
+        return sprintf("%s.myshopify.com", $myshopify_domain);
     }
 
 }
