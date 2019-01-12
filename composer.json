@@ -30,5 +30,12 @@
     },
     "scripts": {
         "test": "phpunit"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Dan\\Shopify\\Integrations\\Laravel\\ShopifyServiceProvider"
+            ]
+        }
     }
 }
