@@ -187,13 +187,13 @@ class Shopify extends Client
     }
 
     /**
-     * @param string $token
      * @param string $shop
+     * @param string $token
      * @return Shopify
      */
-    public static function make($token, $shop)
+    public static function make($shop, $token)
     {
-        return new static($token, $shop);
+        return new static($shop, $token);
     }
 
     /**
