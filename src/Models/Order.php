@@ -159,4 +159,17 @@ class Order extends AbstractModel
         self::RISK_RECOMMENDATION_MEDIUM,
         self::RISK_RECOMMENDATION_HIGH
     ];
+
+    const FILTER_STATUS_ANY = 'any';
+    const FILTER_STATUS_CANCELLED = 'cancelled';
+    const FILTER_STATUS_CLOSED = 'closed';
+    const FILTER_STATUS_OPEN = 'open';
+
+    /** @var array $filter_statuses */
+    public static $filter_statuses = [
+        self::FILTER_STATUS_ANY,
+        self::FILTER_STATUS_CANCELLED,
+        self::FILTER_STATUS_CLOSED,
+        self::FILTER_STATUS_OPEN,
+    ];
 }
