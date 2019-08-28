@@ -3,8 +3,9 @@
 namespace Dan\Shopify\Integrations\Laravel;
 
 use Dan\Shopify\Util;
-use Illuminate\Support\ServiceProvider;
 use Dan\Shopify\Shopify;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
 
 /**
  * Class ShopifyServiceProvider
@@ -44,5 +45,36 @@ class ShopifyServiceProvider extends ServiceProvider
                 return new Shopify($shop, $token);
             });
         }
+
+        if (config('shopify.webhooks.enabled')) {
+            $this->registerWebhookRoutes();
+        }
+    }
+
+    /**
+     * Register the package routes.
+     *
+     * @return void
+     */
+    private function registerWebhookRoutes()
+    {
+        Route::group($this->routeWebhookConfiguration(), function () {
+            $this->loadRoutesFrom(__DIR__.'/Http/routes.php');
+        });
+    }
+
+    /**
+     * Get the Telescope route group configuration array.
+     *
+     * @return array
+     */
+    private function routeWebhookConfiguration()
+    {
+        return [
+            //'domain' => config('shopify.webhooks.route_domain', config('app.url')),
+            'namespace' => 'Dan\Shopify\Integrations\Laravel\Http',
+            'prefix' => config('shopify.webhooks.route_prefix'),
+            'middleware' => array_filter(['web', config('shopify.webhooks.middleware')]),
+        ];
     }
 }
