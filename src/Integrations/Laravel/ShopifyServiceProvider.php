@@ -56,7 +56,7 @@ class ShopifyServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    private function registerWebhookRoutes()
+    protected function registerWebhookRoutes()
     {
         Route::group($this->routeWebhookConfiguration(), function () {
             $this->loadRoutesFrom(__DIR__.'/Http/routes.php');
@@ -64,11 +64,11 @@ class ShopifyServiceProvider extends ServiceProvider
     }
 
     /**
-     * Get the Telescope route group configuration array.
+     * Get the route group configuration array.
      *
      * @return array
      */
-    private function routeWebhookConfiguration()
+    protected function routeWebhookConfiguration()
     {
         return [
             //'domain' => config('shopify.webhooks.route_domain', config('app.url')),
