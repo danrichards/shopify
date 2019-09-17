@@ -56,7 +56,7 @@ class WebhookMiddleware
             return $this->errorWithJsonDecoding($json_error_code);
         }
 
-        if (! Util::validWebhookHmac($hmac, config('shopify.webhooks.secret'), $data)) {
+        if (! Util::validWebhookHmac($hmac, $this->getSecret(), $data)) {
             return $this->errorWithHmacValidation();
         }
 
@@ -66,7 +66,7 @@ class WebhookMiddleware
     /**
      * @return JsonResponse
      */
-    private function errorWithNoShopProvided()
+    protected function errorWithNoShopProvided()
     {
         $msg = "Header `x-shopify-shop-domain` missing.";
         $details = $this->getErrorDetails();
@@ -77,7 +77,7 @@ class WebhookMiddleware
     /**
      * @return JsonResponse
      */
-    private function errorWithNoHmacProvided()
+    protected function errorWithNoHmacProvided()
     {
         $msg = "Header `x-shopify-hmac-sha256` missing.";
         $details = $this->getErrorDetails();
@@ -88,7 +88,7 @@ class WebhookMiddleware
     /**
      * @return JsonResponse
      */
-    private function errorWithShopNotFound()
+    protected function errorWithShopNotFound()
     {
         $url = config('services.shopify.app.app_url');
         $msg = "Shop not installed. Install at: {$url}";
@@ -100,7 +100,7 @@ class WebhookMiddleware
     /**
      * @return JsonResponse
      */
-    private function errorWithNoInputData()
+    protected function errorWithNoInputData()
     {
         $msg = "No input data provided.";
         $details = $this->getErrorDetails();
@@ -112,7 +112,7 @@ class WebhookMiddleware
      * @param int $json_error_code
      * @return JsonResponse
      */
-    private function errorWithJsonDecoding($json_error_code)
+    protected function errorWithJsonDecoding($json_error_code)
     {
         switch ($json_error_code) {
             case JSON_ERROR_DEPTH:
@@ -159,7 +159,7 @@ class WebhookMiddleware
     /**
      * @return JsonResponse
      */
-    private function errorWithHmacValidation()
+    protected function errorWithHmacValidation()
     {
         $msg = "Unable to verify hmac.";
         $details = compact('json_error_code') + $this->getErrorDetails();
@@ -170,7 +170,7 @@ class WebhookMiddleware
     /**
      * @return array
      */
-    private function getErrorDetails()
+    protected function getErrorDetails()
     {
         return [
             'path' => request()->path(),
@@ -179,5 +179,19 @@ class WebhookMiddleware
             'hmac' => $this->hmac,
             'data' => $this->data
         ];
+    }
+
+    /**
+     * Private apps used shared secret while installable applications use
+     * application key.
+     *
+     * If your application uses both implementation, you may benefit from
+     * overriding this method.
+     *
+     * @return string
+     */
+    protected function getSecret()
+    {
+        return config('shopify.webhooks.secret');
     }
 }
