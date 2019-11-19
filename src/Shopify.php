@@ -8,6 +8,7 @@ use Dan\Shopify\Exceptions\ModelNotFoundException;
 use Dan\Shopify\Models\AbstractModel;
 use Dan\Shopify\Models\Asset;
 use Dan\Shopify\Models\Customer;
+use Dan\Shopify\Models\Dispute;
 use Dan\Shopify\Models\Fulfillment;
 use Dan\Shopify\Models\FulfillmentService;
 use Dan\Shopify\Models\Image;
@@ -137,6 +138,7 @@ class Shopify extends Client
     protected static $endpoints = [
         'assets' => 'themes/%s/assets.json',
         'customers' => 'customers/%s.json',
+        'disputes' => 'shopify_payments/disputes/%s.json',
         'fulfillments' => 'orders/%s/fulfillments/%s.json',
         'fulfillment_services' => 'fulfillment_services/%s.json',
         'images' => 'products/%s/images/%s.json',
@@ -152,6 +154,7 @@ class Shopify extends Client
     protected static $resource_models = [
         'assets' => Asset::class,
         'customers' => Customer::class,
+        'disputes' => Dispute::class,
         'fulfillments' => Fulfillment::class,
         'fulfillment_services' => FulfillmentService::class,
         'images' => Image::class,
