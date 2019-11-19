@@ -16,6 +16,7 @@ namespace Dan\Shopify\Models;
  * @property \Carbon\Carbon $evidence_due_by
  * @property \Carbon\Carbon $evidence_sent_on
  * @property \Carbon\Carbon $finalized_on
+ * @property \Carbon\Carbon $initiated_at
  */
 class Dispute extends AbstractModel
 {
@@ -30,6 +31,7 @@ class Dispute extends AbstractModel
         'evidence_due_by',
         'evidence_sent_on',
         'finalized_on',
+        'initiated_at',
     ];
 
     /** @var array $casts */
