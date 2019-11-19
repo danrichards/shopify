@@ -236,7 +236,7 @@ class Shopify extends Client
      */
     public function shop()
     {
-        $response = $this->request('GET', 'admin/shop.json');
+        $response = $this->request('GET', "{$this->base}/shop.json");
 
         $data = json_decode($response->getBody()->getContents(), true);
 
