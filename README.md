@@ -6,7 +6,18 @@ An object-oriented approach towards using the Shopify API. This repos is a work-
 
 ## Supported Objects / Endpoints:
 
-* [Order](https://help.shopify.com/api/reference/order)
+* [Asset](https://help.shopify.com/en/api/reference/online-store/asset)
+* [Customer](https://help.shopify.com/en/api/reference/customers/customer)
+* [Dispute](https://help.shopify.com/en/api/reference/shopify_payments/dispute)
+* [Fulfillment](https://help.shopify.com/en/api/reference/shipping-and-fulfillment/fulfillment)
+* [FulfillmentService](https://help.shopify.com/en/api/reference/shipping-and-fulfillment/fulfillmentservice)
+* [Image](https://help.shopify.com/en/api/reference/products/product-image)
+* [Order](https://help.shopify.com/api/reference/orders)
+* [Product](https://help.shopify.com/api/reference/products)
+* [Risk](https://help.shopify.com/en/api/reference/orders/order-risk)
+* [Theme](https://help.shopify.com/en/api/reference/online-store/theme)
+* [Variant](https://help.shopify.com/en/api/reference/products/product-variant)
+* [Webhook](https://help.shopify.com/en/api/reference/events/webhook)
 
 ## Composer
 
