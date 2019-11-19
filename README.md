@@ -45,7 +45,15 @@ In your `config/app.php`
 SHOPIFY_DOMAIN=your-shop-name.myshopify.com
 SHOPIFY_TOKEN=your-token-here
 ```
-    
+
+### Optionally replace following variables in your `.env`
+
+Empty or `admin` defaults to oldest legacy, [learn more](https://help.shopify.com/en/api/versioning)
+
+```
+SHOPIFY_API_BASE="admin/api/2019-07"
+```
+
 ### Using the Facade gives you `Dan\Shopify\Shopify`
 
 > It will be instantiated with your shop and token you setup in `config/shopify.php`
