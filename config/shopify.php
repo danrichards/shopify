@@ -1,6 +1,21 @@
 <?php
 
 return [
+    /*
+    |--------------------------------------------------------------------------
+    | API Base
+    |--------------------------------------------------------------------------
+    |
+    | Configure API version in which you wish to use in your app(s). Defaults
+    | to the old stable version supported by Shopify. Learn more about API
+    | versioning with Shopify below.
+    |
+    | e.g. admin, admin/api/2019-04, admin/api/2019-07 ...
+    |
+    | @see https://help.shopify.com/en/api/versioning
+    */
+
+    'api_base'    => env('SHOPIFY_API_BASE', 'admin'),
 
     /*
     |--------------------------------------------------------------------------

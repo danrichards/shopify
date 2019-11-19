@@ -127,7 +127,7 @@ class Shopify extends Client
     public $queue = [];
 
     /** @var string $base */
-    protected static $base = 'admin';
+    protected $base = 'admin';
 
     /**
      * Our list of valid Shopify endpoints.
@@ -169,12 +169,14 @@ class Shopify extends Client
      * @param string $token
      * @param string $shop
      */
-    public function __construct($shop, $token)
+    public function __construct($shop, $token, $base = null)
     {
         $base_uri = preg_replace("/(https:\/\/|http:\/\/)/", "", $shop);
         $base_uri = rtrim($base_uri, "/");
         $base_uri = str_replace('.myshopify.com', '', $base_uri);
         $base_uri = "https://{$base_uri}.myshopify.com";
+
+        $this->setBase($base);
 
         parent::__construct([
             'base_uri' => $base_uri,
@@ -469,12 +471,39 @@ class Shopify extends Client
      */
     public function uri($append = '')
     {
-        $uri = static::makeUri($this->api, $this->ids, $this->queue, $append);
+        $uri = static::makeUri($this->api, $this->ids, $this->queue, $append, $this->base);
 
         $this->ids = [];
         $this->queue = [];
 
         return $uri;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBase()
+    {
+        return $this->base;
+    }
+
+    /**
+     * @param string|null $base
+     * @return $this
+     */
+    public function setBase($base = null)
+    {
+        if (is_null($base)) {
+            $this->base = defined('LARAVEL_START')
+                ? config('shopify.api_base', 'admin')
+                : $this->base = 'admin';
+
+            return $this;
+        }
+
+        $this->base = $base;
+
+        return $this;
     }
 
     /**
@@ -485,7 +514,7 @@ class Shopify extends Client
      * @return string
      * @throws InvalidOrMissingEndpointException
      */
-    private static function makeUri($api, $ids = [], $queue = [], $append = '')
+    private static function makeUri($api, $ids = [], $queue = [], $append = '', $base = 'admin')
     {
         // Is it an entity endpoint?
         if (substr_count(static::$endpoints[$api], '%') == count($ids)) {
@@ -509,7 +538,7 @@ class Shopify extends Client
             $endpoint = implode('/', array_filter($parent)).'/'.$endpoint;
         }
 
-        $endpoint = '/'.static::$base.'/'.$endpoint;
+        $endpoint = '/'.$base.'/'.$endpoint;
 
         if ($append) {
             $endpoint = str_replace('.json', '/'.$append.'.json', $endpoint);
