@@ -137,6 +137,7 @@ Dan\Shopify\Util::validWebhookHmac(
 ## Contributors
 
 - [Diogo Gomes](https://github.com/diogogomeswww)
+- [Hiram Cruz](https://github.com/shinyhiram)
 
 ## Todo
 
