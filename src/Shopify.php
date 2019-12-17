@@ -8,13 +8,16 @@ use Dan\Shopify\Exceptions\ModelNotFoundException;
 use Dan\Shopify\Models\AbstractModel;
 use Dan\Shopify\Models\Asset;
 use Dan\Shopify\Models\Customer;
+use Dan\Shopify\Models\Discount;
 use Dan\Shopify\Models\Dispute;
 use Dan\Shopify\Models\Fulfillment;
 use Dan\Shopify\Models\FulfillmentService;
 use Dan\Shopify\Models\Image;
 use Dan\Shopify\Models\Order;
+use Dan\Shopify\Models\PriceRule;
 use Dan\Shopify\Models\Product;
 use Dan\Shopify\Models\Risk;
+use Dan\Shopify\Models\SmartCollection;
 use Dan\Shopify\Models\Theme;
 use Dan\Shopify\Models\Variant;
 use Dan\Shopify\Models\Webhook;
@@ -138,29 +141,35 @@ class Shopify extends Client
     protected static $endpoints = [
         'assets' => 'themes/%s/assets.json',
         'customers' => 'customers/%s.json',
+        'discount' => 'discounts/%s.json',
         'disputes' => 'shopify_payments/disputes/%s.json',
         'fulfillments' => 'orders/%s/fulfillments/%s.json',
         'fulfillment_services' => 'fulfillment_services/%s.json',
         'images' => 'products/%s/images/%s.json',
         'orders' => 'orders/%s.json',
+        'price_rules' => 'price_rules/%s.json',
         'products' => 'products/%s.json',
         'risks' => 'orders/%s/risks/%s.json',
+        'smart_collections' => 'smart_collections/%s.json',
         'themes' => 'themes/%s.json',
         'variants' => 'products/%s/variants/%s.json',
         'webhooks' => 'webhooks/%s.json',
     ];
 
-    /** @var array $resource_helpers */
+    /** @var array $resource_models */
     protected static $resource_models = [
         'assets' => Asset::class,
         'customers' => Customer::class,
+        'discounts' => Discount::class,
         'disputes' => Dispute::class,
         'fulfillments' => Fulfillment::class,
         'fulfillment_services' => FulfillmentService::class,
         'images' => Image::class,
         'orders' => Order::class,
+        'price_rules' => PriceRule::class,
         'products' => Product::class,
         'risks' => Risk::class,
+        'smart_collections' => SmartCollection::class,
         'themes' => Theme::class,
         'variants' => Variant::class,
         'webhooks' => Webhook::class,
