@@ -4,7 +4,7 @@
 namespace Dan\Shopify\Models;
 
 /**
- * Class Discount
+ * Class DiscountCode
  * @package Dan\Shopify\Models
  *
  * Table properties
@@ -15,11 +15,11 @@ namespace Dan\Shopify\Models;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
-class Discount
+class DiscountCode
 {
     /** @var string $resource_name */
-    public static $resource_name = 'discount';
+    public static $resource_name = 'discount_code';
 
     /** @var string $resource_name_many */
-    public static $resource_name_many = 'discounts';
+    public static $resource_name_many = 'discount_codes';
 }

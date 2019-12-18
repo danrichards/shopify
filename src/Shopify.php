@@ -8,7 +8,7 @@ use Dan\Shopify\Exceptions\ModelNotFoundException;
 use Dan\Shopify\Models\AbstractModel;
 use Dan\Shopify\Models\Asset;
 use Dan\Shopify\Models\Customer;
-use Dan\Shopify\Models\Discount;
+use Dan\Shopify\Models\DiscountCode;
 use Dan\Shopify\Models\Dispute;
 use Dan\Shopify\Models\Fulfillment;
 use Dan\Shopify\Models\FulfillmentService;
@@ -141,7 +141,7 @@ class Shopify extends Client
     protected static $endpoints = [
         'assets' => 'themes/%s/assets.json',
         'customers' => 'customers/%s.json',
-        'discount' => 'discounts/%s.json',
+        'discount_codes' => 'discount_codes/%s.json',
         'disputes' => 'shopify_payments/disputes/%s.json',
         'fulfillments' => 'orders/%s/fulfillments/%s.json',
         'fulfillment_services' => 'fulfillment_services/%s.json',
@@ -160,7 +160,7 @@ class Shopify extends Client
     protected static $resource_models = [
         'assets' => Asset::class,
         'customers' => Customer::class,
-        'discounts' => Discount::class,
+        'discount_codes' => DiscountCode::class,
         'disputes' => Dispute::class,
         'fulfillments' => Fulfillment::class,
         'fulfillment_services' => FulfillmentService::class,
