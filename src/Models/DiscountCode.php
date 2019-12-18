@@ -15,7 +15,7 @@ namespace Dan\Shopify\Models;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
-class DiscountCode
+class DiscountCode extends AbstractModel
 {
     /** @var string $resource_name */
     public static $resource_name = 'discount_code';
