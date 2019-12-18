@@ -141,7 +141,7 @@ class Shopify extends Client
     protected static $endpoints = [
         'assets' => 'themes/%s/assets.json',
         'customers' => 'customers/%s.json',
-        'discount_codes' => 'discount_codes/%s.json',
+        'discount_codes' => 'price_rules/%s/discount_codes/%s.json',
         'disputes' => 'shopify_payments/disputes/%s.json',
         'fulfillments' => 'orders/%s/fulfillments/%s.json',
         'fulfillment_services' => 'fulfillment_services/%s.json',
