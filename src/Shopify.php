@@ -30,11 +30,14 @@ use Log;
  *
  * @property \Dan\Shopify\Helpers\Assets $assets
  * @property \Dan\Shopify\Helpers\Customers $customers
+ * @property \Dan\Shopify\Helpers\DiscountCode $discount_codes
  * @property \Dan\Shopify\Helpers\Fulfillments $fulfillments
  * @property \Dan\Shopify\Helpers\FulfillmentServices $fulfillment_services
  * @property \Dan\Shopify\Helpers\Images $images
  * @property \Dan\Shopify\Helpers\Orders $orders
+ * @property \Dan\Shopify\Helpers\PriceRule $price_rules
  * @property \Dan\Shopify\Helpers\Products $products
+ * @property \Dan\Shopify\Helpers\SmartCollection $smart_collections
  * @property \Dan\Shopify\Helpers\Themes $themes
  * @property \Dan\Shopify\Helpers\Risks $risks
  * @property \Dan\Shopify\Helpers\Variants $variants
@@ -44,8 +47,10 @@ use Log;
  * @method \Dan\Shopify\Helpers\FulfillmentServices fulfillment_services(string $fulfillment_service_id)
  * @method \Dan\Shopify\Helpers\Images images(string $image_id)
  * @method \Dan\Shopify\Helpers\Orders orders(string $order_id)
+ * @method \Dan\Shopify\Helpers\PriceRule price_rules(string $price_rule_id)
  * @method \Dan\Shopify\Helpers\Products products(string $product_id)
  * @method \Dan\Shopify\Helpers\Risks risks(string $risk_id)
+ * @method \Dan\Shopify\Helpers\SmartCollection smart_collections(string $smart_collection_id)
  * @method \Dan\Shopify\Helpers\Themes themes(string $theme_id)
  * @method \Dan\Shopify\Helpers\Variants variants(string $variant_id)
  * @method \Dan\Shopify\Helpers\Webhooks webhooks(string $webhook_id)
