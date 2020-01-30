@@ -3,7 +3,7 @@
 namespace Dan\Shopify\Models;
 
 /**
- * Class Webhook
+ * Class Webhook.
  *
  * @property int $id
  * @property string $address
@@ -30,11 +30,11 @@ class Webhook extends AbstractModel
 
     /** @var array $casts */
     protected $casts = [
-        'id' => 'integer',
-        'address' => 'string',
-        'topic' => 'string',
-        'fields' => 'array',
-        'format' => 'string',
+        'id'                   => 'integer',
+        'address'              => 'string',
+        'topic'                => 'string',
+        'fields'               => 'array',
+        'format'               => 'string',
         'metafield_namespaces' => 'array',
     ];
 
@@ -88,7 +88,7 @@ class Webhook extends AbstractModel
     const THEMES_PUBLISH = 'themes/publish';
     const THEMES_UPDATE = 'themes/update';
 
-    /** @var array $topics*/
+    /** @var array $topics */
     public static $topics = [
         self::CARTS_CREATE,
         self::CARTS_UPDATE,
@@ -137,6 +137,6 @@ class Webhook extends AbstractModel
         self::THEMES_CREATE,
         self::THEMES_DELETE,
         self::THEMES_PUBLISH,
-        self::THEMES_UPDATE
+        self::THEMES_UPDATE,
     ];
 }

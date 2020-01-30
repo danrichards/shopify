@@ -3,7 +3,7 @@
 namespace Dan\Shopify\Models;
 
 /**
- * Class Image
+ * Class Image.
  *
  * @property int $id
  * @property int $product_id
@@ -31,11 +31,11 @@ class Image extends AbstractModel
 
     /** @var array $casts */
     protected $casts = [
-        'product_id' => 'int',
-        'position' => 'int',
-        'width' => 'int',
-        'height' => 'int',
-        'src' => 'string',
+        'product_id'  => 'int',
+        'position'    => 'int',
+        'width'       => 'int',
+        'height'      => 'int',
+        'src'         => 'string',
         'variant_ids' => 'array',
     ];
 }

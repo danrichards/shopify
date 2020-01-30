@@ -3,12 +3,12 @@
 namespace Dan\Shopify\Integrations\Laravel\Http;
 
 use Closure;
+use Dan\Shopify\Util;
 use Log;
 use Response;
-use Dan\Shopify\Util;
 
 /**
- * Class WebhookMiddleware
+ * Class WebhookMiddleware.
  */
 class WebhookMiddleware
 {
@@ -30,8 +30,9 @@ class WebhookMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return JsonResponse|mixed
      */
     public function handle($request, Closure $next)
@@ -52,11 +53,11 @@ class WebhookMiddleware
 
         $this->json = $json = json_decode($data);
 
-        if (! empty($json_error_code = json_last_error())) {
+        if (!empty($json_error_code = json_last_error())) {
             return $this->errorWithJsonDecoding($json_error_code);
         }
 
-        if (! Util::validWebhookHmac($hmac, $this->getSecret(), $data)) {
+        if (!Util::validWebhookHmac($hmac, $this->getSecret(), $data)) {
             return $this->errorWithHmacValidation();
         }
 
@@ -68,9 +69,10 @@ class WebhookMiddleware
      */
     protected function errorWithNoShopProvided()
     {
-        $msg = "Header `x-shopify-shop-domain` missing.";
+        $msg = 'Header `x-shopify-shop-domain` missing.';
         $details = $this->getErrorDetails();
         Log::error($msg, $details);
+
         return Response::json($details, 400);
     }
 
@@ -79,9 +81,10 @@ class WebhookMiddleware
      */
     protected function errorWithNoHmacProvided()
     {
-        $msg = "Header `x-shopify-hmac-sha256` missing.";
+        $msg = 'Header `x-shopify-hmac-sha256` missing.';
         $details = $this->getErrorDetails();
         Log::error($msg, $details);
+
         return Response::json($details, 400);
     }
 
@@ -94,6 +97,7 @@ class WebhookMiddleware
         $msg = "Shop not installed. Install at: {$url}";
         $details = $this->getErrorDetails();
         Log::error($msg, $details);
+
         return Response::json($details, 400);
     }
 
@@ -102,14 +106,16 @@ class WebhookMiddleware
      */
     protected function errorWithNoInputData()
     {
-        $msg = "No input data provided.";
+        $msg = 'No input data provided.';
         $details = $this->getErrorDetails();
         Log::error($msg, $details);
+
         return Response::json($details, 422);
     }
 
     /**
      * @param int $json_error_code
+     *
      * @return JsonResponse
      */
     protected function errorWithJsonDecoding($json_error_code)
@@ -146,7 +152,7 @@ class WebhookMiddleware
                 $msg = 'Malformed UTF-16 characters, possibly incorrectly encoded';
                 break;
             default:
-                $msg = "Unknown error";
+                $msg = 'Unknown error';
         }
 
         $msg = "Json error: {$msg}";
@@ -161,9 +167,10 @@ class WebhookMiddleware
      */
     protected function errorWithHmacValidation()
     {
-        $msg = "Unable to verify hmac.";
+        $msg = 'Unable to verify hmac.';
         $details = compact('json_error_code') + $this->getErrorDetails();
         Log::error($msg, $details);
+
         return Response::json($details, 401);
     }
 
@@ -173,11 +180,11 @@ class WebhookMiddleware
     protected function getErrorDetails()
     {
         return [
-            'path' => request()->path(),
+            'path'    => request()->path(),
             'success' => 'false',
-            'shop' => $this->shop,
-            'hmac' => $this->hmac,
-            'data' => $this->data
+            'shop'    => $this->shop,
+            'hmac'    => $this->hmac,
+            'data'    => $this->data,
         ];
     }
 

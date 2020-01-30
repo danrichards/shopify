@@ -3,7 +3,7 @@
 namespace Dan\Shopify\Models;
 
 /**
- * Class Order
+ * Class Order.
  *
  * @property int $id
  * @property string $email
@@ -85,35 +85,35 @@ class Order extends AbstractModel
         'created_at',
         'updated_at',
         'cancelled_at',
-        'processed_at'
+        'processed_at',
     ];
 
     /** @var array $casts */
     protected $casts = [
-        'test' => 'bool',
-        'confirmed' => 'bool',
-        'total_price' => 'float',
-        'subtotal_price' => 'float',
-        'total_weight' => 'float',
-        'total_tax' => 'float',
-        'taxes_included' => 'bool',
-        'total_discounts' => 'float',
-        'total_line_items_price' => 'float',
+        'test'                    => 'bool',
+        'confirmed'               => 'bool',
+        'total_price'             => 'float',
+        'subtotal_price'          => 'float',
+        'total_weight'            => 'float',
+        'total_tax'               => 'float',
+        'taxes_included'          => 'bool',
+        'total_discounts'         => 'float',
+        'total_line_items_price'  => 'float',
         'buyer_accepts_marketing' => 'float',
-        'total_price_usd' => 'float',
-        'discount_codes' => 'array',
-        'note_attributes' => 'array',
-        'payment_gateway_names' => 'array',
-        'line_items' => 'array',
-        'shipping_lines' => 'array',
-        'shipping_address' => 'object',
-        'billing_address' => 'object',
-        'tax_lines' => 'array',
-        'fulfillments' => 'array',
-        'refunds' => 'array',
-        'customer' => 'object',
-        'client_details' => 'object',
-        'payment_details' => 'object'
+        'total_price_usd'         => 'float',
+        'discount_codes'          => 'array',
+        'note_attributes'         => 'array',
+        'payment_gateway_names'   => 'array',
+        'line_items'              => 'array',
+        'shipping_lines'          => 'array',
+        'shipping_address'        => 'object',
+        'billing_address'         => 'object',
+        'tax_lines'               => 'array',
+        'fulfillments'            => 'array',
+        'refunds'                 => 'array',
+        'customer'                => 'object',
+        'client_details'          => 'object',
+        'payment_details'         => 'object',
     ];
 
     // Financial statuses from Shopify
@@ -121,7 +121,7 @@ class Order extends AbstractModel
     const FINANCIAL_STATUS_PAID = 'paid';
     const FINANCIAL_STATUS_PARTIALLY_PAID = 'partially_paid';
     const FINANCIAL_STATUS_PARTIALLY_REFUNDED = 'partially_refunded';
-    const FINANCIAL_STATUS_PENDING= 'pending';
+    const FINANCIAL_STATUS_PENDING = 'pending';
     const FINANCIAL_STATUS_REFUNDED = 'refunded';
     const FINANCIAL_STATUS_VOIDED = 'voided';
 
@@ -133,7 +133,7 @@ class Order extends AbstractModel
         self::FINANCIAL_STATUS_PARTIALLY_REFUNDED,
         self::FINANCIAL_STATUS_PENDING,
         self::FINANCIAL_STATUS_REFUNDED,
-        self::FINANCIAL_STATUS_VOIDED
+        self::FINANCIAL_STATUS_VOIDED,
     ];
 
     // Fulfillment statuses from Shopify
@@ -145,7 +145,7 @@ class Order extends AbstractModel
     public static $fulfillment_statuses = [
         self::FULFILLMENT_STATUS_FILLED,
         self::FULFILLMENT_STATUS_PARTIAL,
-        self::FULFILLMENT_STATUS_UNFILLED
+        self::FULFILLMENT_STATUS_UNFILLED,
     ];
 
     // Risk recommendations from Shopify
@@ -157,7 +157,7 @@ class Order extends AbstractModel
     public static $risk_statuses = [
         self::RISK_RECOMMENDATION_LOW,
         self::RISK_RECOMMENDATION_MEDIUM,
-        self::RISK_RECOMMENDATION_HIGH
+        self::RISK_RECOMMENDATION_HIGH,
     ];
 
     const FILTER_STATUS_ANY = 'any';

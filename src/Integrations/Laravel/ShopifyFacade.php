@@ -5,7 +5,7 @@ namespace Dan\Shopify\Integrations\Laravel;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Class ShopifyFacade
+ * Class ShopifyFacade.
  *
  * Facade for the Laravel Framework
  */
@@ -16,5 +16,8 @@ class ShopifyFacade extends Facade
      *
      * @return string
      */
-    protected static function getFacadeAccessor() { return 'shopify'; }
+    protected static function getFacadeAccessor()
+    {
+        return 'shopify';
+    }
 }

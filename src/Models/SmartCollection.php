@@ -1,13 +1,11 @@
 <?php
 
-
 namespace Dan\Shopify\Models;
 
 use Carbon\Carbon;
 
 /**
- * Class SmartCollection
- * @package Dan\Shopify\Models
+ * Class SmartCollection.
  *
  * @property int $id
  * @property string|null $body_html
@@ -21,7 +19,6 @@ use Carbon\Carbon;
  * @property string|null $published_scope
  * @property Carbon|null $published_at
  * @property Carbon|null $updated_at
- *
  */
 class SmartCollection extends AbstractModel
 {

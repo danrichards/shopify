@@ -1,13 +1,10 @@
 <?php
 
-
 namespace Dan\Shopify\Models;
 
 /**
- * Class DiscountCode
- * @package Dan\Shopify\Models
+ * Class DiscountCode.
  *
- * Table properties
  * @property int    $id
  * @property string $code
  * @property int    $price_rule_id
