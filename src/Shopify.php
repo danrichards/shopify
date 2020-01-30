@@ -602,7 +602,7 @@ class Shopify extends Client
             return $payload;
         }
 
-        if (!isset($payload['id'])) {
+        if (! isset($payload['id'])) {
             if ($count = count($args = array_filter($this->ids))) {
                 $last = $args[$count - 1];
                 if (is_numeric($last)) {

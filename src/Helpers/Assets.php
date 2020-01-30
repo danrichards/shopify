@@ -67,7 +67,7 @@ class Assets extends Endpoint
         }
 
         if (empty($data)) {
-            return null;
+            return;
         }
 
         $model = new Asset($data);
