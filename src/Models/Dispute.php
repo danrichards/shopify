@@ -3,7 +3,7 @@
 namespace Dan\Shopify\Models;
 
 /**
- * Class Dispute
+ * Class Dispute.
  *
  * @property int $id
  * @property int $order_id
@@ -36,12 +36,12 @@ class Dispute extends AbstractModel
 
     /** @var array $casts */
     protected $casts = [
-        'type' => 'string',
-        'currency' => 'string',
-        'amount' => 'float',
-        'reason' => 'string',
+        'type'                => 'string',
+        'currency'            => 'string',
+        'amount'              => 'float',
+        'reason'              => 'string',
         'network_reason_code' => 'string',
-        'status' => 'string',
+        'status'              => 'string',
     ];
 
     const TYPE_CHARGEBACK = 'chargeback';
@@ -50,7 +50,7 @@ class Dispute extends AbstractModel
     /** @var array $types */
     public static $types = [
         self::TYPE_CHARGEBACK,
-        self::TYPE_INQUIRY
+        self::TYPE_INQUIRY,
     ];
 
     const REASON_BANK_NOT_PROCESS = 'bank_not_process';

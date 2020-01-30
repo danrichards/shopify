@@ -3,11 +3,10 @@
 namespace Dan\Shopify\Helpers;
 
 /**
- * Class Themes
+ * Class Themes.
  *
  * @property \Dan\Shopify\Helpers\Assets assets
  */
 class Themes extends Endpoint
 {
-
 }

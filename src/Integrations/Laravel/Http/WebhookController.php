@@ -3,21 +3,22 @@
 namespace Dan\Shopify\Integrations\Laravel\Http;
 
 use BadMethodCallException;
-use Dan\Shopify\Integrations\Laravel\Events\Webhook;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Response;
 
 /**
- * Class WebhookController
+ * Class WebhookController.
  */
 class WebhookController
 {
     /**
      * @param $topic
      * @param Request $request
-     * @return JsonResponse
+     *
      * @throws BadMethodCallException
+     *
+     * @return JsonResponse
      */
     public function handle($topic, Request $request)
     {
@@ -26,7 +27,7 @@ class WebhookController
         switch (true) {
             case empty($class):
                 throw new BadMethodCallException("dan/shopify::event topic `{$topic}` class not configured.");
-            case ! class_exists($class):
+            case !class_exists($class):
                 throw new BadMethodCallException("dan/shopify::event topic `{$topic}` class does not exist.");
             default:
                 event(new $class($topic, $request->all()));

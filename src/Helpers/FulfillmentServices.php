@@ -3,9 +3,8 @@
 namespace Dan\Shopify\Helpers;
 
 /**
- * Class FulfillmentServices
+ * Class FulfillmentServices.
  */
 class FulfillmentServices extends Endpoint
 {
-
 }

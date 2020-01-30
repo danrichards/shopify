@@ -2,13 +2,13 @@
 
 namespace Dan\Shopify\Integrations\Laravel;
 
-use Dan\Shopify\Util;
 use Dan\Shopify\Shopify;
+use Dan\Shopify\Util;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 /**
- * Class ShopifyServiceProvider
+ * Class ShopifyServiceProvider.
  */
 class ShopifyServiceProvider extends ServiceProvider
 {
@@ -20,7 +20,7 @@ class ShopifyServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../../../config/shopify.php' => config_path('shopify.php')
+            __DIR__.'/../../../config/shopify.php' => config_path('shopify.php'),
         ]);
     }
 
@@ -33,7 +33,7 @@ class ShopifyServiceProvider extends ServiceProvider
     {
         if (Util::isLaravel()) {
             $this->mergeConfigFrom(
-                __DIR__ . '/../../../config/shopify.php', 'shopify'
+                __DIR__.'/../../../config/shopify.php', 'shopify'
             );
         }
 
@@ -72,8 +72,8 @@ class ShopifyServiceProvider extends ServiceProvider
     {
         return [
             //'domain' => config('shopify.webhooks.route_domain', config('app.url')),
-            'namespace' => 'Dan\Shopify\Integrations\Laravel\Http',
-            'prefix' => config('shopify.webhooks.route_prefix'),
+            'namespace'  => 'Dan\Shopify\Integrations\Laravel\Http',
+            'prefix'     => config('shopify.webhooks.route_prefix'),
             'middleware' => array_filter(['web', config('shopify.webhooks.middleware')]),
         ];
     }

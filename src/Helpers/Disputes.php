@@ -3,9 +3,8 @@
 namespace Dan\Shopify\Helpers;
 
 /**
- * Class Disputes
+ * Class Disputes.
  */
 class Disputes extends Endpoint
 {
-
 }
