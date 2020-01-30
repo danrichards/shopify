@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Dan\Shopify\Helpers;
-
 
 use Dan\Shopify\Exceptions\InvalidOrMissingEndpointException;
 
@@ -10,8 +8,10 @@ class PriceRule extends Endpoint
 {
     /**
      * @param string $endpoint
-     * @return $this|Endpoint
+     *
      * @throws InvalidOrMissingEndpointException
+     *
+     * @return $this|Endpoint
      */
     public function __get($endpoint)
     {

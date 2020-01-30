@@ -5,9 +5,8 @@ namespace Dan\Shopify\Exceptions;
 use Exception;
 
 /**
- * Class InvalidOrMissingEndpointException
+ * Class InvalidOrMissingEndpointException.
  */
 class InvalidOrMissingEndpointException extends Exception
 {
-
 }

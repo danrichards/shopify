@@ -3,9 +3,8 @@
 namespace Dan\Shopify\Helpers;
 
 /**
- * Class Webhooks
+ * Class Webhooks.
  */
 class Webhooks extends Endpoint
 {
-
 }

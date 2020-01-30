@@ -1,13 +1,11 @@
 <?php
 
-
 namespace Dan\Shopify\Models;
 
 use Carbon\Carbon;
 
 /**
- * Class PriceRule
- * @package Dan\Shopify\Models
+ * Class PriceRule.
  *
  * @property int    $id
  * @property int    $allocation_limit
@@ -45,43 +43,43 @@ class PriceRule extends AbstractModel
     /** @var string $resource_name_many */
     public static $resource_name_many = 'price_rules';
 
-    const ALLOCATION_METHOD_ACROSS          = 'across';
-    const ALLOCATION_METHOD_EACH            = 'each';
-    const CUSTOMER_SELECTION_ALL            = 'all';
-    const CUSTOMER_SELECTION_PREREQUISITE   = 'prerequisite';
-    const TARGET_SELECTION_ALL              = 'all';
-    const TARGET_SELECTION_ENTITLED         = 'entitled';
-    const TARGET_TYPE_LINE_ITEM             = 'line_item';
-    const TARGET_TYPE_SHIPPING_LINE         = 'shipping_line';
-    const VALUE_TYPE_FIXED_AMOUNT           = 'fixed_amount';
-    const VALUE_TYPE_PERCENTAGE             = 'percentage';
+    const ALLOCATION_METHOD_ACROSS = 'across';
+    const ALLOCATION_METHOD_EACH = 'each';
+    const CUSTOMER_SELECTION_ALL = 'all';
+    const CUSTOMER_SELECTION_PREREQUISITE = 'prerequisite';
+    const TARGET_SELECTION_ALL = 'all';
+    const TARGET_SELECTION_ENTITLED = 'entitled';
+    const TARGET_TYPE_LINE_ITEM = 'line_item';
+    const TARGET_TYPE_SHIPPING_LINE = 'shipping_line';
+    const VALUE_TYPE_FIXED_AMOUNT = 'fixed_amount';
+    const VALUE_TYPE_PERCENTAGE = 'percentage';
 
     /** @var array $allocation_methods */
-    static $allocation_methods = [
+    public static $allocation_methods = [
         self::ALLOCATION_METHOD_ACROSS,
         self::ALLOCATION_METHOD_EACH,
     ];
 
     /** @var array $customer_selections */
-    static $customer_selections = [
+    public static $customer_selections = [
         self::CUSTOMER_SELECTION_ALL,
         self::CUSTOMER_SELECTION_PREREQUISITE,
     ];
 
     /** @var array $target_selections */
-    static $target_selections = [
+    public static $target_selections = [
         self::TARGET_SELECTION_ALL,
         self::TARGET_SELECTION_ENTITLED,
     ];
 
     /** @var array $target_types */
-    static $target_types = [
+    public static $target_types = [
         self::TARGET_TYPE_LINE_ITEM,
         self::TARGET_TYPE_SHIPPING_LINE,
     ];
 
     /** @var array $value_types */
-    static $value_types = [
+    public static $value_types = [
         self::VALUE_TYPE_FIXED_AMOUNT,
         self::VALUE_TYPE_PERCENTAGE,
     ];

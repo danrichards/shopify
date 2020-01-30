@@ -9,7 +9,7 @@ use GuzzleHttp\Middleware;
 use ReflectionMethod;
 
 /**
- * Class ShopifyMock
+ * Class ShopifyMock.
  */
 class ShopifyMock extends Shopify
 {
@@ -18,7 +18,9 @@ class ShopifyMock extends Shopify
 
     /**
      * ShopifyMock constructor.
+     *
      * @param array $responseStack
+     *
      * @throws \ReflectionException
      */
     public function __construct($responseStack)
@@ -31,24 +33,25 @@ class ShopifyMock extends Shopify
         $history = Middleware::history($this->requestHistory);
         $handler->push($history);
 
-        $base_uri = "https://test-store.myshopify.com";
+        $base_uri = 'https://test-store.myshopify.com';
         $token = 'test_token';
 
         // Calling Guzzle constructor
         $reflectionMethod = new ReflectionMethod(get_parent_class(get_parent_class($this)), '__construct');
         $reflectionMethod->invoke($this, [
             'base_uri' => $base_uri,
-            'headers' => [
+            'headers'  => [
                 'X-Shopify-Access-Token' => $token,
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json; charset=utf-8;',
+                'Accept'                 => 'application/json',
+                'Content-Type'           => 'application/json; charset=utf-8;',
             ],
-            'handler' => $handler
+            'handler' => $handler,
         ]);
     }
 
     /**
-     * http://docs.guzzlephp.org/en/stable/testing.html
+     * http://docs.guzzlephp.org/en/stable/testing.html.
+     *
      * @return array
      */
     public function getLastTransaction()
@@ -89,7 +92,7 @@ class ShopifyMock extends Shopify
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function lastResponseStatusCode()
     {

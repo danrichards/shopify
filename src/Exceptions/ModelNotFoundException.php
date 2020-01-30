@@ -5,9 +5,8 @@ namespace Dan\Shopify\Exceptions;
 use Exception;
 
 /**
- * Class ModelNotFoundException
+ * Class ModelNotFoundException.
  */
 class ModelNotFoundException extends Exception
 {
-
 }

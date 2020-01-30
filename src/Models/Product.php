@@ -3,7 +3,7 @@
 namespace Dan\Shopify\Models;
 
 /**
- * Class Product
+ * Class Product.
  *
  * @property int $id
  * @property string $title
@@ -35,15 +35,15 @@ class Product extends AbstractModel
     protected $dates = [
         'created_at',
         'updated_at',
-        'published_at'
+        'published_at',
     ];
 
     /** @var array $casts */
     protected $casts = [
         'variants' => 'array',
-        'options' => 'array',
-        'images' => 'array',
-        'image' => 'object'
+        'options'  => 'array',
+        'images'   => 'array',
+        'image'    => 'object',
     ];
 
     const PUBLISHED_SCOPE_GLOBAL = 'global';
@@ -52,7 +52,7 @@ class Product extends AbstractModel
     /** @var array $published_scopes */
     public static $published_scopes = [
         self::PUBLISHED_SCOPE_GLOBAL,
-        self::PUBLISHED_SCOPE_WEB
+        self::PUBLISHED_SCOPE_WEB,
     ];
 
     const WEIGHT_UNIT_GRAMS = 'g';
