@@ -132,7 +132,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      */
     public function getAttribute($key)
     {
-        if (!$key) {
+        if (! $key) {
             return;
         }
 
@@ -184,10 +184,10 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
         $dirty = [];
 
         foreach ($this->attributes as $key => $value) {
-            if (!array_key_exists($key, $this->original)) {
+            if (! array_key_exists($key, $this->original)) {
                 $dirty[$key] = $value;
             } elseif ($value !== $this->original[$key] &&
-                !$this->originalIsNumericallyEquivalent($key)) {
+                ! $this->originalIsNumericallyEquivalent($key)) {
                 $dirty[$key] = $value;
             }
         }
@@ -243,7 +243,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
         // If the attribute is listed as a date, we will convert it to a DateTime
         // instance on retrieval, which makes it quite convenient to work with
         // date fields without having to create a mutator for each property.
-        if (in_array($key, $this->dates) && !is_null($value)) {
+        if (in_array($key, $this->dates) && ! is_null($value)) {
             return $this->asDateTime($value);
         }
 
@@ -614,7 +614,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      */
     public function __isset($key)
     {
-        return !is_null($this->getAttribute($key));
+        return ! is_null($this->getAttribute($key));
     }
 
     /**

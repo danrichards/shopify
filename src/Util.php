@@ -46,7 +46,7 @@ class Util
             return static::$snakeCache[$key][$delimiter];
         }
 
-        if (!ctype_lower($value)) {
+        if (! ctype_lower($value)) {
             $value = preg_replace('/\s+/u', '', $value);
 
             $value = static::lower(preg_replace('/(.)(?=[A-Z])/u', '$1'.$delimiter, $value));
@@ -112,7 +112,7 @@ class Util
     public static function flatten($array, $depth = INF)
     {
         return array_reduce($array, function ($result, $item) use ($depth) {
-            if (!is_array($item)) {
+            if (! is_array($item)) {
                 return array_merge($result, [$item]);
             } elseif ($depth === 1) {
                 return array_merge($result, array_values($item));
@@ -185,7 +185,7 @@ class Util
         } elseif ($mixed instanceof AbstractModel) {
             return $mixed->getKey();
         } else {
-            return null;
+            return;
         }
     }
 
@@ -207,7 +207,7 @@ class Util
      */
     public static function isLaravel()
     {
-        return defined('LARAVEL_START') && !static::isLumen();
+        return defined('LARAVEL_START') && ! static::isLumen();
     }
 
     /**

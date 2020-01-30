@@ -27,7 +27,7 @@ class WebhookController
         switch (true) {
             case empty($class):
                 throw new BadMethodCallException("dan/shopify::event topic `{$topic}` class not configured.");
-            case !class_exists($class):
+            case ! class_exists($class):
                 throw new BadMethodCallException("dan/shopify::event topic `{$topic}` class does not exist.");
             default:
                 event(new $class($topic, $request->all()));

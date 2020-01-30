@@ -53,11 +53,11 @@ class WebhookMiddleware
 
         $this->json = $json = json_decode($data);
 
-        if (!empty($json_error_code = json_last_error())) {
+        if (! empty($json_error_code = json_last_error())) {
             return $this->errorWithJsonDecoding($json_error_code);
         }
 
-        if (!Util::validWebhookHmac($hmac, $this->getSecret(), $data)) {
+        if (! Util::validWebhookHmac($hmac, $this->getSecret(), $data)) {
             return $this->errorWithHmacValidation();
         }
 
