@@ -3,9 +3,8 @@
 namespace Dan\Shopify\Helpers;
 
 /**
- * Class Orders
+ * Class Orders.
  */
 class Orders extends Endpoint
 {
-
 }

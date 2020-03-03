@@ -3,9 +3,8 @@
 namespace Dan\Shopify\Helpers;
 
 /**
- * Class Images
+ * Class Images.
  */
 class Images extends Endpoint
 {
-
 }

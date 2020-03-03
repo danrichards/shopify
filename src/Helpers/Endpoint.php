@@ -5,9 +5,10 @@ namespace Dan\Shopify\Helpers;
 use Dan\Shopify\Shopify;
 
 /**
- * Class Endpoint
+ * Class Endpoint.
  *
  * @mixin Shopify
+ *
  * @property string endpoint
  * @property array ids
  */
@@ -29,7 +30,8 @@ abstract class Endpoint
     /**
      * Set our endpoint by accessing it via a property.
      *
-     * @param  string $property
+     * @param string $property
+     *
      * @return $this
      */
     public function __get($property)
@@ -44,8 +46,9 @@ abstract class Endpoint
     /**
      * Handle dynamic method calls into the model.
      *
-     * @param  string  $method
-     * @param  array  $parameters
+     * @param string $method
+     * @param array  $parameters
+     *
      * @return mixed
      */
     public function __call($method, $parameters)

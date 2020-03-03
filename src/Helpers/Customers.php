@@ -5,14 +5,16 @@ namespace Dan\Shopify\Helpers;
 use Dan\Shopify\Exceptions\InvalidOrMissingEndpointException;
 
 /**
- * Class Customers
+ * Class Customers.
  */
 class Customers extends Endpoint
 {
     /**
      * @param string $endpoint
-     * @return $this|Endpoint
+     *
      * @throws InvalidOrMissingEndpointException
+     *
+     * @return $this|Endpoint
      */
     public function __get($endpoint)
     {

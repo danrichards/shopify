@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 /**
- * Class WebhookEvent
+ * Class WebhookEvent.
  */
 class WebhookEvent implements ShouldQueue
 {
@@ -22,7 +22,7 @@ class WebhookEvent implements ShouldQueue
      * Webhook constructor.
      *
      * @param string $topic
-     * @param array $data
+     * @param array  $data
      */
     public function __construct($topic, array $data = [])
     {

@@ -5,7 +5,7 @@ namespace Dan\Shopify\Models;
 use Carbon\Carbon;
 
 /**
- * Class Customer
+ * Class Customer.
  *
  * @property int $id
  * @property bool $accepts_marketing
@@ -54,11 +54,11 @@ class Customer extends AbstractModel
     /** @var array $casts */
     protected $casts = [
         'accepts_marketing' => 'bool',
-        'addresses' => 'array',
-        'default_address' => 'object',
-        'orders_count' => 'integer',
-        'tax_exempt' => 'bool',
-        'total_spent' => 'float',
-        'verified_email' => 'bool',
+        'addresses'         => 'array',
+        'default_address'   => 'object',
+        'orders_count'      => 'integer',
+        'tax_exempt'        => 'bool',
+        'total_spent'       => 'float',
+        'verified_email'    => 'bool',
     ];
 }

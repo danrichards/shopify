@@ -11,7 +11,7 @@ use JsonSerializable;
 use Serializable;
 
 /**
- * Class AbstractModel
+ * Class AbstractModel.
  *
  * An Eloquent approach to storing and manipulating data for the Shopify Api.
  */
@@ -66,7 +66,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     }
 
     /**
-     * @return integer|string|null
+     * @return int|string|null
      */
     public function getKey()
     {
@@ -87,11 +87,12 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
 
     /**
      * @param array $attributes
+     *
      * @return $this
      */
     public function fill($attributes)
     {
-        foreach($attributes as $key => $value) {
+        foreach ($attributes as $key => $value) {
             $this->setAttribute($key, $value);
         }
 
@@ -102,6 +103,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      * Sync the original attributes with the current.
      *
      * @param array $attributes
+     *
      * @return $this
      */
     public function syncOriginal($attributes = [])
@@ -124,7 +126,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Get an attribute from the model.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return mixed
      */
     public function getAttribute($key)
@@ -145,7 +148,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Get an attribute from the $attributes array.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return mixed
      */
     protected function getAttributeFromArray($key)
@@ -158,8 +162,9 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Get the model's original attribute values.
      *
-     * @param  string|null  $key
-     * @param  mixed  $default
+     * @param string|null $key
+     * @param mixed       $default
+     *
      * @return mixed|array
      */
     public function getOriginal($key = null, $default = null)
@@ -193,7 +198,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Determine if the new and old values for a given key are numerically equivalent.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return bool
      */
     protected function originalIsNumericallyEquivalent($key)
@@ -212,7 +218,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Get a plain attribute (not a relationship).
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return mixed
      */
     public function getAttributeValue($key)
@@ -246,7 +253,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Determine if a get mutator exists for an attribute.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return bool
      */
     public function hasGetMutator($key)
@@ -257,8 +265,9 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Get the value of an attribute using its mutator.
      *
-     * @param  string  $key
-     * @param  mixed  $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return mixed
      */
     protected function mutateAttribute($key, $value)
@@ -269,7 +278,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Determine if a set mutator exists for an attribute.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return bool
      */
     public function hasSetMutator($key)
@@ -280,8 +290,9 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Set a given attribute on the model.
      *
-     * @param  string  $key
-     * @param  mixed  $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return $this
      */
     public function setAttribute($key, $value)
@@ -291,6 +302,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
         // the model, such as "json_encoding" an listing of data for storage.
         if ($this->hasSetMutator($key)) {
             $method = 'set'.Util::studly($key).'Attribute';
+
             return $this->{$method}($value);
         }
 
@@ -309,8 +321,9 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Set the array of model attributes. No checking is done.
      *
-     * @param  array  $attributes
-     * @param  bool  $sync
+     * @param array $attributes
+     * @param bool  $sync
+     *
      * @return $this
      */
     public function setRawAttributes(array $attributes, $sync = false)
@@ -327,7 +340,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Return a timestamp as DateTime object.
      *
-     * @param  mixed  $value
+     * @param mixed $value
+     *
      * @return \Carbon\Carbon
      */
     protected function asDateTime($value)
@@ -373,7 +387,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Convert a DateTime to a storable string.
      *
-     * @param  \DateTime|int  $value
+     * @param \DateTime|int $value
+     *
      * @return string
      */
     public function fromDateTime($value)
@@ -386,7 +401,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Determine if the given value is a standard date format.
      *
-     * @param  string  $value
+     * @param string $value
+     *
      * @return bool
      */
     protected function isStandardDateFormat($value)
@@ -407,8 +423,9 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Cast an attribute to a native PHP type.
      *
-     * @param  string  $key
-     * @param  mixed  $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return mixed
      */
     protected function castAttribute($key, $value)
@@ -445,7 +462,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Get the type of cast for a model attribute.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return string
      */
     protected function getCastType($key)
@@ -498,7 +516,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     }
 
     /**
-     * The origin
+     * The origin.
      *
      * @return array
      */
@@ -516,7 +534,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Determine if the given attribute exists.
      *
-     * @param  mixed  $offset
+     * @param mixed $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)
@@ -527,7 +546,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Get the value for a given offset.
      *
-     * @param  mixed  $offset
+     * @param mixed $offset
+     *
      * @return mixed
      */
     public function offsetGet($offset)
@@ -538,8 +558,9 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Set the value for a given offset.
      *
-     * @param  mixed  $offset
-     * @param  mixed  $value
+     * @param mixed $offset
+     * @param mixed $value
+     *
      * @return void
      */
     public function offsetSet($offset, $value)
@@ -550,7 +571,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Unset the value for a given offset.
      *
-     * @param  mixed  $offset
+     * @param mixed $offset
+     *
      * @return void
      */
     public function offsetUnset($offset)
@@ -561,7 +583,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Dynamically retrieve attributes on the model.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return mixed
      */
     public function __get($key)
@@ -572,8 +595,9 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Dynamically set attributes on the model.
      *
-     * @param  string  $key
-     * @param  mixed  $value
+     * @param string $key
+     * @param mixed  $value
+     *
      * @return void
      */
     public function __set($key, $value)
@@ -584,7 +608,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Determine if an attribute or relation exists on the model.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return bool
      */
     public function __isset($key)
@@ -595,7 +620,8 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Unset an attribute on the model.
      *
-     * @param  string  $key
+     * @param string $key
+     *
      * @return void
      */
     public function __unset($key)
@@ -618,6 +644,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      * @param $prop
      * @param $value
      * @param bool $unset
+     *
      * @return $this
      */
     public function prop($attribute, $prop, $value, $unset = false)
@@ -636,11 +663,12 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     }
 
     /**
-     * Helper for pushing to an attribute that is an array
+     * Helper for pushing to an attribute that is an array.
      *
      * @param $attribute
      * @param $args
-     * @return integer
+     *
+     * @return int
      */
     public function push($attribute, ...$args)
     {
@@ -658,9 +686,10 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     }
 
     /**
-     * Helper for popping from an attribute that is an array
+     * Helper for popping from an attribute that is an array.
      *
      * @param $attribute
+     *
      * @return mixed|null
      */
     public function pop($attribute)
@@ -668,14 +697,16 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
         $arr = (array) $this->getAttribute($attribute);
         $value = array_pop($arr);
         $this->setAttribute($attribute, $arr);
+
         return $value;
     }
 
     /**
-     * Helper for unshifting to an attribute that is array
+     * Helper for unshifting to an attribute that is array.
      *
      * @param $attribute
      * @param $args
+     *
      * @return int
      */
     public function unshift($attribute, ...$args)
@@ -694,9 +725,10 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     }
 
     /**
-     * Helper for shifting from an attribute that is an array
+     * Helper for shifting from an attribute that is an array.
      *
      * @param $attribute
+     *
      * @return mixed|null
      */
     public function shift($attribute)

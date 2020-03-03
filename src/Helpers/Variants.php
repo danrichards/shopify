@@ -3,9 +3,8 @@
 namespace Dan\Shopify\Helpers;
 
 /**
- * Class Variants
+ * Class Variants.
  */
 class Variants extends Endpoint
 {
-
 }

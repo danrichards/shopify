@@ -3,7 +3,7 @@
 namespace Dan\Shopify\Models;
 
 /**
- * Class Asset
+ * Class Asset.
  *
  * @property string $public_url
  * @property string $content_type
@@ -44,12 +44,12 @@ class Asset extends AbstractModel
 
     /** @var array $casts */
     protected $casts = [
-        'key' => 'string',
-        'public_url' => 'string',
-        'value' => 'string',
+        'key'          => 'string',
+        'public_url'   => 'string',
+        'value'        => 'string',
         'content_type' => 'string',
-        'size' => 'integer',
-        'theme_id' => 'integer',
+        'size'         => 'integer',
+        'theme_id'     => 'integer',
     ];
 
     /**

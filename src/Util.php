@@ -5,7 +5,7 @@ namespace Dan\Shopify;
 use Dan\Shopify\Models\AbstractModel;
 
 /**
- * Class Util
+ * Class Util.
  */
 class Util
 {
@@ -33,8 +33,9 @@ class Util
     /**
      * Convert a string to snake case.
      *
-     * @param  string  $value
-     * @param  string  $delimiter
+     * @param string $value
+     * @param string $delimiter
+     *
      * @return string
      */
     public static function snake($value, $delimiter = '_')
@@ -57,7 +58,8 @@ class Util
     /**
      * Convert a value to camel case.
      *
-     * @param  string  $value
+     * @param string $value
+     *
      * @return string
      */
     public static function camel($value)
@@ -71,6 +73,7 @@ class Util
 
     /**
      * @param $value
+     *
      * @return mixed
      */
     public static function studly($value)
@@ -89,7 +92,8 @@ class Util
     /**
      * Convert the given string to lower-case.
      *
-     * @param  string  $value
+     * @param string $value
+     *
      * @return string
      */
     public static function lower($value)
@@ -100,8 +104,9 @@ class Util
     /**
      * Flatten a multi-dimensional array into a single level.
      *
-     * @param  array  $array
-     * @param  int  $depth
+     * @param array $array
+     * @param int   $depth
+     *
      * @return array
      */
     public static function flatten($array, $depth = INF)
@@ -121,6 +126,7 @@ class Util
      * @param string $hmac
      * @param string $token
      * @param string $data
+     *
      * @return bool
      */
     public static function validWebhookHmac($hmac, $token, $data)
@@ -139,6 +145,7 @@ class Util
      * @param $hmac
      * @param $secret
      * @param array $data
+     *
      * @return bool
      */
     public static function validAppHmac($hmac, $secret, array $data)
@@ -147,7 +154,7 @@ class Util
 
         $keys = array_keys($data);
         sort($keys);
-        foreach($keys as $key) {
+        foreach ($keys as $key) {
             $message[] = "{$key}={$data[$key]}";
         }
 
@@ -164,6 +171,7 @@ class Util
 
     /**
      * @param int|string|array|\stdClass|\Dan\Shopify\Models\AbstractModel $mixed
+     *
      * @return int|null
      */
     public static function getKeyFromMixed($mixed)
@@ -177,19 +185,21 @@ class Util
         } elseif ($mixed instanceof AbstractModel) {
             return $mixed->getKey();
         } else {
-            return null;
+            return;
         }
     }
 
     /**
      * @param string $myshopify_domain
+     *
      * @return string
      */
     public static function normalizeDomain($myshopify_domain)
     {
         $myshopify_domain = strtolower($myshopify_domain);
         $myshopify_domain = str_replace('.myshopify.com', '', $myshopify_domain);
-        return sprintf("%s.myshopify.com", $myshopify_domain);
+
+        return sprintf('%s.myshopify.com', $myshopify_domain);
     }
 
     /**

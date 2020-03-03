@@ -8,13 +8,16 @@ use Dan\Shopify\Exceptions\ModelNotFoundException;
 use Dan\Shopify\Models\AbstractModel;
 use Dan\Shopify\Models\Asset;
 use Dan\Shopify\Models\Customer;
+use Dan\Shopify\Models\DiscountCode;
 use Dan\Shopify\Models\Dispute;
 use Dan\Shopify\Models\Fulfillment;
 use Dan\Shopify\Models\FulfillmentService;
 use Dan\Shopify\Models\Image;
 use Dan\Shopify\Models\Order;
+use Dan\Shopify\Models\PriceRule;
 use Dan\Shopify\Models\Product;
 use Dan\Shopify\Models\Risk;
+use Dan\Shopify\Models\SmartCollection;
 use Dan\Shopify\Models\Theme;
 use Dan\Shopify\Models\Variant;
 use Dan\Shopify\Models\Webhook;
@@ -23,26 +26,32 @@ use GuzzleHttp\Exception\ClientException;
 use Log;
 
 /**
- * Class Shopify
+ * Class Shopify.
  *
  * @property \Dan\Shopify\Helpers\Assets $assets
  * @property \Dan\Shopify\Helpers\Customers $customers
+ * @property \Dan\Shopify\Helpers\DiscountCode $discount_codes
  * @property \Dan\Shopify\Helpers\Fulfillments $fulfillments
  * @property \Dan\Shopify\Helpers\FulfillmentServices $fulfillment_services
  * @property \Dan\Shopify\Helpers\Images $images
  * @property \Dan\Shopify\Helpers\Orders $orders
+ * @property \Dan\Shopify\Helpers\PriceRule $price_rules
  * @property \Dan\Shopify\Helpers\Products $products
+ * @property \Dan\Shopify\Helpers\SmartCollection $smart_collections
  * @property \Dan\Shopify\Helpers\Themes $themes
  * @property \Dan\Shopify\Helpers\Risks $risks
  * @property \Dan\Shopify\Helpers\Variants $variants
  * @property \Dan\Shopify\Helpers\Webhooks $webhooks
+ *
  * @method \Dan\Shopify\Helpers\Customers customers(string $customer_id)
  * @method \Dan\Shopify\Helpers\Fulfillments fulfillments(string $fulfillment_id)
  * @method \Dan\Shopify\Helpers\FulfillmentServices fulfillment_services(string $fulfillment_service_id)
  * @method \Dan\Shopify\Helpers\Images images(string $image_id)
  * @method \Dan\Shopify\Helpers\Orders orders(string $order_id)
+ * @method \Dan\Shopify\Helpers\PriceRule price_rules(string $price_rule_id)
  * @method \Dan\Shopify\Helpers\Products products(string $product_id)
  * @method \Dan\Shopify\Helpers\Risks risks(string $risk_id)
+ * @method \Dan\Shopify\Helpers\SmartCollection smart_collections(string $smart_collection_id)
  * @method \Dan\Shopify\Helpers\Themes themes(string $theme_id)
  * @method \Dan\Shopify\Helpers\Variants variants(string $variant_id)
  * @method \Dan\Shopify\Helpers\Webhooks webhooks(string $webhook_id)
@@ -111,9 +120,9 @@ class Shopify extends Client
     ];
 
     /**
-     * The current endpoint for the API. The default endpoint is /orders/
+     * The current endpoint for the API. The default endpoint is /orders/.
      *
-     * @var string $api
+     * @var string
      */
     public $api = 'orders';
 
@@ -121,9 +130,9 @@ class Shopify extends Client
     public $ids = [];
 
     /**
-     * Methods / Params queued for API call
+     * Methods / Params queued for API call.
      *
-     * @var array $queue
+     * @var array
      */
     public $queue = [];
 
@@ -133,37 +142,43 @@ class Shopify extends Client
     /**
      * Our list of valid Shopify endpoints.
      *
-     * @var array $endpoints
+     * @var array
      */
     protected static $endpoints = [
-        'assets' => 'themes/%s/assets.json',
-        'customers' => 'customers/%s.json',
-        'disputes' => 'shopify_payments/disputes/%s.json',
-        'fulfillments' => 'orders/%s/fulfillments/%s.json',
+        'assets'               => 'themes/%s/assets.json',
+        'customers'            => 'customers/%s.json',
+        'discount_codes'       => 'price_rules/%s/discount_codes/%s.json',
+        'disputes'             => 'shopify_payments/disputes/%s.json',
+        'fulfillments'         => 'orders/%s/fulfillments/%s.json',
         'fulfillment_services' => 'fulfillment_services/%s.json',
-        'images' => 'products/%s/images/%s.json',
-        'orders' => 'orders/%s.json',
-        'products' => 'products/%s.json',
-        'risks' => 'orders/%s/risks/%s.json',
-        'themes' => 'themes/%s.json',
-        'variants' => 'products/%s/variants/%s.json',
-        'webhooks' => 'webhooks/%s.json',
+        'images'               => 'products/%s/images/%s.json',
+        'orders'               => 'orders/%s.json',
+        'price_rules'          => 'price_rules/%s.json',
+        'products'             => 'products/%s.json',
+        'risks'                => 'orders/%s/risks/%s.json',
+        'smart_collections'    => 'smart_collections/%s.json',
+        'themes'               => 'themes/%s.json',
+        'variants'             => 'products/%s/variants/%s.json',
+        'webhooks'             => 'webhooks/%s.json',
     ];
 
-    /** @var array $resource_helpers */
+    /** @var array $resource_models */
     protected static $resource_models = [
-        'assets' => Asset::class,
-        'customers' => Customer::class,
-        'disputes' => Dispute::class,
-        'fulfillments' => Fulfillment::class,
+        'assets'               => Asset::class,
+        'customers'            => Customer::class,
+        'discount_codes'       => DiscountCode::class,
+        'disputes'             => Dispute::class,
+        'fulfillments'         => Fulfillment::class,
         'fulfillment_services' => FulfillmentService::class,
-        'images' => Image::class,
-        'orders' => Order::class,
-        'products' => Product::class,
-        'risks' => Risk::class,
-        'themes' => Theme::class,
-        'variants' => Variant::class,
-        'webhooks' => Webhook::class,
+        'images'               => Image::class,
+        'orders'               => Order::class,
+        'price_rules'          => PriceRule::class,
+        'products'             => Product::class,
+        'risks'                => Risk::class,
+        'smart_collections'    => SmartCollection::class,
+        'themes'               => Theme::class,
+        'variants'             => Variant::class,
+        'webhooks'             => Webhook::class,
     ];
 
     /**
@@ -174,8 +189,8 @@ class Shopify extends Client
      */
     public function __construct($shop, $token, $base = null)
     {
-        $base_uri = preg_replace("/(https:\/\/|http:\/\/)/", "", $shop);
-        $base_uri = rtrim($base_uri, "/");
+        $base_uri = preg_replace("/(https:\/\/|http:\/\/)/", '', $shop);
+        $base_uri = rtrim($base_uri, '/');
         $base_uri = str_replace('.myshopify.com', '', $base_uri);
         $base_uri = "https://{$base_uri}.myshopify.com";
 
@@ -185,15 +200,16 @@ class Shopify extends Client
             'base_uri' => $base_uri,
             'headers'  => [
                 'X-Shopify-Access-Token' => $token,
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json; charset=utf-8;'
-            ]
+                'Accept'                 => 'application/json',
+                'Content-Type'           => 'application/json; charset=utf-8;',
+            ],
         ]);
     }
 
     /**
      * @param string $shop
      * @param string $token
+     *
      * @return Shopify
      */
     public static function make($shop, $token)
@@ -204,10 +220,12 @@ class Shopify extends Client
     /**
      * Get a resource using the assigned endpoint ($this->endpoint).
      *
-     * @param array $query
+     * @param array  $query
      * @param string $append
-     * @return array
+     *
      * @throws InvalidOrMissingEndpointException
+     *
+     * @return array
      */
     public function get($query = [], $append = '')
     {
@@ -233,7 +251,7 @@ class Shopify extends Client
     }
 
     /**
-     * Get the shop resource
+     * Get the shop resource.
      *
      * @return array
      */
@@ -250,9 +268,11 @@ class Shopify extends Client
      * Post to a resource using the assigned endpoint ($this->api).
      *
      * @param array|AbstractModel $payload
-     * @param string $append
-     * @return array|AbstractModel
+     * @param string              $append
+     *
      * @throws InvalidOrMissingEndpointException
+     *
+     * @return array|AbstractModel
      */
     public function post($payload = [], $append = '')
     {
@@ -263,9 +283,11 @@ class Shopify extends Client
      * Update a resource using the assigned endpoint ($this->api).
      *
      * @param array|AbstractModel $payload
-     * @param string $append
-     * @return array|AbstractModel
+     * @param string              $append
+     *
      * @throws InvalidOrMissingEndpointException
+     *
+     * @return array|AbstractModel
      */
     public function put($payload = [], $append = '')
     {
@@ -274,11 +296,13 @@ class Shopify extends Client
 
     /**
      * @param $post_or_post
-     * @param array $payload
+     * @param array  $payload
      * @param string $append
-     * @return mixed
+     *
      * @throws InvalidOrMissingEndpointException
      * @throws \GuzzleHttp\Exception\GuzzleException
+     *
+     * @return mixed
      */
     private function post_or_put($post_or_post, $payload = [], $append = '')
     {
@@ -315,6 +339,7 @@ class Shopify extends Client
      * Delete a resource using the assigned endpoint ($this->api).
      *
      * @param array|string $query
+     *
      * @return array
      */
     public function delete($query = [])
@@ -330,8 +355,10 @@ class Shopify extends Client
 
     /**
      * @param $id
-     * @return AbstractModel|null
+     *
      * @throws ModelNotFoundException|InvalidOrMissingEndpointException
+     *
+     * @return AbstractModel|null
      */
     public function find($id)
     {
@@ -360,11 +387,13 @@ class Shopify extends Client
     }
 
     /**
-     * Return an array of models or Collection (if Laravel present)
+     * Return an array of models or Collection (if Laravel present).
      *
      * @param string|array $ids
-     * @return array|\Illuminate\Support\Collection
+     *
      * @throws InvalidOrMissingEndpointException
+     *
+     * @return array|\Illuminate\Support\Collection
      */
     public function findMany($ids)
     {
@@ -376,12 +405,14 @@ class Shopify extends Client
     }
 
     /**
-     * Shopify limits to 250 results
+     * Shopify limits to 250 results.
      *
-     * @param array $query
+     * @param array  $query
      * @param string $append
-     * @return array|\Illuminate\Support\Collection
+     *
      * @throws InvalidOrMissingEndpointException
+     *
+     * @return array|\Illuminate\Support\Collection
      */
     public function all($query = [], $append = '')
     {
@@ -394,7 +425,7 @@ class Shopify extends Client
                 $data = $data[$class::$resource_name_many];
             }
 
-            $data = array_map(function($arr) use ($class) {
+            $data = array_map(function ($arr) use ($class) {
                 return new $class($arr);
             }, $data);
 
@@ -408,8 +439,10 @@ class Shopify extends Client
      * Post to a resource using the assigned endpoint ($this->api).
      *
      * @param AbstractModel $model
-     * @return AbstractModel
+     *
      * @throws InvalidOrMissingEndpointException|\GuzzleHttp\Exception\GuzzleException
+     *
+     * @return AbstractModel
      */
     public function save(AbstractModel $model)
     {
@@ -437,6 +470,7 @@ class Shopify extends Client
 
     /**
      * @param AbstractModel $model
+     *
      * @return bool
      */
     public function destroy(AbstractModel $model)
@@ -451,10 +485,12 @@ class Shopify extends Client
     }
 
     /**
-     * @param array $query
+     * @param array       $query
      * @param string|null $id
-     * @return integer
+     *
      * @throws InvalidOrMissingEndpointException
+     *
+     * @return int
      */
     public function count($query = [])
     {
@@ -469,8 +505,10 @@ class Shopify extends Client
 
     /**
      * @param string $append
-     * @return string
+     *
      * @throws InvalidOrMissingEndpointException
+     *
+     * @return string
      */
     public function uri($append = '')
     {
@@ -492,6 +530,7 @@ class Shopify extends Client
 
     /**
      * @param string|null $base
+     *
      * @return $this
      */
     public function setBase($base = null)
@@ -511,11 +550,13 @@ class Shopify extends Client
 
     /**
      * @param string $api
-     * @param array $ids
-     * @param array $queue
+     * @param array  $ids
+     * @param array  $queue
      * @param string $append
-     * @return string
+     *
      * @throws InvalidOrMissingEndpointException
+     *
+     * @return string
      */
     private static function makeUri($api, $ids = [], $queue = [], $append = '', $base = 'admin')
     {
@@ -552,6 +593,7 @@ class Shopify extends Client
 
     /**
      * @param $payload
+     *
      * @return mixed
      */
     private function normalizePayload($payload)
@@ -562,7 +604,7 @@ class Shopify extends Client
 
         if (! isset($payload['id'])) {
             if ($count = count($args = array_filter($this->ids))) {
-                $last = $args[$count-1];
+                $last = $args[$count - 1];
                 if (is_numeric($last)) {
                     $payload['id'] = $last;
                 }
@@ -584,12 +626,14 @@ class Shopify extends Client
 
     /**
      * @param string $api
+     *
      * @return string
      */
     private static function apiCollectionProperty($api)
     {
         /** @var AbstractModel $model */
         $model = static::$resource_models[$api];
+
         return $model::$resource_name_many;
     }
 
@@ -603,12 +647,14 @@ class Shopify extends Client
 
     /**
      * @param string $api
+     *
      * @return string
      */
     private function apiEntityProperty($api)
     {
         /** @var AbstractModel $model */
         $model = static::$resource_models[$api];
+
         return $model::$resource_name;
     }
 
@@ -616,6 +662,7 @@ class Shopify extends Client
      * Set our endpoint by accessing it like a property.
      *
      * @param string $endpoint
+     *
      * @return $this
      */
     public function __get($endpoint)
@@ -624,7 +671,7 @@ class Shopify extends Client
             $this->api = $endpoint;
         }
 
-        $className = "Dan\Shopify\\Helpers\\" . Util::studly($endpoint);
+        $className = "Dan\Shopify\\Helpers\\".Util::studly($endpoint);
 
         if (class_exists($className)) {
             return new $className($this);
@@ -637,14 +684,17 @@ class Shopify extends Client
      * Set ids for one uri() call.
      *
      * @param string $method
-     * @param array $parameters
-     * @return $this
+     * @param array  $parameters
+     *
      * @throws BadMethodCallException
+     *
+     * @return $this
      */
     public function __call($method, $parameters)
     {
         if (array_key_exists($method, static::$endpoints)) {
             $this->ids = array_merge($this->ids, $parameters);
+
             return $this->__get($method);
         }
         $msg = sprintf('Method %s does not exist.', $method);
@@ -654,8 +704,10 @@ class Shopify extends Client
 
     /**
      * @param $responseStack
-     * @return Helpers\Testing\ShopifyMock
+     *
      * @throws \ReflectionException
+     *
+     * @return Helpers\Testing\ShopifyMock
      */
     public static function fake($responseStack = [])
     {
@@ -663,19 +715,22 @@ class Shopify extends Client
     }
 
     /**
-     * Wrapper to the $client->request method
+     * Wrapper to the $client->request method.
      *
      * @param string $method
      * @param string $uri
-     * @param array $options
-     * @return mixed|\Psr\Http\Message\ResponseInterface
+     * @param array  $options
+     *
      * @throws \GuzzleHttp\Exception\GuzzleException
+     *
+     * @return mixed|\Psr\Http\Message\ResponseInterface
      */
     public function request($method, $uri = '', array $options = [])
     {
-        if (env('SHOPIFY_OPTION_LOG_API_REQUEST') || config('shopify.options.log_api_request_data')){
+        if (env('SHOPIFY_OPTION_LOG_API_REQUEST') || config('shopify.options.log_api_request_data')) {
             Log::info('SHOPIFY API Request', compact('method', 'uri') + $options);
         }
+
         return parent::request($method, $uri, $options);
     }
 }
