@@ -3,6 +3,7 @@
 namespace Dan\Shopify;
 
 use Dan\Shopify\Models\AbstractModel;
+use GuzzleHttp\Client;
 
 /**
  * Class Util.
@@ -123,6 +124,21 @@ class Util
     }
 
     /**
+     * @param string $myshopify_domain
+     *
+     * @return string
+     */
+    public static function normalizeDomain($myshopify_domain)
+    {
+        $myshopify_domain = preg_replace("/(https:\/\/|http:\/\/)/", '', $myshopify_domain);
+        $myshopify_domain = rtrim($myshopify_domain, '/');
+        $myshopify_domain = strtolower($myshopify_domain);
+        $myshopify_domain = str_replace('.myshopify.com', '', $myshopify_domain);
+
+        return sprintf('%s.myshopify.com', $myshopify_domain);
+    }
+
+    /**
      * @param string $hmac
      * @param string $token
      * @param string $data
@@ -190,16 +206,68 @@ class Util
     }
 
     /**
-     * @param string $myshopify_domain
-     *
+     * @param string $client_id
+     * @param string $client_secret
+     * @param string $shop
+     * @param string $code
+     * @return string|false
+     */
+    public static function appAccessToken($client_id, $client_secret, $shop, $code, $verify = false)
+    {
+        $shop = static::normalizeDomain($shop);
+        $base_uri = "https://{$shop}/";
+
+        // By default, let's setup our main shopify shop.
+        $config = compact('base_uri') + [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json; charset=utf-8;'
+            ]
+        ];
+
+        $client = new Client($config);
+        $json = compact('client_id', 'client_secret', 'code');
+
+        $response = $client->post('admin/oauth/access_token', compact('json'));
+        $body = json_decode($response->getBody(), true);
+
+        return $body['access_token'] ?? false;
+    }
+
+    /**
+     * @param $shop
+     * @param $client_id
+     * @param $redirect_uri
+     * @param array $scopes
      * @return string
      */
-    public static function normalizeDomain($myshopify_domain)
+    public static function appAuthUrl($shop, $client_id, $redirect_uri, $scopes = [])
     {
-        $myshopify_domain = strtolower($myshopify_domain);
-        $myshopify_domain = str_replace('.myshopify.com', '', $myshopify_domain);
+        $shop = static::normalizeDomain($shop);
 
-        return sprintf('%s.myshopify.com', $myshopify_domain);
+        $url = [
+                'client_id' => config('services.shopify.app.key'),
+                'scope' => implode(',', (array) $scopes),
+                'redirect_uri' => config('services.shopify.app.redirect'),
+                'state' => md5($shop),
+                'grant_options[]' => '',
+                'nounce' => 'ok',
+            ] + compact('client_id', 'redirect_uri');
+
+        $url = "https://{$shop}/admin/oauth/authorize?".http_build_query($url);
+
+        return $url;
+    }
+
+    /**
+     * @param $hmac
+     * @param $secret
+     * @param $data
+     * @return bool
+     */
+    public static function appValidHmac($hmac, $secret, $data)
+    {
+        return static::validAppHmac($hmac, $secret, $data);
     }
 
     /**
