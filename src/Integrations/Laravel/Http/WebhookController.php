@@ -25,6 +25,9 @@ class WebhookController
         $class = config("shopify.webhooks.event_routing.{$topic}");
 
         switch (true) {
+            case $class === false:
+                //Do Nothing
+                break;
             case empty($class):
                 throw new BadMethodCallException("dan/shopify::event topic `{$topic}` class not configured.");
             case ! class_exists($class):
