@@ -36,11 +36,7 @@ abstract class Endpoint
      */
     public function __get($property)
     {
-        if (isset($this->$property)) {
-            return $this->$property;
-        }
-
-        return $this->client->__get($property);
+        return $this->$property ?? $this->client->__get($property);
     }
 
     /**
