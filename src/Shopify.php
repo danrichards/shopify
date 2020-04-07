@@ -130,6 +130,13 @@ class Shopify extends Client
      */
     public $api = 'orders';
 
+    /**
+     * The cursors for navigated current endpoint pages, if supported.
+     *
+     * @var array $cursors
+     */
+    protected $cursors = [];
+
     /** @var array $ids */
     public $ids = [];
 
@@ -185,6 +192,20 @@ class Shopify extends Client
         'webhooks'             => Webhook::class,
     ];
 
+    /** @var array $cursored_enpoints */
+    protected static $cursored_enpoints = [
+        'customers',
+        'discount_codes',
+        'disputes',
+        'fulfillments',
+        'orders',
+        'price_rules',
+        'products',
+        'smart_collections',
+        'variants',
+        'webhooks',
+    ];
+
     /**
      * Shopify constructor.
      *
@@ -234,11 +255,23 @@ class Shopify extends Client
     {
         $api = $this->api;
 
+        // Don't allow use of page query on cursored enpoints
+        if (isset($query['page']) && in_array($api, static::$cursored_enpoints, true)) {
+            Log::warning(__METHOD__ . ': Use of deprecated query parameter. Use cursor navigation instead.');
+            return [];
+        }
+
+        // Do request and store response in variable
         $response = $this->request(
             $method = 'GET',
             $uri = $this->uri($append),
             $options = ['query' => $query]
         );
+
+        // If response has Link header, parse it and set the cursors
+        if ($response->hasHeader('Link')) {
+            $this->cursors = static::parseLinkHeader($response->getHeader('Link'));
+        }
 
         $data = json_decode($response->getBody()->getContents(), true);
 
@@ -739,5 +772,24 @@ class Shopify extends Client
         }
 
         return parent::request($method, $uri, $options);
+    }
+
+    /**
+     * @param $linkHeader
+     *
+     * @return array
+     */
+    protected static function parseLinkHeader($linkHeader)
+    {
+        $cursors = [];
+
+        foreach (explode(',', $linkHeader) as $link) {
+            $data = explode(';', trim($link));
+            $page_info = str_replace('page_info=', '', preg_match('/page_info=[A-Za-z0-9]+/', $data[0]));
+            $rel = str_replace('rel=', '', trim($data[1]));
+            $cursors[$rel] = $page_info;
+        }
+
+        return $cursors;
     }
 }
