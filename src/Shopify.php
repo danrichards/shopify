@@ -242,7 +242,7 @@ class Shopify extends Client
 
         $data = json_decode($response->getBody()->getContents(), true);
 
-        return $data[static::apiCollectionProperty($api)] ?? $data[$this->apiEntityProperty($api)] ?? $data;
+        return $data[static::apiCollectionProperty($api)] ?? $data[static::apiEntityProperty($api)] ?? $data;
     }
 
     /**
@@ -320,8 +320,8 @@ class Shopify extends Client
 
         $data = json_decode($response->getBody()->getContents(), true);
 
-        if (isset($data[$this->apiEntityProperty($api)])) {
-            $data = $data[$this->apiEntityProperty($api)];
+        if (isset($data[static::apiEntityProperty($api)])) {
+            $data = $data[static::apiEntityProperty($api)];
 
             if ($payload instanceof AbstractModel) {
                 $payload->syncOriginal($data);
@@ -659,7 +659,7 @@ class Shopify extends Client
      *
      * @return string
      */
-    private function apiEntityProperty($api)
+    private static function apiEntityProperty($api)
     {
         /** @var AbstractModel $model */
         $model = static::$resource_models[$api];
