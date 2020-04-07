@@ -189,10 +189,8 @@ class Shopify extends Client
      */
     public function __construct($shop, $token, $base = null)
     {
-        $base_uri = preg_replace("/(https:\/\/|http:\/\/)/", '', $shop);
-        $base_uri = rtrim($base_uri, '/');
-        $base_uri = str_replace('.myshopify.com', '', $base_uri);
-        $base_uri = "https://{$base_uri}.myshopify.com";
+        $shop = Util::normalizeDomain($shop);
+        $base_uri = "https://{$shop}";
 
         $this->setBase($base);
 
