@@ -255,7 +255,7 @@ class Shopify extends Client
     {
         $api = $this->api;
 
-        // Don't allow use of page query on cursored enpoints
+        // Don't allow use of page query on cursored endpoints
         if (isset($query['page']) && in_array($api, static::$cursored_enpoints, true)) {
             Log::warning(__METHOD__ . ': Use of deprecated query parameter. Use cursor navigation instead.');
             return [];
@@ -276,6 +276,47 @@ class Shopify extends Client
         $data = json_decode($response->getBody()->getContents(), true);
 
         return $data[static::apiCollectionProperty($api)] ?? $data[static::apiEntityProperty($api)] ?? $data;
+    }
+
+    /**
+     * @param array $query
+     * @param string $append
+     *
+     * @return array|null
+     *
+     * @throws GuzzleException
+     * @throws InvalidOrMissingEndpointException
+     */
+    public function next($query = [], $append = '')
+    {
+        // Only allow use of next on cursored endpoints
+        if (in_array($this->api, static::$cursored_enpoints, true)) {
+            Log::warning(__METHOD__ . ': Use of cursored method on non-cursored endpoint.');
+            return [];
+        }
+
+        // Only limit key is allowed to exist with cursor based navigation
+        foreach (array_keys($query) as $key) {
+            if ($key !== 'limit') {
+                Log::warning(__METHOD__ . ': Use of unallowed query param with cursored navigation');
+                return [];
+            }
+        }
+
+        // If cursors haven't been set, then just call get normally.
+        if (empty($this->cursors)) {
+            return $this->get($query, $append);
+        }
+
+        // If cursors have been set and next hasn't been set, then return null.
+        if (empty($this->cursors['next'])) {
+            return null;
+        }
+
+        // If cursors have been set and next has been set, then return get with next.
+        $query['page_info'] = $this->cursors['next'];
+
+        return $this->get($query, $append);
     }
 
     /**
