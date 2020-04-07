@@ -23,7 +23,11 @@ use Dan\Shopify\Models\Variant;
 use Dan\Shopify\Models\Webhook;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Collection;
 use Log;
+use Psr\Http\Message\ResponseInterface;
+use ReflectionException;
 
 /**
  * Class Shopify.
@@ -218,12 +222,13 @@ class Shopify extends Client
     /**
      * Get a resource using the assigned endpoint ($this->endpoint).
      *
-     * @param array  $query
+     * @param array $query
      * @param string $append
      *
-     * @throws InvalidOrMissingEndpointException
-     *
      * @return array
+     * @throws GuzzleException
+     *
+     * @throws InvalidOrMissingEndpointException
      */
     public function get($query = [], $append = '')
     {
@@ -237,21 +242,14 @@ class Shopify extends Client
 
         $data = json_decode($response->getBody()->getContents(), true);
 
-        if (isset($data[static::apiCollectionProperty($api)])) {
-            return $data[static::apiCollectionProperty($api)];
-        }
-
-        if (isset($data[static::apiEntityProperty($api)])) {
-            return $data[static::apiEntityProperty($api)];
-        }
-
-        return $data;
+        return $data[static::apiCollectionProperty($api)] ?? $data[$this->apiEntityProperty($api)] ?? $data;
     }
 
     /**
      * Get the shop resource.
      *
      * @return array
+     * @throws GuzzleException
      */
     public function shop()
     {
@@ -266,11 +264,12 @@ class Shopify extends Client
      * Post to a resource using the assigned endpoint ($this->api).
      *
      * @param array|AbstractModel $payload
-     * @param string              $append
-     *
-     * @throws InvalidOrMissingEndpointException
+     * @param string $append
      *
      * @return array|AbstractModel
+     * @throws GuzzleException
+     *
+     * @throws InvalidOrMissingEndpointException
      */
     public function post($payload = [], $append = '')
     {
@@ -281,11 +280,12 @@ class Shopify extends Client
      * Update a resource using the assigned endpoint ($this->api).
      *
      * @param array|AbstractModel $payload
-     * @param string              $append
-     *
-     * @throws InvalidOrMissingEndpointException
+     * @param string $append
      *
      * @return array|AbstractModel
+     * @throws GuzzleException
+     *
+     * @throws InvalidOrMissingEndpointException
      */
     public function put($payload = [], $append = '')
     {
@@ -298,7 +298,7 @@ class Shopify extends Client
      * @param string $append
      *
      * @throws InvalidOrMissingEndpointException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      *
      * @return mixed
      */
@@ -320,8 +320,8 @@ class Shopify extends Client
 
         $data = json_decode($response->getBody()->getContents(), true);
 
-        if (isset($data[static::apiEntityProperty($api)])) {
-            $data = $data[static::apiEntityProperty($api)];
+        if (isset($data[$this->apiEntityProperty($api)])) {
+            $data = $data[$this->apiEntityProperty($api)];
 
             if ($payload instanceof AbstractModel) {
                 $payload->syncOriginal($data);
@@ -337,6 +337,9 @@ class Shopify extends Client
      * Delete a resource using the assigned endpoint ($this->api).
      *
      * @param array|string $query
+     *
+     * @throws GuzzleException
+     * @throws InvalidOrMissingEndpointException
      *
      * @return array
      */
@@ -354,7 +357,9 @@ class Shopify extends Client
     /**
      * @param $id
      *
-     * @throws ModelNotFoundException|InvalidOrMissingEndpointException
+     * @throws GuzzleException
+     * @throws InvalidOrMissingEndpointException
+     * @throws ModelNotFoundException
      *
      * @return AbstractModel|null
      */
@@ -389,9 +394,10 @@ class Shopify extends Client
      *
      * @param string|array $ids
      *
+     * @throws GuzzleException
      * @throws InvalidOrMissingEndpointException
      *
-     * @return array|\Illuminate\Support\Collection
+     * @return array|Collection
      */
     public function findMany($ids)
     {
@@ -405,12 +411,13 @@ class Shopify extends Client
     /**
      * Shopify limits to 250 results.
      *
-     * @param array  $query
+     * @param array $query
      * @param string $append
      *
+     * @throws GuzzleException
      * @throws InvalidOrMissingEndpointException
      *
-     * @return array|\Illuminate\Support\Collection
+     * @return array|Collection
      */
     public function all($query = [], $append = '')
     {
@@ -423,7 +430,7 @@ class Shopify extends Client
                 $data = $data[$class::$resource_name_many];
             }
 
-            $data = array_map(function ($arr) use ($class) {
+            $data = array_map(static function ($arr) use ($class) {
                 return new $class($arr);
             }, $data);
 
@@ -438,7 +445,8 @@ class Shopify extends Client
      *
      * @param AbstractModel $model
      *
-     * @throws InvalidOrMissingEndpointException|\GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
+     * @throws InvalidOrMissingEndpointException
      *
      * @return AbstractModel
      */
@@ -469,6 +477,9 @@ class Shopify extends Client
     /**
      * @param AbstractModel $model
      *
+     * @throws GuzzleException
+     * @throws InvalidOrMissingEndpointException
+     *
      * @return bool
      */
     public function destroy(AbstractModel $model)
@@ -483,9 +494,9 @@ class Shopify extends Client
     }
 
     /**
-     * @param array       $query
-     * @param string|null $id
+     * @param array $query
      *
+     * @throws GuzzleException
      * @throws InvalidOrMissingEndpointException
      *
      * @return int
@@ -703,7 +714,7 @@ class Shopify extends Client
     /**
      * @param $responseStack
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      *
      * @return Helpers\Testing\ShopifyMock
      */
@@ -719,9 +730,7 @@ class Shopify extends Client
      * @param string $uri
      * @param array  $options
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     *
-     * @return mixed|\Psr\Http\Message\ResponseInterface
+     * @return mixed|ResponseInterface
      */
     public function request($method, $uri = '', array $options = [])
     {
