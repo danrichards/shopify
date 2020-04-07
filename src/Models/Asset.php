@@ -2,6 +2,8 @@
 
 namespace Dan\Shopify\Models;
 
+use Carbon\Carbon;
+
 /**
  * Class Asset.
  *
@@ -10,8 +12,8 @@ namespace Dan\Shopify\Models;
  * @property int $size
  * @property int $theme_id
  * @property array $warnings
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Asset extends AbstractModel
 {
