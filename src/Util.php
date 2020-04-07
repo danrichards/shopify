@@ -221,8 +221,8 @@ class Util
         $config = compact('base_uri') + [
             'headers' => [
                 'Accept' => 'application/json',
-                'Content-Type' => 'application/json; charset=utf-8;'
-            ]
+                'Content-Type' => 'application/json; charset=utf-8;',
+            ],
         ];
 
         $client = new Client($config);
@@ -246,13 +246,13 @@ class Util
         $shop = static::normalizeDomain($shop);
 
         $url = [
-                'client_id' => config('services.shopify.app.key'),
-                'scope' => implode(',', (array) $scopes),
-                'redirect_uri' => config('services.shopify.app.redirect'),
-                'state' => md5($shop),
-                'grant_options[]' => '',
-                'nounce' => 'ok',
-            ] + compact('client_id', 'redirect_uri');
+            'client_id' => config('services.shopify.app.key'),
+            'scope' => implode(',', (array) $scopes),
+            'redirect_uri' => config('services.shopify.app.redirect'),
+            'state' => md5($shop),
+            'grant_options[]' => '',
+            'nounce' => 'ok',
+        ] + compact('client_id', 'redirect_uri');
 
         $url = "https://{$shop}/admin/oauth/authorize?".http_build_query($url);
 
