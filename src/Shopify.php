@@ -130,12 +130,15 @@ class Shopify extends Client
      */
     public $api = 'orders';
 
+    /** @var string API_VERSION */
+    public const API_VERSION = '2019-10';
+
     /**
-     * The cursors for navigated current endpoint pages, if supported.
+     * The cursors for navigating current endpoint pages, if supported.
      *
      * @var array $cursors
      */
-    protected $cursors = [];
+    public $cursors = [];
 
     /** @var array $ids */
     public $ids = [];
@@ -270,7 +273,7 @@ class Shopify extends Client
 
         // If response has Link header, parse it and set the cursors
         if ($response->hasHeader('Link')) {
-            $this->cursors = static::parseLinkHeader($response->getHeader('Link'));
+            $this->cursors = static::parseLinkHeader($response->getHeader('Link')[0]);
         }
 
         $data = json_decode($response->getBody()->getContents(), true);
@@ -290,7 +293,7 @@ class Shopify extends Client
     public function next($query = [], $append = '')
     {
         // Only allow use of next on cursored endpoints
-        if (in_array($this->api, static::$cursored_enpoints, true)) {
+        if (! in_array($this->api, static::$cursored_enpoints, true)) {
             Log::warning(__METHOD__ . ': Use of cursored method on non-cursored endpoint.');
             return [];
         }
@@ -647,11 +650,11 @@ class Shopify extends Client
         if (substr_count(static::$endpoints[$api], '%') == count($ids)) {
             $endpoint = vsprintf(static::$endpoints[$api], $ids);
 
-        // Is it a collection endpoint?
+            // Is it a collection endpoint?
         } elseif (substr_count(static::$endpoints[$api], '%') == (count($ids) + 1)) {
             $endpoint = vsprintf(str_replace('/%s.json', '.json', static::$endpoints[$api]), $ids);
 
-        // Is it just plain wrong?
+            // Is it just plain wrong?
         } else {
             $msg = sprintf('You did not specify enough ids for endpoint `%s`, ids(%s).',
                 static::$endpoints[$api],
@@ -665,7 +668,7 @@ class Shopify extends Client
             $endpoint = implode('/', array_filter($parent)).'/'.$endpoint;
         }
 
-        $endpoint = '/'.$base.'/'.$endpoint;
+        $endpoint = '/'.$base.'/api/'.static::API_VERSION.'/'.$endpoint;
 
         if ($append) {
             $endpoint = str_replace('.json', '/'.$append.'.json', $endpoint);
@@ -826,9 +829,12 @@ class Shopify extends Client
 
         foreach (explode(',', $linkHeader) as $link) {
             $data = explode(';', trim($link));
-            $page_info = str_replace('page_info=', '', preg_match('/page_info=[A-Za-z0-9]+/', $data[0]));
-            $rel = str_replace('rel=', '', trim($data[1]));
-            $cursors[$rel] = $page_info;
+            $matches = [];
+            if (preg_match('/page_info=[A-Za-z0-9]+/', $data[0], $matches)) {
+                $page_info = str_replace('page_info=', '', $matches[0]);
+                $rel = str_replace('"', '', str_replace('rel=', '', trim($data[1])));
+                $cursors[$rel] = $page_info;
+            }
         }
 
         return $cursors;
