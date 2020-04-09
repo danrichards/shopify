@@ -300,6 +300,11 @@ class Shopify extends Client
             return [];
         }
 
+        // If cursors haven't been set, then just call get normally.
+        if (empty($this->cursors)) {
+            return $this->get($query, $append);
+        }
+
         // Only limit key is allowed to exist with cursor based navigation
         foreach (array_keys($query) as $key) {
             if ($key !== 'limit') {
@@ -307,11 +312,6 @@ class Shopify extends Client
 
                 return [];
             }
-        }
-
-        // If cursors haven't been set, then just call get normally.
-        if (empty($this->cursors)) {
-            return $this->get($query, $append);
         }
 
         // If cursors have been set and next hasn't been set, then return null.
@@ -653,11 +653,11 @@ class Shopify extends Client
         if (substr_count(static::$endpoints[$api], '%') == count($ids)) {
             $endpoint = vsprintf(static::$endpoints[$api], $ids);
 
-        // Is it a collection endpoint?
+            // Is it a collection endpoint?
         } elseif (substr_count(static::$endpoints[$api], '%') == (count($ids) + 1)) {
             $endpoint = vsprintf(str_replace('/%s.json', '.json', static::$endpoints[$api]), $ids);
 
-        // Is it just plain wrong?
+            // Is it just plain wrong?
         } else {
             $msg = sprintf('You did not specify enough ids for endpoint `%s`, ids(%s).',
                 static::$endpoints[$api],
