@@ -210,9 +210,9 @@ class Util
      * @param string $client_secret
      * @param string $shop
      * @param string $code
-     * @return string|false
+     * @return array
      */
-    public static function appAccessToken($client_id, $client_secret, $shop, $code, $verify = false)
+    public static function appAccessRequest($client_id, $client_secret, $shop, $code)
     {
         $shop = static::normalizeDomain($shop);
         $base_uri = "https://{$shop}/";
@@ -230,6 +230,20 @@ class Util
 
         $response = $client->post('admin/oauth/access_token', compact('json'));
         $body = json_decode($response->getBody(), true);
+
+        return $body ?? [];
+    }
+
+    /**
+     * @param string $client_id
+     * @param string $client_secret
+     * @param string $shop
+     * @param string $code
+     * @return string|false
+     */
+    public static function appAccessToken($client_id, $client_secret, $shop, $code)
+    {
+        $body = static::appAccessRequest($client_id, $client_secret, $shop, $code);
 
         return $body['access_token'] ?? false;
     }
