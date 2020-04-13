@@ -316,7 +316,7 @@ class Shopify extends Client
 
         // If cursors have been set and next hasn't been set, then return null.
         if (empty($this->cursors['next'])) {
-            return null;
+            return [];
         }
 
         // If cursors have been set and next has been set, then return get with next.
