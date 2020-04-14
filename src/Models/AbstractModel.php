@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Dan\Shopify\Util;
 use DateTime;
 use DateTimeInterface;
+use Exception;
 use JsonSerializable;
 use Serializable;
 
@@ -70,9 +71,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      */
     public function getKey()
     {
-        return isset($this->original[static::$identifier])
-            ? $this->original[static::$identifier]
-            : null;
+        return $this->original[static::$identifier] ?? null;
     }
 
     /**
@@ -169,9 +168,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      */
     public function getOriginal($key = null, $default = null)
     {
-        return isset($this->original[$key])
-            ? $this->original[$key]
-            : $default;
+        return $this->original[$key] ?? $default;
     }
 
     /**
@@ -342,7 +339,9 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      *
      * @param mixed $value
      *
-     * @return \Carbon\Carbon
+     * @throws Exception
+     *
+     * @return Carbon
      */
     protected function asDateTime($value)
     {
@@ -387,7 +386,9 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * Convert a DateTime to a storable string.
      *
-     * @param \DateTime|int $value
+     * @param DateTime|int $value
+     *
+     * @throws Exception
      *
      * @return string
      */
@@ -424,7 +425,9 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      * Cast an attribute to a native PHP type.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
+     *
+     * @throws Exception
      *
      * @return mixed
      */
@@ -469,7 +472,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     protected function getCastType($key)
     {
         return isset($this->casts[$key])
-            ? trim(strtolower($this->casts[$key]))
+            ? strtolower(trim($this->casts[$key]))
             : null;
     }
 
@@ -480,7 +483,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      *
      * Be sure to call syncOriginal
      *
-     * @return string
+     * @return array
      */
     public function getPayload()
     {

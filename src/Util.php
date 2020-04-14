@@ -221,8 +221,8 @@ class Util
         $config = compact('base_uri') + [
             'headers' => [
                 'Accept' => 'application/json',
-                'Content-Type' => 'application/json; charset=utf-8;'
-            ]
+                'Content-Type' => 'application/json; charset=utf-8;',
+            ],
         ];
 
         $client = new Client($config);

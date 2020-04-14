@@ -23,7 +23,11 @@ use Dan\Shopify\Models\Variant;
 use Dan\Shopify\Models\Webhook;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Collection;
 use Log;
+use Psr\Http\Message\ResponseInterface;
+use ReflectionException;
 
 /**
  * Class Shopify.
@@ -126,6 +130,16 @@ class Shopify extends Client
      */
     public $api = 'orders';
 
+    /** @var string API_VERSION */
+    public const API_VERSION = '2019-10';
+
+    /**
+     * The cursors for navigating current endpoint pages, if supported.
+     *
+     * @var array $cursors
+     */
+    public $cursors = [];
+
     /** @var array $ids */
     public $ids = [];
 
@@ -181,6 +195,20 @@ class Shopify extends Client
         'webhooks'             => Webhook::class,
     ];
 
+    /** @var array $cursored_enpoints */
+    protected static $cursored_enpoints = [
+        'customers',
+        'discount_codes',
+        'disputes',
+        'fulfillments',
+        'orders',
+        'price_rules',
+        'products',
+        'smart_collections',
+        'variants',
+        'webhooks',
+    ];
+
     /**
      * Shopify constructor.
      *
@@ -218,40 +246,96 @@ class Shopify extends Client
     /**
      * Get a resource using the assigned endpoint ($this->endpoint).
      *
-     * @param array  $query
+     * @param array $query
      * @param string $append
      *
-     * @throws InvalidOrMissingEndpointException
-     *
      * @return array
+     * @throws GuzzleException
+     *
+     * @throws InvalidOrMissingEndpointException
      */
     public function get($query = [], $append = '')
     {
         $api = $this->api;
 
+        // Don't allow use of page query on cursored endpoints
+        if (isset($query['page']) && in_array($api, static::$cursored_enpoints, true)) {
+            if (Util::isLaravel()) {
+                Log::warning(__METHOD__.': Use of deprecated query parameter. Use cursor navigation instead.');
+            }
+
+            return [];
+        }
+
+        // Do request and store response in variable
         $response = $this->request(
             $method = 'GET',
             $uri = $this->uri($append),
             $options = ['query' => $query]
         );
 
+        // If response has Link header, parse it and set the cursors
+        if ($response->hasHeader('Link')) {
+            $this->cursors = static::parseLinkHeader($response->getHeader('Link')[0]);
+        }
+
         $data = json_decode($response->getBody()->getContents(), true);
 
-        if (isset($data[static::apiCollectionProperty($api)])) {
-            return $data[static::apiCollectionProperty($api)];
+        return $data[static::apiCollectionProperty($api)] ?? $data[static::apiEntityProperty($api)] ?? $data;
+    }
+
+    /**
+     * @param array $query
+     * @param string $append
+     *
+     * @return array|null
+     *
+     * @throws GuzzleException
+     * @throws InvalidOrMissingEndpointException
+     */
+    public function next($query = [], $append = '')
+    {
+        // Only allow use of next on cursored endpoints
+        if (! in_array($this->api, static::$cursored_enpoints, true)) {
+            if (Util::isLaravel()) {
+                Log::warning(__METHOD__.': Use of cursored method on non-cursored endpoint.');
+            }
+
+            return [];
         }
 
-        if (isset($data[static::apiEntityProperty($api)])) {
-            return $data[static::apiEntityProperty($api)];
+        // If cursors haven't been set, then just call get normally.
+        if (empty($this->cursors)) {
+            return $this->get($query, $append);
         }
 
-        return $data;
+        // Only limit key is allowed to exist with cursor based navigation
+        foreach (array_keys($query) as $key) {
+            if ($key !== 'limit') {
+                if (Util::isLaravel()) {
+                    Log::warning(__METHOD__.': Use of unallowed query param with cursored navigation');
+                }
+
+                return [];
+            }
+        }
+
+        // If cursors have been set and next hasn't been set, then return null.
+        if (empty($this->cursors['next'])) {
+            return [];
+        }
+
+        // If cursors have been set and next has been set, then return get with next.
+        $query['page_info'] = $this->cursors['next'];
+
+        return $this->get($query, $append);
     }
 
     /**
      * Get the shop resource.
      *
      * @return array
+     * @throws GuzzleException
      */
     public function shop()
     {
@@ -266,11 +350,12 @@ class Shopify extends Client
      * Post to a resource using the assigned endpoint ($this->api).
      *
      * @param array|AbstractModel $payload
-     * @param string              $append
-     *
-     * @throws InvalidOrMissingEndpointException
+     * @param string $append
      *
      * @return array|AbstractModel
+     * @throws GuzzleException
+     *
+     * @throws InvalidOrMissingEndpointException
      */
     public function post($payload = [], $append = '')
     {
@@ -281,11 +366,12 @@ class Shopify extends Client
      * Update a resource using the assigned endpoint ($this->api).
      *
      * @param array|AbstractModel $payload
-     * @param string              $append
-     *
-     * @throws InvalidOrMissingEndpointException
+     * @param string $append
      *
      * @return array|AbstractModel
+     * @throws GuzzleException
+     *
+     * @throws InvalidOrMissingEndpointException
      */
     public function put($payload = [], $append = '')
     {
@@ -298,7 +384,7 @@ class Shopify extends Client
      * @param string $append
      *
      * @throws InvalidOrMissingEndpointException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      *
      * @return mixed
      */
@@ -338,6 +424,9 @@ class Shopify extends Client
      *
      * @param array|string $query
      *
+     * @throws GuzzleException
+     * @throws InvalidOrMissingEndpointException
+     *
      * @return array
      */
     public function delete($query = [])
@@ -354,7 +443,9 @@ class Shopify extends Client
     /**
      * @param $id
      *
-     * @throws ModelNotFoundException|InvalidOrMissingEndpointException
+     * @throws GuzzleException
+     * @throws InvalidOrMissingEndpointException
+     * @throws ModelNotFoundException
      *
      * @return AbstractModel|null
      */
@@ -389,9 +480,10 @@ class Shopify extends Client
      *
      * @param string|array $ids
      *
+     * @throws GuzzleException
      * @throws InvalidOrMissingEndpointException
      *
-     * @return array|\Illuminate\Support\Collection
+     * @return array|Collection
      */
     public function findMany($ids)
     {
@@ -405,12 +497,13 @@ class Shopify extends Client
     /**
      * Shopify limits to 250 results.
      *
-     * @param array  $query
+     * @param array $query
      * @param string $append
      *
+     * @throws GuzzleException
      * @throws InvalidOrMissingEndpointException
      *
-     * @return array|\Illuminate\Support\Collection
+     * @return array|Collection
      */
     public function all($query = [], $append = '')
     {
@@ -423,7 +516,7 @@ class Shopify extends Client
                 $data = $data[$class::$resource_name_many];
             }
 
-            $data = array_map(function ($arr) use ($class) {
+            $data = array_map(static function ($arr) use ($class) {
                 return new $class($arr);
             }, $data);
 
@@ -438,7 +531,8 @@ class Shopify extends Client
      *
      * @param AbstractModel $model
      *
-     * @throws InvalidOrMissingEndpointException|\GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
+     * @throws InvalidOrMissingEndpointException
      *
      * @return AbstractModel
      */
@@ -469,6 +563,9 @@ class Shopify extends Client
     /**
      * @param AbstractModel $model
      *
+     * @throws GuzzleException
+     * @throws InvalidOrMissingEndpointException
+     *
      * @return bool
      */
     public function destroy(AbstractModel $model)
@@ -483,9 +580,9 @@ class Shopify extends Client
     }
 
     /**
-     * @param array       $query
-     * @param string|null $id
+     * @param array $query
      *
+     * @throws GuzzleException
      * @throws InvalidOrMissingEndpointException
      *
      * @return int
@@ -580,7 +677,9 @@ class Shopify extends Client
             $endpoint = implode('/', array_filter($parent)).'/'.$endpoint;
         }
 
-        $endpoint = '/'.$base.'/'.$endpoint;
+        $endpoint = Util::isLaravel()
+            ? "/$base/api/".config('shopify.api_version', static::API_VERSION)."/{$endpoint}"
+            : "/$base/api/".static::API_VERSION."/$endpoint";
 
         if ($append) {
             $endpoint = str_replace('.json', '/'.$append.'.json', $endpoint);
@@ -648,7 +747,7 @@ class Shopify extends Client
      *
      * @return string
      */
-    private function apiEntityProperty($api)
+    private static function apiEntityProperty($api)
     {
         /** @var AbstractModel $model */
         $model = static::$resource_models[$api];
@@ -703,7 +802,7 @@ class Shopify extends Client
     /**
      * @param $responseStack
      *
-     * @throws \ReflectionException
+     * @throws ReflectionException
      *
      * @return Helpers\Testing\ShopifyMock
      */
@@ -719,9 +818,7 @@ class Shopify extends Client
      * @param string $uri
      * @param array  $options
      *
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     *
-     * @return mixed|\Psr\Http\Message\ResponseInterface
+     * @return mixed|ResponseInterface
      */
     public function request($method, $uri = '', array $options = [])
     {
@@ -730,5 +827,27 @@ class Shopify extends Client
         }
 
         return parent::request($method, $uri, $options);
+    }
+
+    /**
+     * @param $linkHeader
+     *
+     * @return array
+     */
+    protected static function parseLinkHeader($linkHeader)
+    {
+        $cursors = [];
+
+        foreach (explode(',', $linkHeader) as $link) {
+            $data = explode(';', trim($link));
+            $matches = [];
+            if (preg_match('/page_info=[A-Za-z0-9]+/', $data[0], $matches)) {
+                $page_info = str_replace('page_info=', '', $matches[0]);
+                $rel = str_replace('"', '', str_replace('rel=', '', trim($data[1])));
+                $cursors[$rel] = $page_info;
+            }
+        }
+
+        return $cursors;
     }
 }
