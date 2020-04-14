@@ -677,7 +677,9 @@ class Shopify extends Client
             $endpoint = implode('/', array_filter($parent)).'/'.$endpoint;
         }
 
-        $endpoint = '/'.$base.'/api/'.static::API_VERSION.'/'.$endpoint;
+        $endpoint = Util::isLaravel()
+            ? "/$base/api/".config('shopify.api_version', static::API_VERSION)."/{$endpoint}"
+            : "/$base/api/".static::API_VERSION."/$endpoint";
 
         if ($append) {
             $endpoint = str_replace('.json', '/'.$append.'.json', $endpoint);

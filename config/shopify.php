@@ -18,6 +18,13 @@ return [
     'api_base'    => env('SHOPIFY_API_BASE', 'admin'),
 
     /*
+     * API Version
+     *
+     * Which version of the shopify api to use.
+     */
+    'api_version' => env('SHOPIFY_API_VERSION', '2019-10'),
+
+    /*
     |--------------------------------------------------------------------------
     | Shopify Shop
     |--------------------------------------------------------------------------
