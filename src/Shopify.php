@@ -260,7 +260,9 @@ class Shopify extends Client
 
         // Don't allow use of page query on cursored endpoints
         if (isset($query['page']) && in_array($api, static::$cursored_enpoints, true)) {
-            Log::warning(__METHOD__.': Use of deprecated query parameter. Use cursor navigation instead.');
+            if (Util::isLaravel()) {
+                Log::warning(__METHOD__.': Use of deprecated query parameter. Use cursor navigation instead.');
+            }
 
             return [];
         }
@@ -295,7 +297,9 @@ class Shopify extends Client
     {
         // Only allow use of next on cursored endpoints
         if (! in_array($this->api, static::$cursored_enpoints, true)) {
-            Log::warning(__METHOD__.': Use of cursored method on non-cursored endpoint.');
+            if (Util::isLaravel()) {
+                Log::warning(__METHOD__.': Use of cursored method on non-cursored endpoint.');
+            }
 
             return [];
         }
@@ -308,7 +312,9 @@ class Shopify extends Client
         // Only limit key is allowed to exist with cursor based navigation
         foreach (array_keys($query) as $key) {
             if ($key !== 'limit') {
-                Log::warning(__METHOD__.': Use of unallowed query param with cursored navigation');
+                if (Util::isLaravel()) {
+                    Log::warning(__METHOD__.': Use of unallowed query param with cursored navigation');
+                }
 
                 return [];
             }
