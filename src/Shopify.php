@@ -25,7 +25,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
-use Log;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionException;
 
@@ -129,9 +128,6 @@ class Shopify extends Client
      * @var string
      */
     public $api = 'orders';
-
-    /** @var string API_VERSION */
-    public const API_VERSION = '2019-10';
 
     /**
      * The cursors for navigating current endpoint pages, if supported.
@@ -260,9 +256,8 @@ class Shopify extends Client
 
         // Don't allow use of page query on cursored endpoints
         if (isset($query['page']) && in_array($api, static::$cursored_enpoints, true)) {
-            if (Util::isLaravel()) {
-                Log::warning(__METHOD__.': Use of deprecated query parameter. Use cursor navigation instead.');
-            }
+            Util::isLaravel() && \Log::warning('vendor:dan:shopify:get', ['Use of deprecated query parameter. Use cursor navigation instead.']);
+
 
             return [];
         }
@@ -297,9 +292,7 @@ class Shopify extends Client
     {
         // Only allow use of next on cursored endpoints
         if (! in_array($this->api, static::$cursored_enpoints, true)) {
-            if (Util::isLaravel()) {
-                Log::warning(__METHOD__.': Use of cursored method on non-cursored endpoint.');
-            }
+            Util::isLaravel() && \Log::warning('vendor:dan:shopify:get', ['Use of cursored method on non-cursored endpoint.']);
 
             return [];
         }
@@ -312,10 +305,8 @@ class Shopify extends Client
         // Only limit key is allowed to exist with cursor based navigation
         foreach (array_keys($query) as $key) {
             if ($key !== 'limit') {
-                if (Util::isLaravel()) {
-                    Log::warning(__METHOD__.': Use of unallowed query param with cursored navigation');
-                }
-
+                Util::isLaravel() && \Log::warning('vendor:dan:shopify:get', ['Limit param is not allowed with cursored queries.']);
+                
                 return [];
             }
         }
@@ -633,7 +624,7 @@ class Shopify extends Client
         if (is_null($base)) {
             $this->base = defined('LARAVEL_START')
                 ? config('shopify.api_base', 'admin')
-                : $this->base = 'admin';
+                : 'admin';
 
             return $this;
         }
@@ -655,6 +646,12 @@ class Shopify extends Client
      */
     private static function makeUri($api, $ids = [], $queue = [], $append = '', $base = 'admin')
     {
+        $base = 'admin';
+
+        if (Util::isLaravel() && $base === 'admin') {
+            $base = config('shopify.api_base', 'admin');
+        }
+
         // Is it an entity endpoint?
         if (substr_count(static::$endpoints[$api], '%') == count($ids)) {
             $endpoint = vsprintf(static::$endpoints[$api], $ids);
@@ -677,9 +674,7 @@ class Shopify extends Client
             $endpoint = implode('/', array_filter($parent)).'/'.$endpoint;
         }
 
-        $endpoint = Util::isLaravel()
-            ? "/$base/api/".config('shopify.api_version', static::API_VERSION)."/{$endpoint}"
-            : "/$base/api/".static::API_VERSION."/$endpoint";
+        $endpoint = "/{$base}/{$endpoint}";
 
         if ($append) {
             $endpoint = str_replace('.json', '/'.$append.'.json', $endpoint);
@@ -822,8 +817,8 @@ class Shopify extends Client
      */
     public function request($method, $uri = '', array $options = [])
     {
-        if (env('SHOPIFY_OPTION_LOG_API_REQUEST') || config('shopify.options.log_api_request_data')) {
-            Log::info('SHOPIFY API Request', compact('method', 'uri') + $options);
+        if (Util::isLaravel() && config('shopify.options.log_api_request_data')) {
+            \Log::info('vendor:dan:shopify:api', compact('method', 'uri') + $options);
         }
 
         return parent::request($method, $uri, $options);
