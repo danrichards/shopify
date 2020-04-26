@@ -639,6 +639,7 @@ class Shopify extends Client
      * @param array  $ids
      * @param array  $queue
      * @param string $append
+     * @param string $base
      *
      * @throws InvalidOrMissingEndpointException
      *
@@ -646,7 +647,7 @@ class Shopify extends Client
      */
     private static function makeUri($api, $ids = [], $queue = [], $append = '', $base = 'admin')
     {
-        $base = 'admin';
+        $base = $base ?: 'admin';
 
         if (Util::isLaravel() && $base === 'admin') {
             $base = config('shopify.api_base', 'admin');
