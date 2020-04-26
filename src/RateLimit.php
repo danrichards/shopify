@@ -92,11 +92,11 @@ class RateLimit implements JsonSerializable
     public function remaining(callable $remaining = null, callable $exceeded = null)
     {
         $state = ($this->cap - $this->calls) > 0;
-        
+
         if ($state && $remaining) {
             return $remaining($this);
         }
-        
+
         if (! $state && $exceeded) {
             return $exceeded($this);
         }
@@ -107,18 +107,19 @@ class RateLimit implements JsonSerializable
     /**
      * @param callable $retry
      * @param callable $continue
-     * 
+     *
      * @return int
      */
     public function retryAfter(callable $retry = null, callable $continue = null)
     {
         $state = $this->retry_after;
-        
+
         if ($state && $retry) {
+            sleep($state);
             return $retry($this);
         }
-        
-        if (! $state && $continue_with) {
+
+        if (! $state && $continue) {
             return $continue($this);
         }
 
@@ -126,6 +127,8 @@ class RateLimit implements JsonSerializable
     }
 
     /**
+     * @param mixed $on_this
+     *
      * @return static|Shopify|mixed
      */
     public function wait($on_this = null)

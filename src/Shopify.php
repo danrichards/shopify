@@ -25,6 +25,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionException;
 
@@ -148,6 +149,15 @@ class Shopify extends Client
 
     /** @var string $base */
     protected $base = 'admin';
+
+    /** @var array $last_headers */
+    protected $last_headers;
+
+    /** @var MessageInterface $last_response */
+    protected $last_response;
+
+    /** @var RateLimit $rate_limit */
+    protected $rate_limit;
 
     /**
      * Our list of valid Shopify endpoints.
@@ -822,7 +832,62 @@ class Shopify extends Client
             \Log::info('vendor:dan:shopify:api', compact('method', 'uri') + $options);
         }
 
-        return parent::request($method, $uri, $options);
+        $this->last_response = $r = parent::request($method, $uri, $options);
+        $this->last_headers = $r->getHeaders();
+        $this->rate_limit = new RateLimit($r);
+
+        return $r;
+    }
+
+    /**
+     * @param callable $request
+     *
+     * @return array
+     */
+    public function rateLimited(callable $request)
+    {
+        try {
+            return $request($this);
+        } catch (ClientException $ce) {
+            if ($ce->getResponse()->getStatusCode() == 429) {
+                return $this->rateLimited($request);
+            } else {
+                throw $ce;
+            }
+        }
+    }
+
+    /**
+     * @param bool $fetch_if_empty
+     *
+     * @return RateLimit
+     *
+     * @throws GuzzleException
+     */
+    public function rateLimit($fetch_if_empty = true)
+    {
+        if ($fetch_if_empty && empty($this->rate_limit)) {
+            $this->shop();
+        }
+
+        return $this->rate_limit = $this->rate_limit
+            ?: new RateLimit($this->lastResponse());
+    }
+
+    /**
+     * @return array
+     */
+    protected function lastHeaders()
+    {
+        return $this->last_headers;
+    }
+
+    /**
+     * @return MessageInterface
+     */
+    protected function lastResponse()
+    {
+        return $this->last_response;
     }
 
     /**
