@@ -622,7 +622,7 @@ class Shopify extends Client
     public function setBase($base = null)
     {
         if (is_null($base)) {
-            $this->base = defined('LARAVEL_START')
+            $this->base = Util::isLaravel()
                 ? config('shopify.api_base', 'admin')
                 : 'admin';
 
