@@ -25,7 +25,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Dan\\Shopify\\Test\\": "tests"
+            "Dan\\Shopify\\Test\\": "tests/"
         }
     },
     "scripts": {
@@ -35,7 +35,10 @@
         "laravel": {
             "providers": [
                 "Dan\\Shopify\\Integrations\\Laravel\\ShopifyServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Shopify": "Dan\\Shopify\\Integrations\\Laravel\\ShopifyFacade"
+            }
         }
     }
 }
