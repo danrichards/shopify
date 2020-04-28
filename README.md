@@ -23,9 +23,23 @@ An object-oriented approach towards using the Shopify API.
 
     $ composer require dan/shopify-api v1.*
     
+## Updated to work with cursors!
+
+As of the `2019-10` API version, Shopify has removed per page pagination on their busiest endpoints.  
+With the deprecation of the per page pagination comes a new cursor based pagination.  
+You can use the `next` method to get paged responses.  
+Example usage:
+``` php
+$api = Dan\Shopify\Shopify::make($shop, $token);
+// First call to next can have all the usual query params you might want.
+$api->orders->next(['limit' => 100, 'status' => 'closed');
+// Further calls will have all query params preset except for limit.
+$api->orders->next(['limit' => 100]);
+```
+
 ## Usage without Laravel
 
-```
+``` php
 // Assumes setup of client with access token.
 $api = Dan\Shopify\Shopify::make($shop, $token);
 $api->orders->find($order_id = 123);              // returns Dan\Shopify/Models/Order
@@ -52,7 +66,7 @@ In your `config/app.php`
     
 ### Replace following variables in your `.env`
     
-```
+``` php
 SHOPIFY_DOMAIN=your-shop-name.myshopify.com
 SHOPIFY_TOKEN=your-token-here
 ```
@@ -61,8 +75,8 @@ SHOPIFY_TOKEN=your-token-here
 
 Empty or `admin` defaults to oldest legacy, [learn more](https://help.shopify.com/en/api/versioning)
 
-```
-SHOPIFY_API_BASE="admin/api/2019-07"
+``` php
+SHOPIFY_API_BASE="admin/api/2019-10"
 ```
 
 ### Using the Facade gives you `Dan\Shopify\Shopify`
@@ -103,7 +117,7 @@ or
 
 #### Get a token for a redirect response.
 
-```
+``` php
 Shopify::getAppInstallResponse(
     'your_app_client_id', 
     'your_app_client_secret',
@@ -116,7 +130,7 @@ Shopify::getAppInstallResponse(
 
 #### Verify App Hmac (works for callback or redirect)
 
-```
+``` php
 Dan\Shopify\Util::validAppHmac(
     'hmac_from_request', 
     'your_app_client_secret', 
@@ -126,7 +140,7 @@ Dan\Shopify\Util::validAppHmac(
 
 #### Verify App Webhook Hmac
 
-```
+``` php
 Dan\Shopify\Util::validWebhookHmac(
     'hmac_from_request', 
     'your_app_client_secret', 
