@@ -21,7 +21,7 @@ An object-oriented approach towards using the Shopify API.
 
 ## Composer
 
-    $ composer require dan/shopify-api v1.*
+    $ composer require dan/shopify-api v2.*
     
 ## Updated to work with cursors!
 
