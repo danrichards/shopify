@@ -3,7 +3,7 @@
 namespace Dan\Shopify\Models;
 
 /**
- * Class Fulfillment
+ * Class Fulfillment.
  *
  * @property int $id
  * @property int $order_id
@@ -24,7 +24,6 @@ namespace Dan\Shopify\Models;
  */
 class Fulfillment extends AbstractModel
 {
-
     /** @var string $resource_name */
     public static $resource_name = 'fulfillment';
 
@@ -37,25 +36,24 @@ class Fulfillment extends AbstractModel
         'created_at',
         'updated_at',
         'cancelled_at',
-        'processed_at'
+        'processed_at',
     ];
 
     /** @var array $casts */
     protected $casts = [
-        'id' => 'integer',
-        'order_id' => 'integer',
-        'status' => 'string',
-        'service' => 'string',
-        'tracking_company' => 'string',
-        'shipment_status' => 'string',
-        'int' => 'location_id',
-        'tracking_number' => 'string',
-        'tracking_numbers' => 'array',
-        'tracking_url' => 'string',
-        'tracking_urls' => 'array',
-        'receipt' => 'object',
-        'name' => 'string',
+        'id'                   => 'integer',
+        'order_id'             => 'integer',
+        'status'               => 'string',
+        'service'              => 'string',
+        'tracking_company'     => 'string',
+        'shipment_status'      => 'string',
+        'int'                  => 'location_id',
+        'tracking_number'      => 'string',
+        'tracking_numbers'     => 'array',
+        'tracking_url'         => 'string',
+        'tracking_urls'        => 'array',
+        'receipt'              => 'object',
+        'name'                 => 'string',
         'admin_graphql_api_id' => 'string',
     ];
-
 }

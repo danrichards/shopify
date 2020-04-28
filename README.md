@@ -1,20 +1,45 @@
 # Shopify API
 
-An object-oriented approach towards using the Shopify API. This repos is a work-in-progress and not production ready.
+An object-oriented approach towards using the Shopify API.
 
 > Please note: the old version (v0.9) using Guzzle 3.9 is [maintained here](https://github.com/danrichards/shopify-api)
 
 ## Supported Objects / Endpoints:
 
-* [Order](https://help.shopify.com/api/reference/order)
+* [Asset](https://help.shopify.com/en/api/reference/online-store/asset)
+* [Customer](https://help.shopify.com/en/api/reference/customers/customer)
+* [Dispute](https://help.shopify.com/en/api/reference/shopify_payments/dispute)
+* [Fulfillment](https://help.shopify.com/en/api/reference/shipping-and-fulfillment/fulfillment)
+* [FulfillmentService](https://help.shopify.com/en/api/reference/shipping-and-fulfillment/fulfillmentservice)
+* [Image](https://help.shopify.com/en/api/reference/products/product-image)
+* [Order](https://help.shopify.com/api/reference/orders)
+* [Product](https://help.shopify.com/api/reference/products)
+* [Risk](https://help.shopify.com/en/api/reference/orders/order-risk)
+* [Theme](https://help.shopify.com/en/api/reference/online-store/theme)
+* [Variant](https://help.shopify.com/en/api/reference/products/product-variant)
+* [Webhook](https://help.shopify.com/en/api/reference/events/webhook)
 
 ## Composer
 
-    $ composer require dan/shopify-api v1.*
+    $ composer require dan/shopify-api v2.*
     
+## Updated to work with cursors!
+
+As of the `2019-10` API version, Shopify has removed per page pagination on their busiest endpoints.  
+With the deprecation of the per page pagination comes a new cursor based pagination.  
+You can use the `next` method to get paged responses.  
+Example usage:
+``` php
+$api = Dan\Shopify\Shopify::make($shop, $token);
+// First call to next can have all the usual query params you might want.
+$api->orders->next(['limit' => 100, 'status' => 'closed');
+// Further calls will have all query params preset except for limit.
+$api->orders->next(['limit' => 100]);
+```
+
 ## Usage without Laravel
 
-```
+``` php
 // Assumes setup of client with access token.
 $api = Dan\Shopify\Shopify::make($shop, $token);
 $api->orders->find($order_id = 123);              // returns Dan\Shopify/Models/Order
@@ -41,11 +66,19 @@ In your `config/app.php`
     
 ### Replace following variables in your `.env`
     
-```
+``` php
 SHOPIFY_DOMAIN=your-shop-name.myshopify.com
 SHOPIFY_TOKEN=your-token-here
 ```
-    
+
+### Optionally replace following variables in your `.env`
+
+Empty or `admin` defaults to oldest legacy, [learn more](https://help.shopify.com/en/api/versioning)
+
+``` php
+SHOPIFY_API_BASE="admin/api/2019-10"
+```
+
 ### Using the Facade gives you `Dan\Shopify\Shopify`
 
 > It will be instantiated with your shop and token you setup in `config/shopify.php`
@@ -84,7 +117,7 @@ or
 
 #### Get a token for a redirect response.
 
-```
+``` php
 Shopify::getAppInstallResponse(
     'your_app_client_id', 
     'your_app_client_secret',
@@ -97,7 +130,7 @@ Shopify::getAppInstallResponse(
 
 #### Verify App Hmac (works for callback or redirect)
 
-```
+``` php
 Dan\Shopify\Util::validAppHmac(
     'hmac_from_request', 
     'your_app_client_secret', 
@@ -107,7 +140,7 @@ Dan\Shopify\Util::validAppHmac(
 
 #### Verify App Webhook Hmac
 
-```
+``` php
 Dan\Shopify\Util::validWebhookHmac(
     'hmac_from_request', 
     'your_app_client_secret', 
@@ -118,6 +151,7 @@ Dan\Shopify\Util::validWebhookHmac(
 ## Contributors
 
 - [Diogo Gomes](https://github.com/diogogomeswww)
+- [Hiram Cruz](https://github.com/shinyhiram)
 
 ## Todo
 

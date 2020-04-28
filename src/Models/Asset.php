@@ -2,20 +2,21 @@
 
 namespace Dan\Shopify\Models;
 
+use Carbon\Carbon;
+
 /**
- * Class Asset
+ * Class Asset.
  *
  * @property string $public_url
  * @property string $content_type
  * @property int $size
  * @property int $theme_id
  * @property array $warnings
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Asset extends AbstractModel
 {
-
     /** @var array $omit_on_replication */
     public static $omit_on_replication = [
         'id',
@@ -45,12 +46,12 @@ class Asset extends AbstractModel
 
     /** @var array $casts */
     protected $casts = [
-        'key' => 'string',
-        'public_url' => 'string',
-        'value' => 'string',
+        'key'          => 'string',
+        'public_url'   => 'string',
+        'value'        => 'string',
         'content_type' => 'string',
-        'size' => 'integer',
-        'theme_id' => 'integer',
+        'size'         => 'integer',
+        'theme_id'     => 'integer',
     ];
 
     /**
@@ -88,5 +89,4 @@ class Asset extends AbstractModel
 
         return new static($data);
     }
-
 }

@@ -2,12 +2,14 @@
 
 namespace Dan\Shopify;
 
+use Dan\Shopify\Models\AbstractModel;
+use GuzzleHttp\Client;
+
 /**
- * Class Util
+ * Class Util.
  */
 class Util
 {
-
     /**
      * The cache of snake-cased words.
      *
@@ -32,8 +34,9 @@ class Util
     /**
      * Convert a string to snake case.
      *
-     * @param  string  $value
-     * @param  string  $delimiter
+     * @param string $value
+     * @param string $delimiter
+     *
      * @return string
      */
     public static function snake($value, $delimiter = '_')
@@ -56,7 +59,8 @@ class Util
     /**
      * Convert a value to camel case.
      *
-     * @param  string  $value
+     * @param string $value
+     *
      * @return string
      */
     public static function camel($value)
@@ -70,6 +74,7 @@ class Util
 
     /**
      * @param $value
+     *
      * @return mixed
      */
     public static function studly($value)
@@ -88,7 +93,8 @@ class Util
     /**
      * Convert the given string to lower-case.
      *
-     * @param  string  $value
+     * @param string $value
+     *
      * @return string
      */
     public static function lower($value)
@@ -99,8 +105,9 @@ class Util
     /**
      * Flatten a multi-dimensional array into a single level.
      *
-     * @param  array  $array
-     * @param  int  $depth
+     * @param array $array
+     * @param int   $depth
+     *
      * @return array
      */
     public static function flatten($array, $depth = INF)
@@ -117,9 +124,25 @@ class Util
     }
 
     /**
+     * @param string $myshopify_domain
+     *
+     * @return string
+     */
+    public static function normalizeDomain($myshopify_domain)
+    {
+        $myshopify_domain = preg_replace("/(https:\/\/|http:\/\/)/", '', $myshopify_domain);
+        $myshopify_domain = rtrim($myshopify_domain, '/');
+        $myshopify_domain = strtolower($myshopify_domain);
+        $myshopify_domain = str_replace('.myshopify.com', '', $myshopify_domain);
+
+        return sprintf('%s.myshopify.com', $myshopify_domain);
+    }
+
+    /**
      * @param string $hmac
      * @param string $token
      * @param string $data
+     *
      * @return bool
      */
     public static function validWebhookHmac($hmac, $token, $data)
@@ -138,6 +161,7 @@ class Util
      * @param $hmac
      * @param $secret
      * @param array $data
+     *
      * @return bool
      */
     public static function validAppHmac($hmac, $secret, array $data)
@@ -146,14 +170,14 @@ class Util
 
         $keys = array_keys($data);
         sort($keys);
-        foreach($keys as $key) {
+        foreach ($keys as $key) {
             $message[] = "{$key}={$data[$key]}";
         }
 
         $message = implode('&', $message);
 
         $calculated_hmac = hash_hmac(
-            $alorithm = 'sha256',
+            $algorithm = 'sha256',
             $message,
             $secret
         );
@@ -163,6 +187,7 @@ class Util
 
     /**
      * @param int|string|array|\stdClass|\Dan\Shopify\Models\AbstractModel $mixed
+     *
      * @return int|null
      */
     public static function getKeyFromMixed($mixed)
@@ -170,14 +195,110 @@ class Util
         if (is_numeric($mixed)) {
             return $mixed;
         } elseif (is_array($mixed) && isset($mixed['id'])) {
-            return $order['id'];
+            return $mixed['id'];
         } elseif ($mixed instanceof \stdClass && isset($mixed->id)) {
             return $mixed->id;
         } elseif ($mixed instanceof AbstractModel) {
             return $mixed->getKey();
         } else {
-            return null;
+            return;
         }
     }
 
+    /**
+     * @param string $client_id
+     * @param string $client_secret
+     * @param string $shop
+     * @param string $code
+     * @return array
+     */
+    public static function appAccessRequest($client_id, $client_secret, $shop, $code)
+    {
+        $shop = static::normalizeDomain($shop);
+        $base_uri = "https://{$shop}/";
+
+        // By default, let's setup our main shopify shop.
+        $config = compact('base_uri') + [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json; charset=utf-8;',
+            ],
+        ];
+
+        $client = new Client($config);
+        $json = compact('client_id', 'client_secret', 'code');
+
+        $response = $client->post('admin/oauth/access_token', compact('json'));
+        $body = json_decode($response->getBody(), true);
+
+        return $body ?? [];
+    }
+
+    /**
+     * @param string $client_id
+     * @param string $client_secret
+     * @param string $shop
+     * @param string $code
+     * @return string|false
+     */
+    public static function appAccessToken($client_id, $client_secret, $shop, $code)
+    {
+        $body = static::appAccessRequest($client_id, $client_secret, $shop, $code);
+
+        return $body['access_token'] ?? false;
+    }
+
+    /**
+     * @param $shop
+     * @param $client_id
+     * @param $redirect_uri
+     * @param array $scopes
+     * @param array $attributes
+     * @return string
+     */
+    public static function appAuthUrl($shop, $client_id, $redirect_uri, $scopes = [], $attributes = [])
+    {
+        $shop = static::normalizeDomain($shop);
+
+        $url = $attributes + compact('client_id', 'redirect_uri') + [
+            'client_id' => config('services.shopify.app.key'),
+            'scope' => implode(',', (array) $scopes),
+            'redirect_uri' => config('services.shopify.app.redirect'),
+            'state' => md5($shop),
+            'grant_options[]' => '',
+            'nounce' => 'ok',
+        ];
+
+        $url = "https://{$shop}/admin/oauth/authorize?".http_build_query($url);
+
+        return $url;
+    }
+
+    /**
+     * @param $hmac
+     * @param $secret
+     * @param $data
+     * @return bool
+     */
+    public static function appValidHmac($hmac, $secret, $data)
+    {
+        return static::validAppHmac($hmac, $secret, $data);
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isLaravel()
+    {
+        return defined('LARAVEL_START') && ! static::isLumen();
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isLumen()
+    {
+        return function_exists('app')
+            && preg_match('/lumen/i', app()->version());
+    }
 }

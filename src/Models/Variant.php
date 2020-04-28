@@ -3,7 +3,7 @@
 namespace Dan\Shopify\Models;
 
 /**
- * Class Variant
+ * Class Variant.
  *
  * @property int $id
  * @property int $product_id
@@ -36,7 +36,6 @@ namespace Dan\Shopify\Models;
  */
 class Variant extends AbstractModel
 {
-
     /** @var string $resource_name */
     public static $resource_name = 'variant';
 
@@ -51,25 +50,24 @@ class Variant extends AbstractModel
 
     /** @var array $casts */
     protected $casts = [
-        'product_id' => 'string',
-        'title' => 'string',
-        'price' => 'float',
-        'sku' => 'string',
-        'position' => 'int',
-        'inventory_policy' => 'string',
-        'compare_at_price' => 'float',
-        'fulfillment_service' => 'string',
-        'option1' => 'string',
-        'taxable' => 'bool',
-        'grams' => 'int',
-        'image_id' => 'string',
-        'inventory_quantity' => 'int',
-        'weight' => 'float',
-        'weight_unit' => 'string',
-        'inventory_item_id' => 'string',
+        'product_id'             => 'string',
+        'title'                  => 'string',
+        'price'                  => 'float',
+        'sku'                    => 'string',
+        'position'               => 'int',
+        'inventory_policy'       => 'string',
+        'compare_at_price'       => 'float',
+        'fulfillment_service'    => 'string',
+        'option1'                => 'string',
+        'taxable'                => 'bool',
+        'grams'                  => 'int',
+        'image_id'               => 'string',
+        'inventory_quantity'     => 'int',
+        'weight'                 => 'float',
+        'weight_unit'            => 'string',
+        'inventory_item_id'      => 'string',
         'old_inventory_quantity' => 'int',
-        'requires_shipping' => 'bool',
-        'metafields' => 'array'
+        'requires_shipping'      => 'bool',
+        'metafields'             => 'array',
     ];
-
 }

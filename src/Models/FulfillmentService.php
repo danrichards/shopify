@@ -3,7 +3,7 @@
 namespace Dan\Shopify\Models;
 
 /**
- * Class FulfillmentService
+ * Class FulfillmentService.
  *
  * @property int $id
  * @property string $name
@@ -19,7 +19,6 @@ namespace Dan\Shopify\Models;
  */
 class FulfillmentService extends AbstractModel
 {
-
     /** @var string $resource_name */
     public static $resource_name = 'fulfillment_service';
 
@@ -31,17 +30,16 @@ class FulfillmentService extends AbstractModel
 
     /** @var array $casts */
     protected $casts = [
-        'id' => 'integer',
-        'name' => 'string',
-        'handle' => 'string',
-        'email' => 'string',
-        'include_pending_stock' => 'bool',
+        'id'                       => 'integer',
+        'name'                     => 'string',
+        'handle'                   => 'string',
+        'email'                    => 'string',
+        'include_pending_stock'    => 'bool',
         'requires_shipping_method' => 'bool',
-        'service_name' => 'string',
-        'inventory_management' => 'bool',
-        'tracking_support' => 'bool',
-        'provider_id' => 'integer',
-        'location_id' => 'integer',
+        'service_name'             => 'string',
+        'inventory_management'     => 'bool',
+        'tracking_support'         => 'bool',
+        'provider_id'              => 'integer',
+        'location_id'              => 'integer',
     ];
-
 }

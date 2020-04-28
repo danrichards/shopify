@@ -3,7 +3,7 @@
 namespace Dan\Shopify\Models;
 
 /**
- * Class Theme
+ * Class Theme.
  *
  * @property int $id
  * @property string $name
@@ -31,10 +31,10 @@ class Theme extends AbstractModel
 
     /** @var array $casts */
     protected $casts = [
-        'name' => 'string',
-        'role' => 'string',
+        'name'        => 'string',
+        'role'        => 'string',
         'previewable' => 'bool',
-        'processing' => 'bool'
+        'processing'  => 'bool',
     ];
 
     const THEME_ROLE_MAIN = 'main';
@@ -43,7 +43,7 @@ class Theme extends AbstractModel
     /** @var array $theme_roles */
     public static $theme_roles = [
         self::THEME_ROLE_MAIN,
-        self::THEME_ROLE_UNPUBLISHED
+        self::THEME_ROLE_UNPUBLISHED,
     ];
 
     const FILE_LAYOUT_GIFT_CARD = 'layout/gift_card.liquid';

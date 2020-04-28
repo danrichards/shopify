@@ -14,13 +14,14 @@ class OrdersApiTest extends TestCase
      * Retrieves a list of products.
      *
      * @test
+     *
      * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
      * @throws \ReflectionException
      */
     public function it_gets_a_list_of_orders()
     {
         $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(OrderFactory::create(2))
+            TransactionMock::create(OrderFactory::create(2)),
         ]);
 
         $response = $api->orders->get();
@@ -37,13 +38,14 @@ class OrdersApiTest extends TestCase
      * Retrieve a count of all orders.
      *
      * @test
+     *
      * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
      * @throws \ReflectionException
      */
     public function it_gets_a_count_of_orders()
     {
         $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create('{ "count": 2 }')
+            TransactionMock::create('{ "count": 2 }'),
         ]);
 
         $response = $api->orders->count();
@@ -59,6 +61,7 @@ class OrdersApiTest extends TestCase
      * Retrieves a single order.
      *
      * @test
+     *
      * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
      * @throws \Dan\Shopify\Exceptions\ModelNotFoundException
      * @throws \ReflectionException
@@ -66,7 +69,7 @@ class OrdersApiTest extends TestCase
     public function it_gets_a_order()
     {
         $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(OrderFactory::create())
+            TransactionMock::create(OrderFactory::create()),
         ]);
 
         $response = $api->orders->find($order_id = 123);
@@ -82,13 +85,14 @@ class OrdersApiTest extends TestCase
      * Creates a new order.
      *
      * @test
+     *
      * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
      * @throws \ReflectionException
      */
     public function it_creates_a_new_order()
     {
         $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(OrderFactory::create(), 201)
+            TransactionMock::create(OrderFactory::create(), 201),
         ]);
 
         $response = $api->orders->post(json_decode('{
@@ -111,17 +115,18 @@ class OrdersApiTest extends TestCase
      * Updates a order.
      *
      * @test
+     *
      * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
      * @throws \ReflectionException
      */
     public function it_updates_a_order()
     {
         $update = [
-            'note' => 'New note'
+            'note' => 'New note',
         ];
 
         $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(OrderFactory::create(1, $update))
+            TransactionMock::create(OrderFactory::create(1, $update)),
         ]);
 
         $response = $api->orders(123)->put($update);
@@ -135,15 +140,16 @@ class OrdersApiTest extends TestCase
 
     /**
      * DELETE /admin/orders/123.json
-     * Delete a order
+     * Delete a order.
      *
      * @test
+     *
      * @throws \ReflectionException
      */
     public function it_deletes_a_order()
     {
         $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create()
+            TransactionMock::create(),
         ]);
 
         $response = $api->orders(123)->delete();
@@ -156,16 +162,17 @@ class OrdersApiTest extends TestCase
 
     /**
      * POST /admin/orders/123/close.json
-     * Closes an order
+     * Closes an order.
      *
      * @test
+     *
      * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
      * @throws \ReflectionException
      */
     public function it_closes_an_order()
     {
         $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(OrderFactory::create(1, ['id' => 123]), 201)
+            TransactionMock::create(OrderFactory::create(1, ['id' => 123]), 201),
         ]);
 
         $response = $api->orders(123)->post([], 'close');

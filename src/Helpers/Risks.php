@@ -3,9 +3,8 @@
 namespace Dan\Shopify\Helpers;
 
 /**
- * Class Risks
+ * Class Risks.
  */
 class Risks extends Endpoint
 {
-
 }

@@ -2,11 +2,13 @@
 
 namespace Dan\Shopify\Integrations\Laravel;
 
-use Illuminate\Support\ServiceProvider;
 use Dan\Shopify\Shopify;
+use Dan\Shopify\Util;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
 
 /**
- * Class ShopifyServiceProvider
+ * Class ShopifyServiceProvider.
  */
 class ShopifyServiceProvider extends ServiceProvider
 {
@@ -18,7 +20,7 @@ class ShopifyServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../../../config/shopify.php' => config_path('shopify.php')
+            __DIR__.'/../../../config/shopify.php' => config_path('shopify.php'),
         ]);
     }
 
@@ -29,9 +31,11 @@ class ShopifyServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(
-            __DIR__ . '/../../../config/shopify.php', 'shopify'
-        );
+        if (Util::isLaravel()) {
+            $this->mergeConfigFrom(
+                __DIR__.'/../../../config/shopify.php', 'shopify'
+            );
+        }
 
         $shop = config('shopify.shop');
         $token = config('shopify.token');
@@ -41,5 +45,36 @@ class ShopifyServiceProvider extends ServiceProvider
                 return new Shopify($shop, $token);
             });
         }
+
+        if (config('shopify.webhooks.enabled')) {
+            $this->registerWebhookRoutes();
+        }
+    }
+
+    /**
+     * Register the package routes.
+     *
+     * @return void
+     */
+    protected function registerWebhookRoutes()
+    {
+        Route::group($this->routeWebhookConfiguration(), function () {
+            $this->loadRoutesFrom(__DIR__.'/Http/routes.php');
+        });
+    }
+
+    /**
+     * Get the route group configuration array.
+     *
+     * @return array
+     */
+    protected function routeWebhookConfiguration()
+    {
+        return [
+            //'domain' => config('shopify.webhooks.route_domain', config('app.url')),
+            'namespace'  => 'Dan\Shopify\Integrations\Laravel\Http',
+            'prefix'     => config('shopify.webhooks.route_prefix'),
+            'middleware' => array_filter(['web', config('shopify.webhooks.middleware')]),
+        ];
     }
 }

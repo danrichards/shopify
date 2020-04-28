@@ -3,7 +3,7 @@
 namespace Dan\Shopify\Models;
 
 /**
- * Class Risk
+ * Class Risk.
  *
  * @property int $id
  * @property int $order_id
@@ -18,7 +18,6 @@ namespace Dan\Shopify\Models;
  */
 class Risk extends AbstractModel
 {
-
     /** @var string $resource_name */
     public static $resource_name = 'risk';
 
@@ -33,14 +32,13 @@ class Risk extends AbstractModel
 
     /** @var array $casts */
     protected $casts = [
-        'order_id' => 'string',
-        'source' => 'string',
-        'score' => 'float',
-        'recommendation' => 'string',
-        'display' => 'bool',
-        'cause_cancel' => 'bool',
-        'message' => 'string',
-        'merchant_message' => 'string'
+        'order_id'         => 'string',
+        'source'           => 'string',
+        'score'            => 'float',
+        'recommendation'   => 'string',
+        'display'          => 'bool',
+        'cause_cancel'     => 'bool',
+        'message'          => 'string',
+        'merchant_message' => 'string',
     ];
-
 }
