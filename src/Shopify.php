@@ -174,7 +174,7 @@ class Shopify extends Client
         'fulfillments'         => 'fulfillments/%s.json',
         'fulfillment_services' => 'fulfillment_services/%s.json',
         'images'               => 'images/%s.json',
-        'metafields'           => 'metafields.json',
+        'metafields'           => 'metafields/%s.json',
         'orders'               => 'orders/%s.json',
         'price_rules'          => 'price_rules/%s.json',
         'products'             => 'products/%s.json',
