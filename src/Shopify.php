@@ -771,6 +771,7 @@ class Shopify extends Client
      * @param string $endpoint
      *
      * @return $this|Endpoint
+     * @throws \Exception
      */
     public function __get($endpoint)
     {
@@ -784,7 +785,8 @@ class Shopify extends Client
             return new $className($this);
         }
 
-        return $this;
+        // If user tries to access property that doesn't exist, scold them.
+        throw new \RuntimeException('Property does not exist on API');
     }
 
     /**
