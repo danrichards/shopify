@@ -41,7 +41,7 @@ $api->metafields->get();
 $api->orders($order_id)->metafields->get();
 
 // Metafields on a Product
-$api->products($product_id)->metafields()->get();
+$api->products($product_id)->metafields->get();
 
 // Metafields on a Variant
 $api->products($product_id)->variants($variant_id)->metafields->get();
