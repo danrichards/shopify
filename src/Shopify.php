@@ -40,6 +40,7 @@ use ReflectionException;
  * @property \Dan\Shopify\Helpers\Fulfillments $fulfillments
  * @property \Dan\Shopify\Helpers\FulfillmentServices $fulfillment_services
  * @property \Dan\Shopify\Helpers\Images $images
+ * @property \Dan\Shopify\Helpers\Metafields $metafields
  * @property \Dan\Shopify\Helpers\Orders $orders
  * @property \Dan\Shopify\Helpers\PriceRule $price_rules
  * @property \Dan\Shopify\Helpers\Products $products
@@ -53,6 +54,7 @@ use ReflectionException;
  * @method \Dan\Shopify\Helpers\Fulfillments fulfillments(string $fulfillment_id)
  * @method \Dan\Shopify\Helpers\FulfillmentServices fulfillment_services(string $fulfillment_service_id)
  * @method \Dan\Shopify\Helpers\Images images(string $image_id)
+ * @method \Dan\Shopify\Helpers\Metafields metafields(string $metafield_id)
  * @method \Dan\Shopify\Helpers\Orders orders(string $order_id)
  * @method \Dan\Shopify\Helpers\PriceRules price_rules(string $price_rule_id)
  * @method \Dan\Shopify\Helpers\Products products(string $product_id)
@@ -320,7 +322,7 @@ class Shopify extends Client
         foreach (array_keys($query) as $key) {
             if ($key !== 'limit') {
                 Util::isLaravel() && \Log::warning('vendor:dan:shopify:get', ['Limit param is not allowed with cursored queries.']);
-                
+
                 return [];
             }
         }
