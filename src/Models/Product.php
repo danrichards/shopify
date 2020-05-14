@@ -67,4 +67,12 @@ class Product extends AbstractModel
         self::WEIGHT_UNIT_LB,
         self::WEIGHT_UNIT_OUNCE,
     ];
+
+    /**
+     * @return array
+     */
+    public function getTagsAsArray(): array
+    {
+        return explode(', ', $this->tags);
+    }
 }
