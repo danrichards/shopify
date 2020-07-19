@@ -65,7 +65,8 @@ abstract class Endpoint
                 throw new InvalidOrMissingEndpointException('Calling ' . $method . ' from ' . $this->client->api . ' requires an id');
             }
 
-            array_unshift($client->queue, [ $client->api, array_last($client->ids) ]);
+            $last = array_reverse($client->ids)[0] ?? null;
+            array_unshift($client->queue, [$client->api, $last]);
             $client->api = $property;
             $client->ids = [];
 
@@ -90,7 +91,8 @@ abstract class Endpoint
                 throw new InvalidOrMissingEndpointException('Calling ' . $method . ' from ' . $this->client->api . ' requires an id');
             }
 
-            array_unshift($this->client->queue, [ $this->client->api, array_last($this->client->ids) ]);
+            $last = array_reverse($client->ids)[0] ?? null;
+            array_unshift($this->client->queue, [$this->client->api, $last]);
             $this->client->api = $method;
             $this->client->ids = [];
 
