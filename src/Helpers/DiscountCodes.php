@@ -2,6 +2,6 @@
 
 namespace Dan\Shopify\Helpers;
 
-class DiscountCode extends Endpoint
+class DiscountCodes extends Endpoint
 {
 }

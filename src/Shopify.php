@@ -36,7 +36,7 @@ use ReflectionException;
  *
  * @property \Dan\Shopify\Helpers\Assets $assets
  * @property \Dan\Shopify\Helpers\Customers $customers
- * @property \Dan\Shopify\Helpers\DiscountCode $discount_codes
+ * @property \Dan\Shopify\Helpers\DiscountCodes $discount_codes
  * @property \Dan\Shopify\Helpers\Fulfillments $fulfillments
  * @property \Dan\Shopify\Helpers\FulfillmentServices $fulfillment_services
  * @property \Dan\Shopify\Helpers\Images $images
@@ -51,6 +51,7 @@ use ReflectionException;
  * @property \Dan\Shopify\Helpers\Webhooks $webhooks
  *
  * @method \Dan\Shopify\Helpers\Customers customers(string $customer_id)
+ * @method \Dan\Shopify\Helpers\DiscountCodes discount_codes(string $discount_code_id)
  * @method \Dan\Shopify\Helpers\Fulfillments fulfillments(string $fulfillment_id)
  * @method \Dan\Shopify\Helpers\FulfillmentServices fulfillment_services(string $fulfillment_service_id)
  * @method \Dan\Shopify\Helpers\Images images(string $image_id)
