@@ -19,7 +19,7 @@ use Dan\Shopify\Models\Order;
 use Dan\Shopify\Models\PriceRule;
 use Dan\Shopify\Models\Product;
 use Dan\Shopify\Models\Risk;
-use Dan\Shopify\Models\SmartCollection;
+use Dan\Shopify\Models\SmartCollections;
 use Dan\Shopify\Models\Theme;
 use Dan\Shopify\Models\Variant;
 use Dan\Shopify\Models\Webhook;
@@ -44,7 +44,7 @@ use ReflectionException;
  * @property \Dan\Shopify\Helpers\Orders $orders
  * @property \Dan\Shopify\Helpers\PriceRule $price_rules
  * @property \Dan\Shopify\Helpers\Products $products
- * @property \Dan\Shopify\Helpers\SmartCollection $smart_collections
+ * @property \Dan\Shopify\Helpers\SmartCollections $smart_collections
  * @property \Dan\Shopify\Helpers\Themes $themes
  * @property \Dan\Shopify\Helpers\Risks $risks
  * @property \Dan\Shopify\Helpers\Variants $variants
@@ -60,7 +60,7 @@ use ReflectionException;
  * @method \Dan\Shopify\Helpers\PriceRules price_rules(string $price_rule_id)
  * @method \Dan\Shopify\Helpers\Products products(string $product_id)
  * @method \Dan\Shopify\Helpers\Risks risks(string $risk_id)
- * @method \Dan\Shopify\Helpers\SmartCollection smart_collections(string $smart_collection_id)
+ * @method \Dan\Shopify\Helpers\SmartCollections smart_collections(string $smart_collection_id)
  * @method \Dan\Shopify\Helpers\Themes themes(string $theme_id)
  * @method \Dan\Shopify\Helpers\Variants variants(string $variant_id)
  * @method \Dan\Shopify\Helpers\Webhooks webhooks(string $webhook_id)
@@ -202,7 +202,7 @@ class Shopify extends Client
         'price_rules'          => PriceRule::class,
         'products'             => Product::class,
         'risks'                => Risk::class,
-        'smart_collections'    => SmartCollection::class,
+        'smart_collections'    => SmartCollections::class,
         'themes'               => Theme::class,
         'variants'             => Variant::class,
         'webhooks'             => Webhook::class,
