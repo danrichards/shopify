@@ -289,6 +289,13 @@ class Shopify extends Client
         // If response has Link header, parse it and set the cursors
         if ($response->hasHeader('Link')) {
             $this->cursors = static::parseLinkHeader($response->getHeader('Link')[0]);
+        } 
+        // If we don't have Link on a cursored endpoint then it was the only page. Set cursors to null to avoid breaking next.
+        elseif (in_array($api, self::$cursored_enpoints, true)) {
+            $this->cursors = [
+                'prev' => null,
+                'next' => null,
+            ];
         }
 
         $data = json_decode($response->getBody()->getContents(), true);
