@@ -22,7 +22,7 @@ An object-oriented approach towards using the Shopify API.
 
 ## Composer
 
-    $ composer require dan/shopify-api v2.*
+    $ composer require dan/shopify v2.*
 
 ### Metafields!
 
