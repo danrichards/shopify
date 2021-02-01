@@ -14,7 +14,7 @@ return [
     | @see https://help.shopify.com/en/api/versioning
     */
 
-    'api_base'    => env('SHOPIFY_API_BASE', 'admin/api/2019-10'),
+    'api_base'    => env('SHOPIFY_API_BASE', 'admin/api/2020-04'),
 
     /*
     |--------------------------------------------------------------------------
