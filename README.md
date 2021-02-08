@@ -16,6 +16,7 @@ An object-oriented approach towards using the Shopify API.
 * [Order](https://help.shopify.com/api/reference/orders)
 * [Product](https://help.shopify.com/api/reference/products)
 * [Risk](https://help.shopify.com/en/api/reference/orders/order-risk)
+* [Shop](https://shopify.dev/docs/admin-api/rest/reference/store-properties/shop)
 * [Theme](https://help.shopify.com/en/api/reference/online-store/theme)
 * [Variant](https://help.shopify.com/en/api/reference/products/product-variant)
 * [Webhook](https://help.shopify.com/en/api/reference/events/webhook)
@@ -61,6 +62,8 @@ You can use the `next` method to get paged responses.
 Example usage:
 ``` php
 $api = Dan\Shopify\Shopify::make($shop, $token);
+// Get Shop data
+$api->shop() // Returns associative array of shop data
 // First call to next can have all the usual query params you might want.
 $api->orders->next(['limit' => 100, 'status' => 'closed');
 // Further calls will have all query params preset except for limit.
@@ -72,6 +75,10 @@ $api->orders->next(['limit' => 100]);
 ``` php
 // Assumes setup of client with access token.
 $api = Dan\Shopify\Shopify::make($shop, $token);
+
+// Get Shop data
+$api->shop() // Returns associative array of shop data
+
 $api->orders->find($order_id = 123);              // returns Dan\Shopify/Models/Order
 
 // Alternatively, we may call methods on the API object.
