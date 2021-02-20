@@ -2,7 +2,8 @@
     "name": "dan/shopify",
     "description": "Shopify API with Laravel integrations using latest Guzzle.",
     "license": "MIT",
-    "keywords": ["shopify", "api", "webhooks", "laravel"],
+    "keywords": [
+        "", "api", "webhooks", "laravel"],
     "type": "project",
     "authors": [
         {
@@ -12,7 +13,7 @@
     ],
     "autoload" : {
         "psr-4": {
-            "Dan\\Shopify\\": "shopify/src/"
+            "Dan\\Shopify\\": "src/"
         }
     },
     "require": {
@@ -25,11 +26,11 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Dan\\Shopify\\Test\\": "shopify/tests/"
+            "Dan\\Shopify\\Test\\": "tests/"
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "vendor/bin/phpunit"
     },
     "extra": {
         "laravel": {
