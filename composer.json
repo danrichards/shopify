@@ -12,7 +12,7 @@
     ],
     "autoload" : {
         "psr-4": {
-            "Dan\\Shopify\\": "src/"
+            "Dan\\Shopify\\": "shopify/src/"
         }
     },
     "require": {
@@ -25,7 +25,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Dan\\Shopify\\Test\\": "tests/"
+            "Dan\\Shopify\\Test\\": "shopify/tests/"
         }
     },
     "scripts": {
