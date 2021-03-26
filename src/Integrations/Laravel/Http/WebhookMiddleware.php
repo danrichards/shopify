@@ -9,6 +9,10 @@ use Response;
 
 /**
  * Class WebhookMiddleware.
+ *
+ * IMPORTANT: You should overload config('shopify.webhooks.middleware') with
+ * your own middleware class if you intend on handling multiple stores. This
+ * class, relies on config('shopify.webhooks.secret') to validate.
  */
 class WebhookMiddleware
 {

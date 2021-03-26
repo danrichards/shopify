@@ -5,7 +5,7 @@ namespace Dan\Shopify\Models;
 use Carbon\Carbon;
 
 /**
- * Class SmartCollection.
+ * Class SmartCollections.
  *
  * @property int $id
  * @property string|null $body_html
@@ -20,7 +20,7 @@ use Carbon\Carbon;
  * @property Carbon|null $published_at
  * @property Carbon|null $updated_at
  */
-class SmartCollection extends AbstractModel
+class SmartCollections extends AbstractModel
 {
     /** @var string $resource_name */
     public static $resource_name = 'smart_collection';

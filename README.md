@@ -12,16 +12,47 @@ An object-oriented approach towards using the Shopify API.
 * [Fulfillment](https://help.shopify.com/en/api/reference/shipping-and-fulfillment/fulfillment)
 * [FulfillmentService](https://help.shopify.com/en/api/reference/shipping-and-fulfillment/fulfillmentservice)
 * [Image](https://help.shopify.com/en/api/reference/products/product-image)
+* [Metafield](https://shopify.dev/docs/admin-api/rest/reference/metafield?api)
 * [Order](https://help.shopify.com/api/reference/orders)
 * [Product](https://help.shopify.com/api/reference/products)
 * [Risk](https://help.shopify.com/en/api/reference/orders/order-risk)
+* [Shop](https://shopify.dev/docs/admin-api/rest/reference/store-properties/shop)
 * [Theme](https://help.shopify.com/en/api/reference/online-store/theme)
 * [Variant](https://help.shopify.com/en/api/reference/products/product-variant)
 * [Webhook](https://help.shopify.com/en/api/reference/events/webhook)
 
 ## Composer
 
-    $ composer require dan/shopify-api v2.*
+    $ composer require dan/shopify v2.*
+
+### Metafields!
+
+There are multiple endpoints in the Shopify API that have support for metafields.  
+In effort to support them all, this API has been updated to allow chaining `->metafields` from any endpoint.  
+This won't always work as not every endpoint supports metafields, and any endpoint that doesn't support metafields will result in a `404`.  
+Below are examples of all the endpoints that support metafields.
+```php
+// Get our API
+$api = Dan\Shopify\Shopify::make($shop, $token);
+
+// Store metafields
+$api->metafields->get();
+
+// Metafields on an Order
+$api->orders($order_id)->metafields->get();
+
+// Metafields on a Product
+$api->products($product_id)->metafields->get();
+
+// Metafields on a Variant
+$api->products($product_id)->variants($variant_id)->metafields->get();
+
+// Metafields on a Customer
+$api->customers($customer_id)->metafields->get();
+
+// Metafields can also be updated like all other endpoints
+$api->products($product_id)->metafields($metafield_id)->put($data);
+``` 
     
 ## Updated to work with cursors!
 
@@ -31,6 +62,8 @@ You can use the `next` method to get paged responses.
 Example usage:
 ``` php
 $api = Dan\Shopify\Shopify::make($shop, $token);
+// Get Shop data
+$api->shop() // Returns associative array of shop data
 // First call to next can have all the usual query params you might want.
 $api->orders->next(['limit' => 100, 'status' => 'closed');
 // Further calls will have all query params preset except for limit.
@@ -42,6 +75,10 @@ $api->orders->next(['limit' => 100]);
 ``` php
 // Assumes setup of client with access token.
 $api = Dan\Shopify\Shopify::make($shop, $token);
+
+// Get Shop data
+$api->shop() // Returns associative array of shop data
+
 $api->orders->find($order_id = 123);              // returns Dan\Shopify/Models/Order
 
 // Alternatively, we may call methods on the API object.

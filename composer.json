@@ -2,7 +2,8 @@
     "name": "dan/shopify",
     "description": "Shopify API with Laravel integrations using latest Guzzle.",
     "license": "MIT",
-    "keywords": ["shopify", "api", "webhooks", "laravel"],
+    "keywords": [
+        "", "api", "webhooks", "laravel"],
     "type": "project",
     "authors": [
         {
@@ -17,7 +18,7 @@
     },
     "require": {
         "php": ">=5.6.4",
-        "guzzlehttp/guzzle": "^6.2",
+        "guzzlehttp/guzzle": "^6.2|^7.0",
         "nesbot/carbon": "^1.26.3 || ^2.0"
     },
     "require-dev": {
@@ -29,7 +30,7 @@
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "vendor/bin/phpunit"
     },
     "extra": {
         "laravel": {

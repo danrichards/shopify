@@ -20,7 +20,7 @@ class ShopifyServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../../../config/shopify.php' => config_path('shopify.php'),
+            __DIR__ . '/../../../config/shopify.php' => config_path('shopify.php'),
         ]);
     }
 
@@ -33,7 +33,7 @@ class ShopifyServiceProvider extends ServiceProvider
     {
         if (Util::isLaravel()) {
             $this->mergeConfigFrom(
-                __DIR__.'/../../../config/shopify.php', 'shopify'
+                __DIR__ . '/../../../config/shopify.php', 'shopify'
             );
         }
 
@@ -59,7 +59,7 @@ class ShopifyServiceProvider extends ServiceProvider
     protected function registerWebhookRoutes()
     {
         Route::group($this->routeWebhookConfiguration(), function () {
-            $this->loadRoutesFrom(__DIR__.'/Http/routes.php');
+            $this->loadRoutesFrom(__DIR__ . '/Http/routes.php');
         });
     }
 

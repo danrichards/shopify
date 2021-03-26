@@ -5,6 +5,7 @@ namespace Dan\Shopify;
 use BadMethodCallException;
 use Dan\Shopify\Exceptions\InvalidOrMissingEndpointException;
 use Dan\Shopify\Exceptions\ModelNotFoundException;
+use Dan\Shopify\Helpers\Endpoint;
 use Dan\Shopify\Models\AbstractModel;
 use Dan\Shopify\Models\Asset;
 use Dan\Shopify\Models\Customer;
@@ -13,11 +14,12 @@ use Dan\Shopify\Models\Dispute;
 use Dan\Shopify\Models\Fulfillment;
 use Dan\Shopify\Models\FulfillmentService;
 use Dan\Shopify\Models\Image;
+use Dan\Shopify\Models\Metafield;
 use Dan\Shopify\Models\Order;
 use Dan\Shopify\Models\PriceRule;
 use Dan\Shopify\Models\Product;
 use Dan\Shopify\Models\Risk;
-use Dan\Shopify\Models\SmartCollection;
+use Dan\Shopify\Models\SmartCollections;
 use Dan\Shopify\Models\Theme;
 use Dan\Shopify\Models\Variant;
 use Dan\Shopify\Models\Webhook;
@@ -34,28 +36,31 @@ use ReflectionException;
  *
  * @property \Dan\Shopify\Helpers\Assets $assets
  * @property \Dan\Shopify\Helpers\Customers $customers
- * @property \Dan\Shopify\Helpers\DiscountCode $discount_codes
+ * @property \Dan\Shopify\Helpers\DiscountCodes $discount_codes
  * @property \Dan\Shopify\Helpers\Fulfillments $fulfillments
  * @property \Dan\Shopify\Helpers\FulfillmentServices $fulfillment_services
  * @property \Dan\Shopify\Helpers\Images $images
+ * @property \Dan\Shopify\Helpers\Metafields $metafields
  * @property \Dan\Shopify\Helpers\Orders $orders
  * @property \Dan\Shopify\Helpers\PriceRule $price_rules
  * @property \Dan\Shopify\Helpers\Products $products
- * @property \Dan\Shopify\Helpers\SmartCollection $smart_collections
+ * @property \Dan\Shopify\Helpers\SmartCollections $smart_collections
  * @property \Dan\Shopify\Helpers\Themes $themes
  * @property \Dan\Shopify\Helpers\Risks $risks
  * @property \Dan\Shopify\Helpers\Variants $variants
  * @property \Dan\Shopify\Helpers\Webhooks $webhooks
  *
  * @method \Dan\Shopify\Helpers\Customers customers(string $customer_id)
+ * @method \Dan\Shopify\Helpers\DiscountCodes discount_codes(string $discount_code_id)
  * @method \Dan\Shopify\Helpers\Fulfillments fulfillments(string $fulfillment_id)
  * @method \Dan\Shopify\Helpers\FulfillmentServices fulfillment_services(string $fulfillment_service_id)
  * @method \Dan\Shopify\Helpers\Images images(string $image_id)
+ * @method \Dan\Shopify\Helpers\Metafields metafields(string $metafield_id)
  * @method \Dan\Shopify\Helpers\Orders orders(string $order_id)
- * @method \Dan\Shopify\Helpers\PriceRule price_rules(string $price_rule_id)
+ * @method \Dan\Shopify\Helpers\PriceRules price_rules(string $price_rule_id)
  * @method \Dan\Shopify\Helpers\Products products(string $product_id)
  * @method \Dan\Shopify\Helpers\Risks risks(string $risk_id)
- * @method \Dan\Shopify\Helpers\SmartCollection smart_collections(string $smart_collection_id)
+ * @method \Dan\Shopify\Helpers\SmartCollections smart_collections(string $smart_collection_id)
  * @method \Dan\Shopify\Helpers\Themes themes(string $theme_id)
  * @method \Dan\Shopify\Helpers\Variants variants(string $variant_id)
  * @method \Dan\Shopify\Helpers\Webhooks webhooks(string $webhook_id)
@@ -165,20 +170,21 @@ class Shopify extends Client
      * @var array
      */
     protected static $endpoints = [
-        'assets'               => 'themes/%s/assets.json',
+        'assets'               => 'assets.json',
         'customers'            => 'customers/%s.json',
-        'discount_codes'       => 'price_rules/%s/discount_codes/%s.json',
+        'discount_codes'       => 'discount_codes/%s.json',
         'disputes'             => 'shopify_payments/disputes/%s.json',
-        'fulfillments'         => 'orders/%s/fulfillments/%s.json',
+        'fulfillments'         => 'fulfillments/%s.json',
         'fulfillment_services' => 'fulfillment_services/%s.json',
-        'images'               => 'products/%s/images/%s.json',
+        'images'               => 'images/%s.json',
+        'metafields'           => 'metafields/%s.json',
         'orders'               => 'orders/%s.json',
         'price_rules'          => 'price_rules/%s.json',
         'products'             => 'products/%s.json',
-        'risks'                => 'orders/%s/risks/%s.json',
+        'risks'                => 'risks/%s.json',
         'smart_collections'    => 'smart_collections/%s.json',
         'themes'               => 'themes/%s.json',
-        'variants'             => 'products/%s/variants/%s.json',
+        'variants'             => 'variants/%s.json',
         'webhooks'             => 'webhooks/%s.json',
     ];
 
@@ -191,11 +197,12 @@ class Shopify extends Client
         'fulfillments'         => Fulfillment::class,
         'fulfillment_services' => FulfillmentService::class,
         'images'               => Image::class,
+        'metafields'           => Metafield::class,
         'orders'               => Order::class,
         'price_rules'          => PriceRule::class,
         'products'             => Product::class,
         'risks'                => Risk::class,
-        'smart_collections'    => SmartCollection::class,
+        'smart_collections'    => SmartCollections::class,
         'themes'               => Theme::class,
         'variants'             => Variant::class,
         'webhooks'             => Webhook::class,
@@ -282,6 +289,13 @@ class Shopify extends Client
         // If response has Link header, parse it and set the cursors
         if ($response->hasHeader('Link')) {
             $this->cursors = static::parseLinkHeader($response->getHeader('Link')[0]);
+        } 
+        // If we don't have Link on a cursored endpoint then it was the only page. Set cursors to null to avoid breaking next.
+        elseif (in_array($api, self::$cursored_enpoints, true)) {
+            $this->cursors = [
+                'prev' => null,
+                'next' => null,
+            ];
         }
 
         $data = json_decode($response->getBody()->getContents(), true);
@@ -316,7 +330,7 @@ class Shopify extends Client
         foreach (array_keys($query) as $key) {
             if ($key !== 'limit') {
                 Util::isLaravel() && \Log::warning('vendor:dan:shopify:get', ['Limit param is not allowed with cursored queries.']);
-                
+
                 return [];
             }
         }
@@ -766,7 +780,8 @@ class Shopify extends Client
      *
      * @param string $endpoint
      *
-     * @return $this
+     * @return $this|Endpoint
+     * @throws \Exception
      */
     public function __get($endpoint)
     {
@@ -780,7 +795,8 @@ class Shopify extends Client
             return new $className($this);
         }
 
-        return $this;
+        // If user tries to access property that doesn't exist, scold them.
+        throw new \RuntimeException('Property does not exist on API');
     }
 
     /**
@@ -796,7 +812,7 @@ class Shopify extends Client
     public function __call($method, $parameters)
     {
         if (array_key_exists($method, static::$endpoints)) {
-            $this->ids = array_merge($this->ids, $parameters);
+            $this->ids = $parameters;
 
             return $this->__get($method);
         }

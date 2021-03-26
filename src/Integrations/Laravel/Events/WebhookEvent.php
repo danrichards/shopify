@@ -18,16 +18,29 @@ class WebhookEvent implements ShouldQueue
     /** @var array $data */
     protected $data;
 
+    /** @var string|null $shop */
+    protected $shop;
+
     /**
-     * Webhook constructor.
+     * WebhookEvent constructor.
      *
      * @param string $topic
      * @param array  $data
+     * @param string $shop
      */
-    public function __construct($topic, array $data = [])
+    public function __construct($topic, array $data, string $shop)
     {
         $this->topic = $topic;
         $this->data = $data;
+        $this->shop = $shop;
+    }
+
+    /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
     }
 
     /**
@@ -39,10 +52,10 @@ class WebhookEvent implements ShouldQueue
     }
 
     /**
-     * @return array
+     * @return string|null
      */
-    public function getData()
+    public function getShop()
     {
-        return $this->data;
+        return $this->shop;
     }
 }
