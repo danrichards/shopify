@@ -6,15 +6,13 @@ return [
     | API Base
     |--------------------------------------------------------------------------
     |
-    | Configure API version in which you wish to use in your app(s). Defaults to
-    | 2019-10 for supporting the new cursor based navigation.
-    |
-    | e.g. admin, admin/api/2019-10, ...
+    | Configure API version in which you wish to use in your app(s).
+    | e.g. admin, admin/api/2020-07, ...
     |
     | @see https://help.shopify.com/en/api/versioning
     */
 
-    'api_base'    => env('SHOPIFY_API_BASE', 'admin/api/2020-04'),
+    'api_base'    => env('SHOPIFY_API_BASE', 'admin/api/2020-07'),
 
     /*
     |--------------------------------------------------------------------------
