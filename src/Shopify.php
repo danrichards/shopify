@@ -850,6 +850,11 @@ class Shopify extends Client
 
         $this->last_response = $r = parent::request($method, $uri, $options);
         $this->last_headers = $r->getHeaders();
+
+        if ($r->hasHeader('X-Shopify-API-Deprecated-Reason')) {
+            $api_deprecated_reason = $r->getHeader('X-Shopify-API-Deprecated-Reason');
+            \Log::warning('vendor:dan:shopify:api:deprecated', compact('api_deprecated_reason', 'method', 'uri') + $options + []);
+        }
         $this->rate_limit = new RateLimit($r);
 
         return $r;
