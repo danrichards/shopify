@@ -272,12 +272,12 @@ class Shopify extends Client
         $api = $this->api;
 
         // Don't allow use of page query on cursored endpoints
-//        if (isset($query['page']) && in_array($api, static::$cursored_enpoints, true)) {
-//            Util::isLaravel() && \Log::warning('vendor:dan:shopify:get', ['Use of deprecated query parameter. Use cursor navigation instead.']);
-//
-//
-//            return [];
-//        }
+        if (isset($query['page']) && in_array($api, static::$cursored_enpoints, true)) {
+            Util::isLaravel() && \Log::warning('vendor:dan:shopify:get', ['Use of deprecated query parameter. Use cursor navigation instead.']);
+
+
+            return [];
+        }
 
         // Do request and store response in variable
         $response = $this->request(
