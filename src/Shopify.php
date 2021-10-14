@@ -273,8 +273,11 @@ class Shopify extends Client
 
         // Don't allow use of page query on cursored endpoints
         if (isset($query['page']) && in_array($api, static::$cursored_enpoints, true)) {
-            Util::isLaravel() && \Log::warning('vendor:dan:shopify:get', ['Use of deprecated query parameter. Use cursor navigation instead.']);
-
+            if (Util::isLaravel()) {
+                if (config('shopify.options.log_deprecation_warnings')) {
+                    \Log::warning('vendor:dan:shopify:get', ['Use of deprecated query parameter. Use cursor navigation instead.']);
+                }
+            }
 
             return [];
         }
@@ -316,7 +319,11 @@ class Shopify extends Client
     {
         // Only allow use of next on cursored endpoints
         if (! in_array($this->api, static::$cursored_enpoints, true)) {
-            Util::isLaravel() && \Log::warning('vendor:dan:shopify:get', ['Use of cursored method on non-cursored endpoint.']);
+            if (Util::isLaravel()) {
+                if (config('shopify.options.log_deprecation_warnings')) {
+                    \Log::warning('vendor:dan:shopify:get', ['Use of cursored method on non-cursored endpoint.']);
+                }
+            }
 
             return [];
         }
@@ -329,7 +336,11 @@ class Shopify extends Client
         // Only limit key is allowed to exist with cursor based navigation
         foreach (array_keys($query) as $key) {
             if ($key !== 'limit') {
-                Util::isLaravel() && \Log::warning('vendor:dan:shopify:get', ['Limit param is not allowed with cursored queries.']);
+                if (Util::isLaravel()) {
+                    if (config('shopify.options.log_deprecation_warnings')) {
+                        \Log::warning('vendor:dan:shopify:get', ['Limit param is not allowed with cursored queries.']);
+                    }
+                }
 
                 return [];
             }
@@ -855,9 +866,13 @@ class Shopify extends Client
         $api_version_warning = $r->getHeader('X-Shopify-Api-Version-Warning');
         if ($api_deprecated_reason || $api_version_warning) {
             $api_version = $r->getHeader('X-Shopify-Api-Version');
-            $api = compact('api_version', 'api_version_warning', 'api_deprecated_reason');
-            $request = compact('method', 'uri') + $options;
-            \Log::warning('vendor:dan:shopify:api:deprecated', compact('api', 'request'));
+            if (Util::isLaravel()) {
+                if (config('shopify.options.log_deprecation_warnings')) {
+                    $api = compact('api_version', 'api_version_warning', 'api_deprecated_reason');
+                    $request = compact('method', 'uri') + $options;
+                    \Log::warning('vendor:dan:shopify:api:deprecated', compact('api', 'request'));
+                }
+            }
         }
 
         $this->rate_limit = new RateLimit($r);
