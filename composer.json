@@ -2,8 +2,7 @@
     "name": "dan/shopify",
     "description": "Shopify API with Laravel integrations using latest Guzzle.",
     "license": "MIT",
-    "keywords": [
-        "", "api", "webhooks", "laravel"],
+    "keywords": ["shopify", "api", "webhooks", "laravel"],
     "type": "project",
     "authors": [
         {
