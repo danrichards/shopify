@@ -25,19 +25,19 @@ class RateLimit implements JsonSerializable
     /**
      * RateLimit constructor.
      *
-     * @param MessageInterface|null $response
+     * @param \Illuminate\Http\Client\Response|null $response
      */
     public function __construct($response)
     {
         if ($response) {
-            $call_limit = $response->hasHeader(static::HEADER_CALL_LIMIT)
-                ? $response->getHeader(static::HEADER_CALL_LIMIT)[0]
+            $call_limit = $response->header(static::HEADER_CALL_LIMIT)
+                ? $response->header(static::HEADER_CALL_LIMIT)[0]
                 : '0/40';
 
             list($this->calls, $this->cap) = explode('/', $call_limit);
 
-            $this->retry_after = $response->hasHeader(static::HEADER_RETRY_AFTER)
-                ? $response->getHeader(static::HEADER_RETRY_AFTER)[0]
+            $this->retry_after = $response->header(static::HEADER_RETRY_AFTER)
+                ? $response->header(static::HEADER_RETRY_AFTER)[0]
                 : 0;
         } else {
             $this->calls = 0;
