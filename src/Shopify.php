@@ -266,7 +266,6 @@ class Shopify
      * @param string $append
      *
      * @return array
-     * @throws GuzzleException
      *
      * @throws InvalidOrMissingEndpointException
      */
@@ -855,7 +854,7 @@ class Shopify
      * @param array $options
      *
      * @return \Illuminate\Http\Client\Response
-     * @throws \Exception
+     * @throws \Illuminate\Http\Client\RequestException|\Exception
      */
     public function request($method, $uri = '', array $options = [])
     {
@@ -863,7 +862,7 @@ class Shopify
             \Log::info('vendor:dan:shopify:api', compact('method', 'uri') + $options);
         }
 
-        $this->last_response = $r = $this->client->send($method, $uri, $options);
+        $this->last_response = $r = $this->client->send($method, $uri, $options)->throw();
         $this->last_headers = $r->headers();
 
         $api_deprecated_reason = $r->header('X-Shopify-API-Deprecated-Reason');
