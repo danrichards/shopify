@@ -2,6 +2,7 @@
 
 namespace Dan\Shopify;
 
+use Illuminate\Http\Client\Response;
 use JsonSerializable;
 use Psr\Http\Message\MessageInterface;
 
@@ -27,22 +28,14 @@ class RateLimit implements JsonSerializable
      *
      * @param \Illuminate\Http\Client\Response|null $response
      */
-    public function __construct($response)
+    public function __construct(?Response $response)
     {
         if ($response) {
-            $call_limit = $response->header(static::HEADER_CALL_LIMIT)
-                ? $response->header(static::HEADER_CALL_LIMIT)[0]
-                : '0/40';
+            $call_limit = $response->header(static::HEADER_CALL_LIMIT) ?: '0/40';
 
-            list($this->calls, $this->cap) = explode('/', $call_limit);
+            [$this->calls, $this->cap] = explode('/', $call_limit);
 
-            $this->retry_after = $response->header(static::HEADER_RETRY_AFTER)
-                ? $response->header(static::HEADER_RETRY_AFTER)[0]
-                : 0;
-        } else {
-            $this->calls = 0;
-            $this->cap = 40;
-            $this->retry_after = 0;
+            $this->retry_after = $response->header(static::HEADER_RETRY_AFTER) ?: 0;
         }
     }
 
