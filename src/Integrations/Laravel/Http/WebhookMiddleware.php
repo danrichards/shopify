@@ -55,7 +55,7 @@ class WebhookMiddleware
             return $this->errorWithNoInputData();
         }
 
-        $this->json = $json = json_decode($data);
+        $this->json = json_decode($data);
 
         if (! empty($json_error_code = json_last_error())) {
             return $this->errorWithJsonDecoding($json_error_code);
