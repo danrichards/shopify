@@ -49,6 +49,7 @@ return [
 
     'options' => [
         'log_api_request_data' => env('SHOPIFY_OPTION_LOG_API_REQUEST', 0),
+        'log_api_response_data' => env('SHOPIFY_OPTION_LOG_API_RESPONSE', 0),
         'log_deprecation_warnings' => env('SHOPIFY_OPTIONS_LOG_DEPRECATION_WARNINGS', 1),
     ],
 
