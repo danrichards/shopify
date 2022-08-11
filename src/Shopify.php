@@ -28,7 +28,6 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Psr\Http\Message\MessageInterface;
-use ReflectionException;
 
 /**
  * Class Shopify.
@@ -268,6 +267,7 @@ class Shopify
      * @return array
      *
      * @throws InvalidOrMissingEndpointException
+     * @throws \Illuminate\Http\Client\RequestException
      */
     public function get($query = [], $append = '')
     {
@@ -835,18 +835,6 @@ class Shopify
     }
 
     /**
-     * @param $responseStack
-     *
-     * @throws ReflectionException
-     *
-     * @return Helpers\Testing\ShopifyMock
-     */
-    public static function fake($responseStack = [])
-    {
-        return new Helpers\Testing\ShopifyMock($responseStack);
-    }
-
-    /**
      * Wrapper to the $client->request method.
      *
      * @param string $method
@@ -859,11 +847,16 @@ class Shopify
     public function request($method, $uri = '', array $options = [])
     {
         if (Util::isLaravel() && config('shopify.options.log_api_request_data')) {
-            \Log::info('vendor:dan:shopify:api', compact('method', 'uri') + $options);
+            \Log::info('vendor:dan:shopify:api:request', compact('method', 'uri') + $options);
         }
 
         $this->last_response = $r = $this->client->send($method, $uri, $options)->throw();
         $this->last_headers = $r->headers();
+        $this->rate_limit = new RateLimit($r);
+
+        if (Util::isLaravel() && config('shopify.options.log_api_response_data')) {
+            \Log::info('vendor:dan:shopify:api:response', (array) $r);
+        }
 
         $api_deprecated_reason = $r->header('X-Shopify-API-Deprecated-Reason');
         $api_version_warning = $r->header('X-Shopify-Api-Version-Warning');
@@ -877,8 +870,6 @@ class Shopify
                 }
             }
         }
-
-        $this->rate_limit = new RateLimit($r);
 
         return $r;
     }
