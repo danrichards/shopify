@@ -293,7 +293,7 @@ class Shopify
 
         // If response has Link header, parse it and set the cursors
         if ($response->hasHeader('Link')) {
-            $this->cursors = static::parseLinkHeader($response->header('Link')[0]);
+            $this->cursors = static::parseLinkHeader($response->header('Link'));
         } 
         // If we don't have Link on a cursored endpoint then it was the only page. Set cursors to null to avoid breaking next.
         elseif (in_array($api, self::$cursored_enpoints, true)) {
