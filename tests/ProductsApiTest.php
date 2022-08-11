@@ -3,9 +3,12 @@
 namespace Dan\Shopify\Test;
 
 use Dan\Shopify\Helpers\Testing\ModelFactory\ProductFactory;
-use Dan\Shopify\Helpers\Testing\TransactionMock;
 use Dan\Shopify\Models\Product;
-use PHPUnit\Framework\TestCase;
+use Dan\Shopify\Shopify;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
+use Orchestra\Testbench\TestCase;
+use Throwable;
 
 class ProductsApiTest extends TestCase
 {
@@ -14,22 +17,21 @@ class ProductsApiTest extends TestCase
      * Retrieves a list of products.
      *
      * @test
-     *
-     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
-     * @throws \ReflectionException
+     * @throws Throwable
      */
     public function it_gets_a_list_of_products()
     {
-        $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(ProductFactory::create(2)),
+        Http::fake([
+            '*admin/products.json' => ProductFactory::create(2)
         ]);
 
-        $response = $api->products->get();
+        $response = (new Shopify('shop', 'token'))->products->get();
 
-        $this->assertEquals(200, $api->lastResponseStatusCode());
-        $this->assertTrue(is_array($response));
-        $this->assertEquals('GET', $api->lastRequestMethod());
-        $this->assertEquals('/admin/products.json', $api->lastRequestUri());
+        Http::assertSent(function (Request $request) {
+            return $request->url() == 'https://shop.myshopify.com/admin/products.json'
+                && $request->method() == 'GET';
+        });
+
         $this->assertCount(2, $response);
     }
 
@@ -38,21 +40,21 @@ class ProductsApiTest extends TestCase
      * Retrieve a count of all products.
      *
      * @test
-     *
-     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
-     * @throws \ReflectionException
+     * @throws Throwable
      */
     public function it_gets_a_count_of_products()
     {
-        $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create('{ "count": 2 }'),
+        Http::fake([
+            '*admin/products/count.json' => ['count' => 2]
         ]);
 
-        $response = $api->products->count();
+        $response = (new Shopify('shop', 'token'))->products->count();
 
-        $this->assertEquals(200, $api->lastResponseStatusCode());
-        $this->assertEquals('GET', $api->lastRequestMethod());
-        $this->assertEquals('/admin/products/count.json', $api->lastRequestUri());
+        Http::assertSent(function (Request $request) {
+            return $request->url() == 'https://shop.myshopify.com/admin/products/count.json'
+                && $request->method() == 'GET';
+        });
+
         $this->assertEquals(2, $response);
     }
 
@@ -61,23 +63,22 @@ class ProductsApiTest extends TestCase
      * Retrieves a single product.
      *
      * @test
-     *
-     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
-     * @throws \Dan\Shopify\Exceptions\ModelNotFoundException
-     * @throws \ReflectionException
+     * @throws Throwable
      */
     public function it_gets_a_product()
     {
-        $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(ProductFactory::create()),
+        Http::fake([
+            '*admin/products/123.json' => ProductFactory::create(1, ['id' => 123])
         ]);
 
-        $response = $api->products->find($product_id = 123);
+        $response = (new Shopify('shop', 'token'))->products->find(123);
 
-        $this->assertEquals(200, $api->lastResponseStatusCode());
-        $this->assertEquals(Product::class, get_class($response));
-        $this->assertEquals('GET', $api->lastRequestMethod());
-        $this->assertEquals('/admin/products/123.json', $api->lastRequestUri());
+        Http::assertSent(function (Request $request) {
+            return $request->url() == 'https://shop.myshopify.com/admin/products/123.json'
+                && $request->method() == 'GET';
+        });
+
+        $this->assertEquals(123, $response['id']);
     }
 
     /**
@@ -85,28 +86,25 @@ class ProductsApiTest extends TestCase
      * Creates a new product.
      *
      * @test
-     *
-     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
-     * @throws \ReflectionException
+     * @throws Throwable
      */
     public function it_creates_a_new_product()
     {
-        $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(ProductFactory::create(), 201),
+        Http::fake([
+            '*admin/products.json' => ProductFactory::create(1, ['id' => 123, 'title' => 'some title'])
         ]);
 
-        $response = $api->products->post(json_decode('{
-            "title": "Burton Custom Freestyle 151",
-            "body_html": "<strong>Good snowboard!</strong>",
-            "vendor": "Burton",
-            "product_type": "Snowboard",
-            "tags": "Barnes & Noble, John\'s Fav, &quot;Big Air&quot;"
-          }', true));
+        $response = (new Shopify('shop', 'token'))->products->post([
+            'title' => 'some title'
+        ]);
 
-        $this->assertEquals(201, $api->lastResponseStatusCode());
-        $this->assertTrue(is_array($response));
-        $this->assertEquals('POST', $api->lastRequestMethod());
-        $this->assertEquals('/admin/products.json', $api->lastRequestUri());
+        Http::assertSent(function (Request $request) {
+            return $request->url() == 'https://shop.myshopify.com/admin/products.json'
+                && $request->method() == 'POST';
+        });
+
+        $this->assertEquals(123, $response['id']);
+        $this->assertEquals('some title', $response['title']);
     }
 
     /**
@@ -114,27 +112,24 @@ class ProductsApiTest extends TestCase
      * Updates a product and its variants and images.
      *
      * @test
-     *
-     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
-     * @throws \ReflectionException
+     * @throws Throwable
      */
     public function it_updates_a_product()
     {
-        $update = [
-            'title' => 'New product title',
-        ];
-
-        $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(ProductFactory::create(1, $update)),
+        Http::fake([
+            '*admin/products/123.json' => ProductFactory::create(1, ['title' => 'new title'])
         ]);
 
-        $response = $api->products(123)->put($update);
+        $response = (new Shopify('shop', 'token'))->products(123)->put([
+            'title' => 'new title'
+        ]);
 
-        $this->assertEquals(200, $api->lastResponseStatusCode());
-        $this->assertEquals('PUT', $api->lastRequestMethod());
-        $this->assertEquals('/admin/products/123.json', $api->lastRequestUri());
-        $this->assertTrue(is_array($response));
-        $this->assertEquals($update['title'], $response['title']);
+        Http::assertSent(function (Request $request) {
+            return $request->url() == 'https://shop.myshopify.com/admin/products/123.json'
+                && $request->method() == 'PUT';
+        });
+
+        $this->assertEquals('new title', $response['title']);
     }
 
     /**
@@ -142,20 +137,17 @@ class ProductsApiTest extends TestCase
      * Delete a product along with all its variants and images.
      *
      * @test
-     *
-     * @throws \ReflectionException
+     * @throws Throwable
      */
     public function it_deletes_a_product()
     {
-        $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(),
-        ]);
+        Http::fake();
 
-        $response = $api->products(123)->delete();
+        (new Shopify('shop', 'token'))->products(123)->delete();
 
-        $this->assertEquals(200, $api->lastResponseStatusCode());
-        $this->assertEquals('DELETE', $api->lastRequestMethod());
-        $this->assertEquals('/admin/products/123.json', $api->lastRequestUri());
-        $this->assertTrue(empty($response));
+        Http::assertSent(function (Request $request) {
+            return $request->url() == 'https://shop.myshopify.com/admin/products/123.json'
+                && $request->method() == 'DELETE';
+        });
     }
 }

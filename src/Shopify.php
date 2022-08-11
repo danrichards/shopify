@@ -23,13 +23,11 @@ use Dan\Shopify\Models\SmartCollections;
 use Dan\Shopify\Models\Theme;
 use Dan\Shopify\Models\Variant;
 use Dan\Shopify\Models\Webhook;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 use Psr\Http\Message\MessageInterface;
-use Psr\Http\Message\ResponseInterface;
-use ReflectionException;
 
 /**
  * Class Shopify.
@@ -42,7 +40,7 @@ use ReflectionException;
  * @property \Dan\Shopify\Helpers\Images $images
  * @property \Dan\Shopify\Helpers\Metafields $metafields
  * @property \Dan\Shopify\Helpers\Orders $orders
- * @property \Dan\Shopify\Helpers\PriceRule $price_rules
+ * @property \Dan\Shopify\Helpers\PriceRules $price_rules
  * @property \Dan\Shopify\Helpers\Products $products
  * @property \Dan\Shopify\Helpers\SmartCollections $smart_collections
  * @property \Dan\Shopify\Helpers\Themes $themes
@@ -65,7 +63,7 @@ use ReflectionException;
  * @method \Dan\Shopify\Helpers\Variants variants(string $variant_id)
  * @method \Dan\Shopify\Helpers\Webhooks webhooks(string $webhook_id)
  */
-class Shopify extends Client
+class Shopify
 {
     const SCOPE_READ_ANALYTICS = 'read_analytics';
     const SCOPE_READ_CHECKOUTS = 'read_checkouts';
@@ -223,10 +221,16 @@ class Shopify extends Client
     ];
 
     /**
+     * @var \Illuminate\Http\Client\PendingRequest
+     */
+    protected $client;
+
+    /**
      * Shopify constructor.
      *
-     * @param string $token
      * @param string $shop
+     * @param string $token
+     * @param null $base
      */
     public function __construct($shop, $token, $base = null)
     {
@@ -235,14 +239,12 @@ class Shopify extends Client
 
         $this->setBase($base);
 
-        parent::__construct([
-            'base_uri' => $base_uri,
-            'headers'  => [
+        $this->client = Http::baseUrl($base_uri)
+            ->withHeaders([
                 'X-Shopify-Access-Token' => $token,
                 'Accept'                 => 'application/json',
                 'Content-Type'           => 'application/json; charset=utf-8;',
-            ],
-        ]);
+            ]);
     }
 
     /**
@@ -263,9 +265,9 @@ class Shopify extends Client
      * @param string $append
      *
      * @return array
-     * @throws GuzzleException
      *
      * @throws InvalidOrMissingEndpointException
+     * @throws \Illuminate\Http\Client\RequestException
      */
     public function get($query = [], $append = '')
     {
@@ -291,7 +293,7 @@ class Shopify extends Client
 
         // If response has Link header, parse it and set the cursors
         if ($response->hasHeader('Link')) {
-            $this->cursors = static::parseLinkHeader($response->getHeader('Link')[0]);
+            $this->cursors = static::parseLinkHeader($response->header('Link')[0]);
         } 
         // If we don't have Link on a cursored endpoint then it was the only page. Set cursors to null to avoid breaking next.
         elseif (in_array($api, self::$cursored_enpoints, true)) {
@@ -833,39 +835,33 @@ class Shopify extends Client
     }
 
     /**
-     * @param $responseStack
-     *
-     * @throws ReflectionException
-     *
-     * @return Helpers\Testing\ShopifyMock
-     */
-    public static function fake($responseStack = [])
-    {
-        return new Helpers\Testing\ShopifyMock($responseStack);
-    }
-
-    /**
      * Wrapper to the $client->request method.
      *
      * @param string $method
      * @param string $uri
-     * @param array  $options
+     * @param array $options
      *
-     * @return mixed|ResponseInterface
+     * @return \Illuminate\Http\Client\Response
+     * @throws \Illuminate\Http\Client\RequestException|\Exception
      */
     public function request($method, $uri = '', array $options = [])
     {
         if (Util::isLaravel() && config('shopify.options.log_api_request_data')) {
-            \Log::info('vendor:dan:shopify:api', compact('method', 'uri') + $options);
+            \Log::info('vendor:dan:shopify:api:request', compact('method', 'uri') + $options);
         }
 
-        $this->last_response = $r = parent::request($method, $uri, $options);
-        $this->last_headers = $r->getHeaders();
+        $this->last_response = $r = $this->client->send($method, $uri, $options)->throw();
+        $this->last_headers = $r->headers();
+        $this->rate_limit = new RateLimit($r);
 
-        $api_deprecated_reason = $r->getHeader('X-Shopify-API-Deprecated-Reason');
-        $api_version_warning = $r->getHeader('X-Shopify-Api-Version-Warning');
+        if (Util::isLaravel() && config('shopify.options.log_api_response_data')) {
+            \Log::info('vendor:dan:shopify:api:response', (array) $r);
+        }
+
+        $api_deprecated_reason = $r->header('X-Shopify-API-Deprecated-Reason');
+        $api_version_warning = $r->header('X-Shopify-Api-Version-Warning');
         if ($api_deprecated_reason || $api_version_warning) {
-            $api_version = $r->getHeader('X-Shopify-Api-Version');
+            $api_version = $r->header('X-Shopify-Api-Version');
             if (Util::isLaravel()) {
                 if (config('shopify.options.log_deprecation_warnings')) {
                     $api = compact('api_version', 'api_version_warning', 'api_deprecated_reason');
@@ -875,8 +871,6 @@ class Shopify extends Client
             }
         }
 
-        $this->rate_limit = new RateLimit($r);
-
         return $r;
     }
 
@@ -884,16 +878,17 @@ class Shopify extends Client
      * @param callable $request
      *
      * @return array
+     * @throws \Illuminate\Http\Client\RequestException
      */
     public function rateLimited(callable $request)
     {
         try {
-            return $request($this);
-        } catch (ClientException $ce) {
-            if ($ce->getResponse()->getStatusCode() == 429) {
+            return $request($this)->throw();
+        } catch (\Illuminate\Http\Client\RequestException $re) {
+            if ($re->response->status() == 429) {
                 return $this->rateLimited($request);
             } else {
-                throw $ce;
+                throw $re;
             }
         }
     }

@@ -2,10 +2,11 @@
 
 namespace Dan\Shopify\Test;
 
-use Dan\Shopify\Helpers\Testing\ModelFactory\OrderFactory;
-use Dan\Shopify\Helpers\Testing\TransactionMock;
-use Dan\Shopify\Models\Order;
-use PHPUnit\Framework\TestCase;
+use Dan\Shopify\Shopify;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
+use Orchestra\Testbench\TestCase;
+use Throwable;
 
 class OrdersApiTest extends TestCase
 {
@@ -14,23 +15,18 @@ class OrdersApiTest extends TestCase
      * Retrieves a list of products.
      *
      * @test
-     *
-     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
-     * @throws \ReflectionException
+     * @throws Throwable
      */
     public function it_gets_a_list_of_orders()
     {
-        $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(OrderFactory::create(2)),
-        ]);
+        Http::fake();
 
-        $response = $api->orders->get();
+        (new Shopify('shop', 'token'))->orders->get();
 
-        $this->assertEquals(200, $api->lastResponseStatusCode());
-        $this->assertTrue(is_array($response));
-        $this->assertEquals('GET', $api->lastRequestMethod());
-        $this->assertEquals('/admin/orders.json', $api->lastRequestUri());
-        $this->assertCount(2, $response);
+        Http::assertSent(function (Request $request) {
+            return $request->url() == 'https://shop.myshopify.com/admin/orders.json'
+                && $request->method() == 'GET';
+        });
     }
 
     /**
@@ -38,22 +34,20 @@ class OrdersApiTest extends TestCase
      * Retrieve a count of all orders.
      *
      * @test
-     *
-     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
-     * @throws \ReflectionException
+     * @throws Throwable
      */
     public function it_gets_a_count_of_orders()
     {
-        $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create('{ "count": 2 }'),
+        Http::fake([
+            'https://shop.myshopify.com/admin/orders/count.json' => Http::response(['count' => 2])
         ]);
 
-        $response = $api->orders->count();
+        (new Shopify('shop', 'token'))->orders->count();
 
-        $this->assertEquals(200, $api->lastResponseStatusCode());
-        $this->assertEquals('GET', $api->lastRequestMethod());
-        $this->assertEquals('/admin/orders/count.json', $api->lastRequestUri());
-        $this->assertEquals(2, $response);
+        Http::assertSent(function (Request $request) {
+            return $request->url() == 'https://shop.myshopify.com/admin/orders/count.json'
+                && $request->method() == 'GET';
+        });
     }
 
     /**
@@ -61,23 +55,18 @@ class OrdersApiTest extends TestCase
      * Retrieves a single order.
      *
      * @test
-     *
-     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
-     * @throws \Dan\Shopify\Exceptions\ModelNotFoundException
-     * @throws \ReflectionException
+     * @throws Throwable
      */
-    public function it_gets_a_order()
+    public function it_gets_an_order()
     {
-        $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(OrderFactory::create()),
-        ]);
+        Http::fake();
 
-        $response = $api->orders->find($order_id = 123);
+        (new Shopify('shop', 'token'))->orders->find(123);
 
-        $this->assertEquals(200, $api->lastResponseStatusCode());
-        $this->assertEquals(Order::class, get_class($response));
-        $this->assertEquals('GET', $api->lastRequestMethod());
-        $this->assertEquals('/admin/orders/123.json', $api->lastRequestUri());
+        Http::assertSent(function (Request $request) {
+            return $request->url() == 'https://shop.myshopify.com/admin/orders/123.json'
+                && $request->method() == 'GET';
+        });
     }
 
     /**
@@ -85,29 +74,21 @@ class OrdersApiTest extends TestCase
      * Creates a new order.
      *
      * @test
-     *
-     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
-     * @throws \ReflectionException
+     * @throws Throwable
      */
     public function it_creates_a_new_order()
     {
-        $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(OrderFactory::create(), 201),
+        Http::fake();
+
+        (new Shopify('shop', 'token'))->orders->post($order = [
+            'key1' => 'value1'
         ]);
 
-        $response = $api->orders->post(json_decode('{
-            "line_items": [
-              {
-                "variant_id": 447654529,
-                "quantity": 1
-              }
-            ]
-          }', true));
-
-        $this->assertEquals(201, $api->lastResponseStatusCode());
-        $this->assertTrue(is_array($response));
-        $this->assertEquals('POST', $api->lastRequestMethod());
-        $this->assertEquals('/admin/orders.json', $api->lastRequestUri());
+        Http::assertSent(function (Request $request) use ($order) {
+            return $request->url() == 'https://shop.myshopify.com/admin/orders.json'
+                && $request->method() == 'POST'
+                && $request->data() == compact('order');
+        });
     }
 
     /**
@@ -115,27 +96,23 @@ class OrdersApiTest extends TestCase
      * Updates a order.
      *
      * @test
-     *
-     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
-     * @throws \ReflectionException
+     * @throws Throwable
      */
     public function it_updates_a_order()
     {
-        $update = [
-            'note' => 'New note',
-        ];
+        Http::fake();
 
-        $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(OrderFactory::create(1, $update)),
+        (new Shopify('shop', 'token'))->orders(123)->put($order = [
+            'key1' => 'value1'
         ]);
 
-        $response = $api->orders(123)->put($update);
+        $order['id'] = 123;
 
-        $this->assertEquals(200, $api->lastResponseStatusCode());
-        $this->assertEquals('PUT', $api->lastRequestMethod());
-        $this->assertEquals('/admin/orders/123.json', $api->lastRequestUri());
-        $this->assertTrue(is_array($response));
-        $this->assertEquals($update['note'], $response['note']);
+        Http::assertSent(function (Request $request) use ($order) {
+            return $request->url() == 'https://shop.myshopify.com/admin/orders/123.json'
+                && $request->method() == 'PUT'
+                && $request->data() == compact('order');
+        });
     }
 
     /**
@@ -143,21 +120,18 @@ class OrdersApiTest extends TestCase
      * Delete a order.
      *
      * @test
-     *
-     * @throws \ReflectionException
+     * @throws Throwable
      */
     public function it_deletes_a_order()
     {
-        $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(),
-        ]);
+        Http::fake();
 
-        $response = $api->orders(123)->delete();
+        (new Shopify('shop', 'token'))->orders(123)->delete();
 
-        $this->assertEquals(200, $api->lastResponseStatusCode());
-        $this->assertEquals('DELETE', $api->lastRequestMethod());
-        $this->assertEquals('/admin/orders/123.json', $api->lastRequestUri());
-        $this->assertTrue(empty($response));
+        Http::assertSent(function (Request $request) {
+            return $request->url() == 'https://shop.myshopify.com/admin/orders/123.json'
+                && $request->method() == 'DELETE';
+        });
     }
 
     /**
@@ -165,24 +139,17 @@ class OrdersApiTest extends TestCase
      * Closes an order.
      *
      * @test
-     *
-     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
-     * @throws \ReflectionException
+     * @throws Throwable
      */
     public function it_closes_an_order()
     {
-        $api = \Dan\Shopify\Shopify::fake([
-            TransactionMock::create(OrderFactory::create(1, ['id' => 123]), 201),
-        ]);
+        Http::fake();
 
-        $response = $api->orders(123)->post([], 'close');
+        (new Shopify('shop', 'token'))->orders(123)->post([], 'close');
 
-        $this->assertEquals(201, $api->lastResponseStatusCode());
-        $this->assertTrue(is_array($response));
-        $this->assertEquals('POST', $api->lastRequestMethod());
-        $this->assertEquals('/admin/orders/123/close.json', $api->lastRequestUri());
+        Http::assertSent(function (Request $request) {
+            return $request->url() == 'https://shop.myshopify.com/admin/orders/123/close.json'
+                && $request->method() == 'POST';
+        });
     }
-
-    /** /admin/orders/450789469/open.json */
-    /** /admin/orders/450789469/cancel.json */
 }
