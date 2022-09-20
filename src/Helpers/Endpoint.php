@@ -28,6 +28,7 @@ abstract class Endpoint
         'orders',
         'price_rules',
         'products',
+        'recurring_application_charges',
         'risks',
         'smart_collections',
         'themes',

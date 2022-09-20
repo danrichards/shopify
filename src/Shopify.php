@@ -3,6 +3,7 @@
 namespace Dan\Shopify;
 
 use BadMethodCallException;
+use Dan\Shopify\Models\RecurringApplicationCharge;
 use Dan\Shopify\Exceptions\InvalidOrMissingEndpointException;
 use Dan\Shopify\Exceptions\ModelNotFoundException;
 use Dan\Shopify\Helpers\Endpoint;
@@ -44,6 +45,7 @@ use Psr\Http\Message\MessageInterface;
  * @property \Dan\Shopify\Helpers\Products $products
  * @property \Dan\Shopify\Helpers\SmartCollections $smart_collections
  * @property \Dan\Shopify\Helpers\Themes $themes
+ * @property \Dan\Shopify\Helpers\RecurringApplicationCharges $recurring_application_charges
  * @property \Dan\Shopify\Helpers\Risks $risks
  * @property \Dan\Shopify\Helpers\Variants $variants
  * @property \Dan\Shopify\Helpers\Webhooks $webhooks
@@ -57,6 +59,7 @@ use Psr\Http\Message\MessageInterface;
  * @method \Dan\Shopify\Helpers\Orders orders(string $order_id)
  * @method \Dan\Shopify\Helpers\PriceRules price_rules(string $price_rule_id)
  * @method \Dan\Shopify\Helpers\Products products(string $product_id)
+ * @method \Dan\Shopify\Helpers\RecurringApplicationCharges recurring_application_charges(string $charge_id)
  * @method \Dan\Shopify\Helpers\Risks risks(string $risk_id)
  * @method \Dan\Shopify\Helpers\SmartCollections smart_collections(string $smart_collection_id)
  * @method \Dan\Shopify\Helpers\Themes themes(string $theme_id)
@@ -168,42 +171,44 @@ class Shopify
      * @var array
      */
     protected static $endpoints = [
-        'assets'               => 'assets.json',
-        'customers'            => 'customers/%s.json',
-        'discount_codes'       => 'discount_codes/%s.json',
-        'disputes'             => 'shopify_payments/disputes/%s.json',
-        'fulfillments'         => 'fulfillments/%s.json',
-        'fulfillment_services' => 'fulfillment_services/%s.json',
-        'images'               => 'images/%s.json',
-        'metafields'           => 'metafields/%s.json',
-        'orders'               => 'orders/%s.json',
-        'price_rules'          => 'price_rules/%s.json',
-        'products'             => 'products/%s.json',
-        'risks'                => 'risks/%s.json',
-        'smart_collections'    => 'smart_collections/%s.json',
-        'themes'               => 'themes/%s.json',
-        'variants'             => 'variants/%s.json',
-        'webhooks'             => 'webhooks/%s.json',
+        'assets'                        => 'assets.json',
+        'customers'                     => 'customers/%s.json',
+        'discount_codes'                => 'discount_codes/%s.json',
+        'disputes'                      => 'shopify_payments/disputes/%s.json',
+        'fulfillments'                  => 'fulfillments/%s.json',
+        'fulfillment_services'          => 'fulfillment_services/%s.json',
+        'images'                        => 'images/%s.json',
+        'metafields'                    => 'metafields/%s.json',
+        'orders'                        => 'orders/%s.json',
+        'price_rules'                   => 'price_rules/%s.json',
+        'products'                      => 'products/%s.json',
+        'recurring_application_charges' => 'recurring_application_charges/%s.json',
+        'risks'                         => 'risks/%s.json',
+        'smart_collections'             => 'smart_collections/%s.json',
+        'themes'                        => 'themes/%s.json',
+        'variants'                      => 'variants/%s.json',
+        'webhooks'                      => 'webhooks/%s.json',
     ];
 
     /** @var array $resource_models */
     protected static $resource_models = [
-        'assets'               => Asset::class,
-        'customers'            => Customer::class,
-        'discount_codes'       => DiscountCode::class,
-        'disputes'             => Dispute::class,
-        'fulfillments'         => Fulfillment::class,
-        'fulfillment_services' => FulfillmentService::class,
-        'images'               => Image::class,
-        'metafields'           => Metafield::class,
-        'orders'               => Order::class,
-        'price_rules'          => PriceRule::class,
-        'products'             => Product::class,
-        'risks'                => Risk::class,
-        'smart_collections'    => SmartCollections::class,
-        'themes'               => Theme::class,
-        'variants'             => Variant::class,
-        'webhooks'             => Webhook::class,
+        'assets'                        => Asset::class,
+        'customers'                     => Customer::class,
+        'discount_codes'                => DiscountCode::class,
+        'disputes'                      => Dispute::class,
+        'fulfillments'                  => Fulfillment::class,
+        'fulfillment_services'          => FulfillmentService::class,
+        'images'                        => Image::class,
+        'metafields'                    => Metafield::class,
+        'orders'                        => Order::class,
+        'price_rules'                   => PriceRule::class,
+        'products'                      => Product::class,
+        'recurring_application_charges' => RecurringApplicationCharge::class,
+        'risks'                         => Risk::class,
+        'smart_collections'             => SmartCollections::class,
+        'themes'                        => Theme::class,
+        'variants'                      => Variant::class,
+        'webhooks'                      => Webhook::class,
     ];
 
     /** @var array $cursored_enpoints */
