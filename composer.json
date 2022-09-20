@@ -16,7 +16,7 @@
         }
     },
     "require": {
-        "php": ">=7.0",
+        "php": ">=7.1",
         "guzzlehttp/guzzle": "^6.2|^7.0",
         "nesbot/carbon": "^1.26.3 || ^2.0",
         "illuminate/http": "^8.83",
