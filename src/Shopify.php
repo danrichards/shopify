@@ -3,6 +3,7 @@
 namespace Dan\Shopify;
 
 use BadMethodCallException;
+use Dan\Shopify\Models\AssignedFulfillmentOrder;
 use Dan\Shopify\Models\RecurringApplicationCharge;
 use Dan\Shopify\Exceptions\InvalidOrMissingEndpointException;
 use Dan\Shopify\Exceptions\ModelNotFoundException;
@@ -34,6 +35,7 @@ use Psr\Http\Message\MessageInterface;
  * Class Shopify.
  *
  * @property \Dan\Shopify\Helpers\Assets $assets
+ * @property \Dan\Shopify\Helpers\AssignedFulfillmentOrders $assigned_fulfillment_orders
  * @property \Dan\Shopify\Helpers\Customers $customers
  * @property \Dan\Shopify\Helpers\DiscountCodes $discount_codes
  * @property \Dan\Shopify\Helpers\Fulfillments $fulfillments
@@ -50,6 +52,7 @@ use Psr\Http\Message\MessageInterface;
  * @property \Dan\Shopify\Helpers\Variants $variants
  * @property \Dan\Shopify\Helpers\Webhooks $webhooks
  *
+ * @method \Dan\Shopify\Helpers\AssignedFulfillmentOrders assigned_fulfillment_orders()
  * @method \Dan\Shopify\Helpers\Customers customers(string $customer_id)
  * @method \Dan\Shopify\Helpers\DiscountCodes discount_codes(string $discount_code_id)
  * @method \Dan\Shopify\Helpers\Fulfillments fulfillments(string $fulfillment_id)
@@ -172,6 +175,7 @@ class Shopify
      */
     protected static $endpoints = [
         'assets'                        => 'assets.json',
+        'assigned_fulfillment_orders'   => 'assigned_fulfillment_orders/%s.json',
         'customers'                     => 'customers/%s.json',
         'discount_codes'                => 'discount_codes/%s.json',
         'disputes'                      => 'shopify_payments/disputes/%s.json',
@@ -192,6 +196,7 @@ class Shopify
 
     /** @var array $resource_models */
     protected static $resource_models = [
+        'assigned_fulfillment_orders' => AssignedFulfillmentOrder::class,
         'assets'                        => Asset::class,
         'customers'                     => Customer::class,
         'discount_codes'                => DiscountCode::class,
@@ -299,7 +304,7 @@ class Shopify
         // If response has Link header, parse it and set the cursors
         if ($response->hasHeader('Link')) {
             $this->cursors = static::parseLinkHeader($response->header('Link'));
-        } 
+        }
         // If we don't have Link on a cursored endpoint then it was the only page. Set cursors to null to avoid breaking next.
         elseif (in_array($api, self::$cursored_enpoints, true)) {
             $this->cursors = [

@@ -18,6 +18,7 @@ abstract class Endpoint
     /** @var string[] $endpoints */
     protected static $endpoints = [
         'assets',
+        'assigned_fulfillment_orders',
         'customers',
         'discount_codes',
         'disputes',
