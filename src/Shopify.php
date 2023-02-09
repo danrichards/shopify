@@ -72,6 +72,7 @@ use Psr\Http\Message\MessageInterface;
 class Shopify
 {
     const SCOPE_READ_ANALYTICS = 'read_analytics';
+    const SCOPE_READ_ASSIGNED_FULFILLMENT_ORDERS = 'read_assigned_fulfillment_orders';
     const SCOPE_READ_CHECKOUTS = 'read_checkouts';
     const SCOPE_READ_CONTENT = 'read_content';
     const SCOPE_READ_CUSTOMERS = 'read_customers';
@@ -103,6 +104,7 @@ class Shopify
     /** @var array $scopes */
     public static $scopes = [
         self::SCOPE_READ_ANALYTICS,
+        self::SCOPE_READ_ASSIGNED_FULFILLMENT_ORDERS,
         self::SCOPE_READ_CHECKOUTS,
         self::SCOPE_READ_CONTENT,
         self::SCOPE_READ_CUSTOMERS,
