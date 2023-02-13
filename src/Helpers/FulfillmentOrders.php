@@ -5,6 +5,19 @@ namespace Dan\Shopify\Helpers;
 class FulfillmentOrders extends Endpoint
 {
     /**
+     * Accept a fulfillment request.
+     *
+     * @param  array  $payload
+     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return array|\Dan\Shopify\Models\AbstractModel
+     */
+    public function accept($payload = [])
+    {
+        return $this->client->post($payload, 'fulfillment_request/accept');
+    }
+
+    /**
      * Mark a fulfillment order as cancelled.
      *
      * @param  int|null  $id
@@ -56,6 +69,19 @@ class FulfillmentOrders extends Endpoint
     public function open($payload = [])
     {
         return $this->client->post($payload, 'open');
+    }
+
+    /**
+     * Reject a fulfillment request.
+     *
+     * @param  array  $payload
+     * @throws \Dan\Shopify\Exceptions\InvalidOrMissingEndpointException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return array|\Dan\Shopify\Models\AbstractModel
+     */
+    public function reject($payload = [])
+    {
+        return $this->client->post($payload, 'fulfillment_request/reject');
     }
 
     /**
