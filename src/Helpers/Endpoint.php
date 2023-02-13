@@ -23,6 +23,7 @@ abstract class Endpoint
         'discount_codes',
         'disputes',
         'fulfillments',
+        'fulfillment_orders',
         'fulfillment_services',
         'images',
         'metafields',

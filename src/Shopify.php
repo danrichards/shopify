@@ -4,6 +4,7 @@ namespace Dan\Shopify;
 
 use BadMethodCallException;
 use Dan\Shopify\Models\AssignedFulfillmentOrder;
+use Dan\Shopify\Models\FulfillmentOrder;
 use Dan\Shopify\Models\RecurringApplicationCharge;
 use Dan\Shopify\Exceptions\InvalidOrMissingEndpointException;
 use Dan\Shopify\Exceptions\ModelNotFoundException;
@@ -39,6 +40,7 @@ use Psr\Http\Message\MessageInterface;
  * @property \Dan\Shopify\Helpers\Customers $customers
  * @property \Dan\Shopify\Helpers\DiscountCodes $discount_codes
  * @property \Dan\Shopify\Helpers\Fulfillments $fulfillments
+ * @property \Dan\Shopify\Helpers\FulfillmentOrders $fulfillment_orders
  * @property \Dan\Shopify\Helpers\FulfillmentServices $fulfillment_services
  * @property \Dan\Shopify\Helpers\Images $images
  * @property \Dan\Shopify\Helpers\Metafields $metafields
@@ -56,6 +58,7 @@ use Psr\Http\Message\MessageInterface;
  * @method \Dan\Shopify\Helpers\Customers customers(string $customer_id)
  * @method \Dan\Shopify\Helpers\DiscountCodes discount_codes(string $discount_code_id)
  * @method \Dan\Shopify\Helpers\Fulfillments fulfillments(string $fulfillment_id)
+ * @method \Dan\Shopify\Helpers\FulfillmentOrders fulfillment_orders(string $fulfillment_order_id)
  * @method \Dan\Shopify\Helpers\FulfillmentServices fulfillment_services(string $fulfillment_service_id)
  * @method \Dan\Shopify\Helpers\Images images(string $image_id)
  * @method \Dan\Shopify\Helpers\Metafields metafields(string $metafield_id)
@@ -182,6 +185,7 @@ class Shopify
         'discount_codes'                => 'discount_codes/%s.json',
         'disputes'                      => 'shopify_payments/disputes/%s.json',
         'fulfillments'                  => 'fulfillments/%s.json',
+        'fulfillment_orders'            => 'fulfillment_orders/%s.json',
         'fulfillment_services'          => 'fulfillment_services/%s.json',
         'images'                        => 'images/%s.json',
         'metafields'                    => 'metafields/%s.json',
@@ -204,6 +208,7 @@ class Shopify
         'discount_codes'                => DiscountCode::class,
         'disputes'                      => Dispute::class,
         'fulfillments'                  => Fulfillment::class,
+        'fulfillment_orders'            => FulfillmentOrder::class,
         'fulfillment_services'          => FulfillmentService::class,
         'images'                        => Image::class,
         'metafields'                    => Metafield::class,
