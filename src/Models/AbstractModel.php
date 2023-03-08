@@ -497,7 +497,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * @return string
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return json_encode($this->attributes + $this->original);
     }
@@ -541,7 +541,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      *
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->$offset);
     }
@@ -553,7 +553,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      *
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->$offset;
     }
@@ -566,7 +566,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->$offset = $value;
     }
@@ -578,7 +578,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
      *
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->$offset);
     }
