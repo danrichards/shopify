@@ -505,7 +505,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * @return string
      */
-    public function serialize()
+    public function serialize(): ?string
     {
         return serialize($this->getAttributes());
     }
@@ -513,7 +513,7 @@ abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAcc
     /**
      * @param string $serialized
      */
-    public function unserialize($serialized)
+    public function unserialize($serialized): void
     {
         $this->attributes = unserialize($serialized);
     }
