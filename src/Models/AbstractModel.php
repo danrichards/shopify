@@ -16,7 +16,7 @@ use Serializable;
  *
  * An Eloquent approach to storing and manipulating data for the Shopify Api.
  */
-abstract class AbstractModel implements JsonSerializable, Serializable, ArrayAccess
+abstract class AbstractModel implements JsonSerializable, ArrayAccess
 {
     /** @var string $resource_name */
     public static $resource_name;
