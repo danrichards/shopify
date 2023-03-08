@@ -9,8 +9,6 @@ use DateTime;
 use DateTimeInterface;
 use Exception;
 use JsonSerializable;
-use Serializable;
-
 /**
  * Class AbstractModel.
  *
