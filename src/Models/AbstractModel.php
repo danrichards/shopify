@@ -507,7 +507,7 @@ abstract class AbstractModel implements JsonSerializable, ArrayAccess
      */
     public function __serialize(): array
     {
-        return serialize($this->getAttributes());
+        return $this->getAttributes();
     }
 
     /**
