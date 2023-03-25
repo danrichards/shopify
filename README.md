@@ -69,6 +69,31 @@ $api->products->post(['title' => 'Simple Test']); // array dictionary
 $api->products('123456789')->put(['title' => 'My title changed.']); // array dictionary
 ```
 
+## Basic (very basic) GraphQL
+
+The collection and model utilities that are available `->find(...)` and `->findMany(...)` for RESTful endpoints are NOT available for GraphQL.
+
+Some endpoints are only available through Shopify's GraphQL library. This makes me sad because GraphQL is not as readable or intuitive as RESTful APIs, less people understand it, and it's harder to train people on. That said, if you want to jam out with your graphql, there is a client method to assist you.
+
+For example, fetch delivery profiles (only available in GraphQL).
+
+> Note: You can safely use the `graphql(...)` helper method without any concern of changing the state on the `Dan\Shopify\Shopify::class`.
+
+```php
+$query = "{
+  deliveryProfiles (first: 3) {
+    edges {
+      node {
+        id,
+        name,
+      }
+    }
+  }
+}"
+
+$api->graphql($query); // hipster
+```
+
 ## Using cursors
 
 > Shopify doesn't jam with regular old pagination, sigh ...
