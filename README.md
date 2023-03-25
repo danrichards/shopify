@@ -70,7 +70,7 @@ With the deprecation of the per page pagination comes a new cursor based paginat
 You can use the `next` method to get paged responses.  
 Example usage:
 
-``` php
+```php
 // First call to next can have all the usual query params you might want.
 $api->orders->next(['limit' => 100, 'status' => 'closed');
 
@@ -120,17 +120,21 @@ In your `config/app.php`
 
 Requires for private app (env token) for single store usage of oauth (multiple stores)
 
-    Dan\Shopify\Integrations\Laravel\ShopifyServiceProvider::class,
+```php
+Dan\Shopify\Integrations\Laravel\ShopifyServiceProvider::class,
+```
     
 ### Add the following to your `aliases` array:
 
 If your app only interacts with a single store, there is a Facade that may come in handy.
 
-    'Shopify' => Dan\Shopify\Integrations\Laravel\ShopifyFacade::class,
+```php
+'Shopify' => Dan\Shopify\Integrations\Laravel\ShopifyFacade::class,
+```
     
 ### For facade usage, replace the following variables in your `.env`
     
-``` php
+```dotenv
 SHOPIFY_DOMAIN=your-shop-name.myshopify.com
 SHOPIFY_TOKEN=your-token-here
 ```
@@ -139,7 +143,7 @@ SHOPIFY_TOKEN=your-token-here
 
 Empty or `admin` defaults to oldest supported API, [learn more](https://help.shopify.com/en/api/versioning)
 
-``` php
+```dotenv
 SHOPIFY_API_BASE="admin/api/2022-07"
 ```
 
@@ -149,7 +153,7 @@ SHOPIFY_API_BASE="admin/api/2022-07"
 
 Review the `Basic Usage` above, using the Facade is more or less the same, except you're only interacting with the one store in your config.
 
-```
+```php
 // Facade same as $api->shop(), but for just the one store.
 Shopify::shop();
 
@@ -166,7 +170,7 @@ Making a public app using oauth, follow the Shopify docs to make your auth url, 
 
 ### Get a token for a redirect response.
 
-``` php
+```php
 Shopify::getAppInstallResponse(
     'your_app_client_id', 
     'your_app_client_secret',
@@ -179,7 +183,7 @@ Shopify::getAppInstallResponse(
 
 ### Verify App Hmac (works for callback or redirect)
 
-``` php
+```php
 Dan\Shopify\Util::validAppHmac(
     'hmac_from_request', 
     'your_app_client_secret', 
@@ -189,7 +193,7 @@ Dan\Shopify\Util::validAppHmac(
 
 ### Verify App Webhook Hmac
 
-``` php
+```php
 Dan\Shopify\Util::validWebhookHmac(
     'hmac_from_request', 
     'your_app_client_secret', 
