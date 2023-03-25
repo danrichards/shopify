@@ -187,6 +187,7 @@ class Shopify
         'fulfillments'                  => 'fulfillments/%s.json',
         'fulfillment_orders'            => 'fulfillment_orders/%s.json',
         'fulfillment_services'          => 'fulfillment_services/%s.json',
+        'graphql'                       => 'graphql.json',
         'images'                        => 'images/%s.json',
         'metafields'                    => 'metafields/%s.json',
         'orders'                        => 'orders/%s.json',
@@ -273,6 +274,39 @@ class Shopify
     public static function make($shop, $token)
     {
         return new static($shop, $token);
+    }
+
+    /**
+     * Leverage the graphql API safetly without changing instance state
+     *
+     * EXAMPLE $query (string)
+     *
+     * {
+     *   deliveryProfiles (first: 3) {
+     *     edges {
+     *       node {
+     *         id,
+     *         name,
+     *       }
+     *     }
+     *   }
+     * }
+     *
+     * @param string $query
+     * @return array
+     *
+     * @throws InvalidOrMissingEndpointException
+     * @throws \Illuminate\Http\Client\RequestException
+     */
+    public function graphql($query)
+    {
+        $uri = static::makeUri('graphql');
+
+        $options = ['json' => compact('query')];
+
+        $response = $this->client->send('POST', $uri, $options)->throw();
+
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     /**
@@ -711,11 +745,11 @@ class Shopify
         if (substr_count(static::$endpoints[$api], '%') == count($ids)) {
             $endpoint = vsprintf(static::$endpoints[$api], $ids);
 
-        // Is it a collection endpoint?
+            // Is it a collection endpoint?
         } elseif (substr_count(static::$endpoints[$api], '%') == (count($ids) + 1)) {
             $endpoint = vsprintf(str_replace('/%s.json', '.json', static::$endpoints[$api]), $ids);
 
-        // Is it just plain wrong?
+            // Is it just plain wrong?
         } else {
             $msg = sprintf('You did not specify enough ids for endpoint `%s`, ids(%s).',
                 static::$endpoints[$api],
