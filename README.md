@@ -19,6 +19,14 @@ A fluent and object-oriented approach for using the Shopify API.
 * [Variant](https://help.shopify.com/en/api/reference/products/product-variant)
 * [Webhook](https://help.shopify.com/en/api/reference/events/webhook)
 
+## Versions
+
+| PHP | Package |
+|---|---|
+| 8 | 5.0.* |
+| 7 | 4.0.* |
+| YOLO | dev-master |
+
 ## Composer
 
 ```shell
